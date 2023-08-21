@@ -59,6 +59,7 @@ int MainWindow::on_TiempoS_valueChanged(int arg1)
 void MainWindow::on_IniciarPB_clicked()
 {
     // setear las ganancias e iniciar las acciones
+    // No se si aqui dejar la validacion o nel
 }
 
 
