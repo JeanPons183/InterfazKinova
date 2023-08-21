@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+int tiempo;
+
 double kp1;
 double kp2;
 double kp3;
@@ -39,6 +41,28 @@ void MainWindow::on_PDSel_clicked()
 
 }
 
+void MainWindow::on_PDSel_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_CambiarTiempoPB_clicked()
+{
+    // Setear el tiempo con el cesar
+}
+
+int MainWindow::on_TiempoS_valueChanged(int arg1)
+{
+    return tiempo = arg1;
+}
+
+void MainWindow::on_IniciarPB_clicked()
+{
+    // setear las ganancias e iniciar las acciones
+}
+
+
+//--------------------------------- funciones de Ganancias -------------------------//
 double MainWindow::on_KP1_valueChanged(double arg1)
 {
     return kp1 = arg1;
@@ -114,14 +138,12 @@ double MainWindow::on_KD6_valueChanged(double arg1)
     return kd6 = arg1;
 }
 
-void MainWindow::on_TiempoS_valueChanged(int arg1)
-{
-
-}
+//----------------------------------------------------------------------------------------------//
 
 
-void MainWindow::on_PDSel_toggled(bool checked)
-{
 
-}
+
+
+
+
 

@@ -29,6 +29,10 @@ private slots:
 
     void on_PDSel_toggled(bool checked);
 
+    void on_CambiarTiempoPB_clicked();
+    int on_TiempoS_valueChanged(int arg1);
+
+    //--------------------------------- funciones de Ganancias -------------------------//
     double on_KP1_valueChanged(double arg1);
     double on_KP2_valueChanged(double arg1);
     double on_KP3_valueChanged(double arg1);
@@ -52,7 +56,9 @@ private slots:
 
 
 
-    void on_TiempoS_valueChanged(int arg1);
+
+
+    void on_IniciarPB_clicked();
 
 private:
     Ui::MainWindow *ui;
