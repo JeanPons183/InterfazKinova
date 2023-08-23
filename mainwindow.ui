@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>891</width>
-    <height>477</height>
+    <width>914</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="TItuloLabel">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -33,35 +33,6 @@
      <string>Kinova Gen 3 Lite</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="errorTextBrowser">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>260</y>
-      <width>241</width>
-      <height>101</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>730</x>
-      <y>230</y>
-      <width>134</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Errores</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -71,7 +42,7 @@
       <height>26</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_5">
+    <layout class="QGridLayout" name="ConectarLO">
      <item row="0" column="0">
       <widget class="QPushButton" name="ConectarPB">
        <property name="text">
@@ -103,7 +74,7 @@
       <height>287</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="GananciasLO">
      <item row="4" column="3">
       <widget class="QDoubleSpinBox" name="KD4">
        <property name="maximum">
@@ -165,7 +136,7 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_16">
+      <widget class="QLabel" name="Actuador2Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -179,7 +150,7 @@
       </widget>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="label_14">
+      <widget class="QLabel" name="Actuador6Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -233,7 +204,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label_17">
+      <widget class="QLabel" name="Actuador1Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -287,7 +258,7 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QLabel" name="label_18">
+      <widget class="QLabel" name="KILabel">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -321,7 +292,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="label_20">
+      <widget class="QLabel" name="KPLabel">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -345,7 +316,7 @@
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QLabel" name="label_19">
+      <widget class="QLabel" name="KDLabel">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -359,7 +330,7 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_13">
+      <widget class="QLabel" name="Actuador4Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -383,7 +354,7 @@
       </widget>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="label_15">
+      <widget class="QLabel" name="ActuadorLabel">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -397,7 +368,7 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="Actuador3Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -411,7 +382,7 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="Actuador5Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -425,23 +396,23 @@
       </widget>
      </item>
     </layout>
-    <zorder>label_14</zorder>
-    <zorder>label_18</zorder>
-    <zorder>label_20</zorder>
+    <zorder>Actuador6Label</zorder>
+    <zorder>KILabel</zorder>
+    <zorder>KPLabel</zorder>
     <zorder>KD2</zorder>
-    <zorder>label_19</zorder>
-    <zorder>label_17</zorder>
+    <zorder>KDLabel</zorder>
+    <zorder>Actuador1Label</zorder>
     <zorder>KP3</zorder>
     <zorder>KD5</zorder>
     <zorder>KP6</zorder>
-    <zorder>label_16</zorder>
-    <zorder>label_5</zorder>
-    <zorder>label_6</zorder>
+    <zorder>Actuador2Label</zorder>
+    <zorder>Actuador5Label</zorder>
+    <zorder>Actuador3Label</zorder>
     <zorder>KP5</zorder>
     <zorder>KI5</zorder>
     <zorder>KI3</zorder>
-    <zorder>label_15</zorder>
-    <zorder>label_13</zorder>
+    <zorder>ActuadorLabel</zorder>
+    <zorder>Actuador4Label</zorder>
     <zorder>KD1</zorder>
     <zorder>KI2</zorder>
     <zorder>KI1</zorder>
@@ -463,11 +434,11 @@
       <height>90</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_6">
+    <layout class="QGridLayout" name="EjecutarLO">
      <item row="0" column="0">
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="IniciarLO">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_10">
+        <widget class="QLabel" name="EjecutarLabel">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -496,9 +467,9 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="DetenerLO">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_11">
+        <widget class="QLabel" name="DetenerLabel">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -530,7 +501,7 @@
       <height>81</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_4">
+    <layout class="QGridLayout" name="TiempoLO">
      <item row="2" column="0" colspan="2">
       <widget class="QPushButton" name="CambiarTiempoPB">
        <property name="text">
@@ -539,7 +510,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="SegundosLabel">
        <property name="font">
         <font>
          <family>Arial</family>
@@ -555,7 +526,7 @@
       <widget class="QSpinBox" name="TiempoS"/>
      </item>
      <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="TALabel">
        <property name="font">
         <font>
          <family>Arial</family>
@@ -594,7 +565,7 @@
      </property>
     </item>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -603,7 +574,7 @@
       <height>211</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="ControladoresLO">
      <item>
       <layout class="QFormLayout" name="formLayout">
        <item row="1" column="0">
@@ -698,13 +669,41 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>230</y>
+      <width>258</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="ErroresLO">
+     <item row="0" column="0">
+      <widget class="QLabel" name="ErroresLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Errores</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QTextBrowser" name="errorTextBrowser"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
+     <width>914</width>
      <height>21</height>
     </rect>
    </property>
@@ -717,6 +716,46 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>ConectarPB</tabstop>
+  <tabstop>PDSel</tabstop>
+  <tabstop>PIDSel</tabstop>
+  <tabstop>PDCancGSel</tabstop>
+  <tabstop>PDComGSel</tabstop>
+  <tabstop>PdCancGSel</tabstop>
+  <tabstop>PdCompGSel</tabstop>
+  <tabstop>PDSel_2</tabstop>
+  <tabstop>PIDSel_2</tabstop>
+  <tabstop>PDCancGSel_2</tabstop>
+  <tabstop>PDComGSel_2</tabstop>
+  <tabstop>PdCancGSel_2</tabstop>
+  <tabstop>PdCompGSel_2</tabstop>
+  <tabstop>KP1</tabstop>
+  <tabstop>KP2</tabstop>
+  <tabstop>KP3</tabstop>
+  <tabstop>KP4</tabstop>
+  <tabstop>KP5</tabstop>
+  <tabstop>KP6</tabstop>
+  <tabstop>KI1</tabstop>
+  <tabstop>KI2</tabstop>
+  <tabstop>KI3</tabstop>
+  <tabstop>KI4</tabstop>
+  <tabstop>KI5</tabstop>
+  <tabstop>KI6</tabstop>
+  <tabstop>KD1</tabstop>
+  <tabstop>KD2</tabstop>
+  <tabstop>KD3</tabstop>
+  <tabstop>KD4</tabstop>
+  <tabstop>KD5</tabstop>
+  <tabstop>KD6</tabstop>
+  <tabstop>TiempoS</tabstop>
+  <tabstop>CambiarTiempoPB</tabstop>
+  <tabstop>IniciarPB</tabstop>
+  <tabstop>DetenerPB</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>MarkConeccion</tabstop>
+  <tabstop>errorTextBrowser</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
