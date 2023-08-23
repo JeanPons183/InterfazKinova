@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     // Configura el manejador de mensajes personalizado
-    //qInstallMessageHandler(myMessageHandler);
+    void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg);
+    qInstallMessageHandler(myMessageHandler);
 
     MainWindow w;
     w.show();
