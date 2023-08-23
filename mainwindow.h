@@ -70,6 +70,7 @@ private slots:
 
     void on_IniciarPB_clicked();
 
+//    void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg);
 
 private:
     Ui::MainWindow *ui;

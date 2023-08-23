@@ -4,8 +4,6 @@
 int tiempo;
 bool iniciar = true;
 
-double kp1MaxValue;
-
 double kp1;     const double kp1Max = 20.0;
 double kp2;     const double kp2Max = 20.0;
 double kp3;     const double kp3Max = 20.0;
@@ -26,8 +24,6 @@ double kd3;     const double kd3Max = 20.0;
 double kd4;     const double kd4Max = 20.0;
 double kd5;     const double kd5Max = 20.0;
 double kd6;     const double kd6Max = 20.0;
-
-double kp; double kpMax;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -63,97 +59,97 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::FocusOut)
     {
-        if (object == ui->KP1 && kp1 < kp1Max)
+        if (object == ui->KP1 && kp1 > kp1Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp1Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp1Max);
             QMessageBox::information(this, "Error en KP1", mensaje);
         }
-        else if (object == ui->KP2 && kp2 < kp2Max)
+        else if (object == ui->KP2 && kp2 > kp2Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp3Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp3Max);
             QMessageBox::information(this, "Error en KP2", mensaje);
         }
-        else if (object == ui->KP3 && kp3 < kp3Max)
+        else if (object == ui->KP3 && kp3 > kp3Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp4Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp4Max);
             QMessageBox::information(this, "Error en KP3", mensaje);
         }
-        else if (object == ui->KP4 && kp4 < kp4Max)
+        else if (object == ui->KP4 && kp4 > kp4Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
             QMessageBox::information(this, "Error en KP4", mensaje);
         }
-        else if (object == ui->KP5 && kp5 < kp5Max)
+        else if (object == ui->KP5 && kp5 > kp5Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
             QMessageBox::information(this, "Error en KP5", mensaje);
         }
-        else if (object == ui->KP6 && kp6 < kp6Max)
+        else if (object == ui->KP6 && kp6 > kp6Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kp6Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kp6Max);
             QMessageBox::information(this, "Error en KP6", mensaje);
         }
 
         //----------------------------------------
-        if (object == ui->KI1 && ki1 < ki1Max)
+        if (object == ui->KI1 && ki1 > ki1Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki1Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki1Max);
             QMessageBox::information(this, "Error en KI1", mensaje);
         }
-        else if (object == ui->KI2 && ki2 < ki2Max)
+        else if (object == ui->KI2 && ki2 > ki2Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki3Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki3Max);
             QMessageBox::information(this, "Error en KI2", mensaje);
         }
-        else if (object == ui->KI3 && ki3 < ki3Max)
+        else if (object == ui->KI3 && ki3 > ki3Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki4Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki4Max);
             QMessageBox::information(this, "Error en KI3", mensaje);
         }
-        else if (object == ui->KI4 && ki4 < ki4Max)
+        else if (object == ui->KI4 && ki4 > ki4Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
             QMessageBox::information(this, "Error en KI4", mensaje);
         }
-        else if (object == ui->KI5 && ki5 < ki5Max)
+        else if (object == ui->KI5 && ki5 > ki5Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
             QMessageBox::information(this, "Error en KI5", mensaje);
         }
-        else if (object == ui->KI6 && ki6 < ki6Max)
+        else if (object == ui->KI6 && ki6 > ki6Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(ki6Max);
+            QString mensaje = "El valor es mayor que " + QString::number(ki6Max);
             QMessageBox::information(this, "Error en KI6", mensaje);
         }
         //-----------------------------------------------------------
-        if (object == ui->KD1 && kd1 < kd1Max)
+        if (object == ui->KD1 && kd1 > kd1Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd1Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd1Max);
             QMessageBox::information(this, "Error en KD1", mensaje);
         }
-        else if (object == ui->KD2 && kd2 < kd2Max)
+        else if (object == ui->KD2 && kd2 > kd2Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd3Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd3Max);
             QMessageBox::information(this, "Error en KD2", mensaje);
         }
-        else if (object == ui->KD3 && kd3 < kd3Max)
+        else if (object == ui->KD3 && kd3 > kd3Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd4Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd4Max);
             QMessageBox::information(this, "Error en KD3", mensaje);
         }
-        else if (object == ui->KD4 && kd4 < kd4Max)
+        else if (object == ui->KD4 && kd4 > kd4Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd5Max);
             QMessageBox::information(this, "Error en KD4", mensaje);
         }
-        else if (object == ui->KD5 && kd5 < kd5Max)
+        else if (object == ui->KD5 && kd5 > kd5Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd5Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd5Max);
             QMessageBox::information(this, "Error en KD5", mensaje);
         }
-        else if (object == ui->KD6 && kd6 < kd6Max)
+        else if (object == ui->KD6 && kd6 > kd6Max)
         {
-            QString mensaje = "El valor es menor que " + QString::number(kd6Max);
+            QString mensaje = "El valor es mayor que " + QString::number(kd6Max);
             QMessageBox::information(this, "Error en KD6", mensaje);
         }
     }
@@ -186,6 +182,30 @@ void MainWindow::on_IniciarPB_clicked()
     // No se si aqui dejar la validacion o nel
 }
 
+// Muestra de errores y quiza  la notificaciones de las ganancias
+
+//void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
+//{
+//    QTextBrowser *errorTextBrowser = QApplication::activeWindow()->findChild<QTextBrowser*>("errorTextBrowser"); // Ajusta el nombre del QTextBrowser según tu diseño
+
+//    switch (type) {
+//    case QtDebugMsg:
+//        // Mensajes de depuración, puedes hacer algo si lo deseas
+//        break;
+//    case QtWarningMsg:
+//        // Mensajes de advertencia, puedes mostrarlos en el QTextBrowser
+//        errorTextBrowser->append("Advertencia: " + msg);
+//        break;
+//    case QtCriticalMsg:
+//        // Mensajes críticos (errores), también los mostramos en el QTextBrowser
+//        errorTextBrowser->append("Error: " + msg);
+//        break;
+//    case QtFatalMsg:
+//        // Mensajes fatales, aquí puedes tomar medidas drásticas si lo deseas
+//        errorTextBrowser->append("Error fatal: " + msg);
+//        break;
+//    }
+//}
 
 //--------------------------------- funciones de Ganancias -------------------------//
 void MainWindow::on_KP1_valueChanged(double arg1)
