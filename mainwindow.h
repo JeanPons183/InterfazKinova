@@ -4,15 +4,8 @@
 #include <QMainWindow>
 #include <QLCDNumber>
 #include <QDoubleSpinBox>
-#include <iostream>
-
 // Para mostrar las notificaciones
 #include <QMessageBox>
-#include <QLabel>
-#include <QStatusBar>
-#include <QFocusEvent>
-
-
 
 
 
@@ -69,8 +62,6 @@ private slots:
     void on_KI6_valueChanged(double arg1);
 
     void on_IniciarPB_clicked();
-
-//    void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg);
 
 private:
     Ui::MainWindow *ui;

@@ -425,6 +425,34 @@
       </widget>
      </item>
     </layout>
+    <zorder>label_14</zorder>
+    <zorder>label_18</zorder>
+    <zorder>label_20</zorder>
+    <zorder>KD2</zorder>
+    <zorder>label_19</zorder>
+    <zorder>label_17</zorder>
+    <zorder>KP3</zorder>
+    <zorder>KD5</zorder>
+    <zorder>KP6</zorder>
+    <zorder>label_16</zorder>
+    <zorder>label_5</zorder>
+    <zorder>label_6</zorder>
+    <zorder>KP5</zorder>
+    <zorder>KI5</zorder>
+    <zorder>KI3</zorder>
+    <zorder>label_15</zorder>
+    <zorder>label_13</zorder>
+    <zorder>KD1</zorder>
+    <zorder>KI2</zorder>
+    <zorder>KI1</zorder>
+    <zorder>KD4</zorder>
+    <zorder>KI6</zorder>
+    <zorder>KI4</zorder>
+    <zorder>KD3</zorder>
+    <zorder>KD6</zorder>
+    <zorder>KP1</zorder>
+    <zorder>KP2</zorder>
+    <zorder>KP4</zorder>
    </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">

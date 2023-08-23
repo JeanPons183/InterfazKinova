@@ -182,32 +182,9 @@ void MainWindow::on_IniciarPB_clicked()
     // No se si aqui dejar la validacion o nel
 }
 
-// Muestra de errores y quiza  la notificaciones de las ganancias
+// Muestra de errores y quiza la notificaciones de las ganancias con el errorTextBrowser
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
-{
-    QTextBrowser *errorTextBrowser = QApplication::activeWindow()->findChild<QTextBrowser*>("errorTextBrowser"); // Ajusta el nombre del QTextBrowser según tu diseño
-    errorTextBrowser->append("Advertencia: " + msg);
-    switch (type) {
-    case QtDebugMsg:
-        // Mensajes de depuración, puedes hacer algo si lo deseas
-        break;
-    case QtWarningMsg:
-        // Mensajes de advertencia, puedes mostrarlos en el QTextBrowser
-        errorTextBrowser->append("Advertencia: " + msg);
-        break;
-    case QtCriticalMsg:
-        // Mensajes críticos (errores), también los mostramos en el QTextBrowser
-        errorTextBrowser->append("Error: " + msg);
-        break;
-    case QtFatalMsg:
-        // Mensajes fatales, aquí puedes tomar medidas drásticas si lo deseas
-        errorTextBrowser->append("Error fatal: " + msg);
-        break;
-    case QtInfoMsg:
-        break;
-    }
-}
+
 
 //--------------------------------- funciones de Ganancias -------------------------//
 void MainWindow::on_KP1_valueChanged(double arg1)
