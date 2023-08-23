@@ -4,6 +4,15 @@
 #include <QMainWindow>
 #include <QLCDNumber>
 #include <QDoubleSpinBox>
+#include <iostream>
+
+// Para mostrar las notificaciones
+#include <QMessageBox>
+#include <QLabel>
+#include <QStatusBar>
+#include <QFocusEvent>
+
+
 
 
 
@@ -18,6 +27,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+protected:
+    void focusOutEvent(QFocusEvent *event) override;
+
+public:
+    void showNotification(const QString &title, const QString &message);
+
 
 private slots:
     void on_PDSel_clicked();
@@ -59,6 +75,7 @@ private slots:
 
 
     void on_IniciarPB_clicked();
+
 
 private:
     Ui::MainWindow *ui;
