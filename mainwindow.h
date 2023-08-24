@@ -68,6 +68,8 @@ private slots:
     void on_IniciarPB_clicked();
 
 
+    void on_guardarPB_clicked();
+
 private:
     Ui::MainWindow *ui;
 
