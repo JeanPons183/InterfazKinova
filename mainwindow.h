@@ -28,13 +28,17 @@ public:
 private slots:
     bool eventFilter(QObject *object, QEvent *event) override;
     void on_PDSel_clicked();
+    void on_PIDSel_clicked();
+    void on_PDCancGSel_clicked();
+    void on_PDCompGSel_clicked();
+    void on_PdCancGSel_clicked();
+    void on_PdCompGSel_clicked();
+
 
     // void on_ConectarPB_clicked();
     // void on_DetenerPB_clicked();
 
    // int on_CambiarTiempoPB_clicked();
-
-    void on_PDSel_toggled(bool checked);
 
     void on_CambiarTiempoPB_clicked();
     void on_TiempoS_valueChanged(int arg1);
@@ -62,6 +66,7 @@ private slots:
     void on_KI6_valueChanged(double arg1);
 
     void on_IniciarPB_clicked();
+
 
 private:
     Ui::MainWindow *ui;

@@ -158,11 +158,230 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
 void MainWindow::on_PDSel_clicked()
 {
+    ui->KPLabel->show();
+    ui->KILabel->show();
+    ui->KDLabel->show();
+
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KI");
+    ui->KDLabel->close();
+
+    ui->KP1->show();       // Esto lo muestra
+    ui->KI1->show();       // Esto lo muestra
+
+    ui->KP2->close();       // Esto lo elimina
+    ui->KP3->close();       // Esto lo elimina
+    ui->KP4->close();       // Esto lo elimina
+    ui->KP5->close();       // Esto lo elimina
+    ui->KP6->close();       // Esto lo elimina
+
+    ui->KI2->close();       // Esto lo elimina
+    ui->KI3->close();       // Esto lo elimina
+    ui->KI4->close();       // Esto lo elimina
+    ui->KI5->close();       // Esto lo elimina
+    ui->KI6->close();       // Esto lo elimina
+
+    ui->KD1->close();       // Esto lo elimina
+    ui->KD2->close();       // Esto lo elimina
+    ui->KD3->close();       // Esto lo elimina
+    ui->KD4->close();       // Esto lo elimina
+    ui->KD5->close();       // Esto lo elimina
+    ui->KD6->close();       // Esto lo elimina
+
+    ui->Actuador2Label->close();
+    ui->Actuador3Label->close();
+    ui->Actuador4Label->close();
+    ui->Actuador5Label->close();
+    ui->Actuador6Label->close();
+}
+
+void MainWindow::on_PIDSel_clicked()
+{
+    ui->KPLabel->show();
+    ui->KILabel->show();
+    ui->KDLabel->show();
+
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KI");
+    ui->KDLabel->setText("KD");
+
+    ui->Actuador2Label->close();
+    ui->Actuador3Label->close();
+    ui->Actuador4Label->close();
+    ui->Actuador5Label->close();
+    ui->Actuador6Label->close();
+
+    ui->KP1->show();
+    ui->KI1->show();
+    ui->KD1->show();
+
+    ui->KP2->close();       // Esto lo elimina
+    ui->KP3->close();       // Esto lo elimina
+    ui->KP4->close();       // Esto lo elimina
+    ui->KP5->close();       // Esto lo elimina
+    ui->KP6->close();       // Esto lo elimina
+
+    ui->KI2->close();       // Esto lo elimina
+    ui->KI3->close();       // Esto lo elimina
+    ui->KI4->close();       // Esto lo elimina
+    ui->KI5->close();       // Esto lo elimina
+    ui->KI6->close();       // Esto lo elimina
+
+    ui->KD2->close();       // Esto lo elimina
+    ui->KD3->close();       // Esto lo elimina
+    ui->KD4->close();       // Esto lo elimina
+    ui->KD5->close();       // Esto lo elimina
+    ui->KD6->close();       // Esto lo elimina
+}
+
+void MainWindow::on_PDCancGSel_clicked()
+{
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KD");     // Asignar los valores de KI a KD
+    ui->KDLabel->close();
+
+    ui->KP1->show();       // Esto lo elimina
+    ui->KP2->show();       // Esto lo elimina
+    ui->KP3->show();       // Esto lo elimina
+    ui->KP4->show();       // Esto lo elimina
+    ui->KP5->show();       // Esto lo elimina
+    ui->KP6->show();       // Esto lo elimina
+
+    ui->KI1->show();       // Esto lo elimina
+    ui->KI2->show();       // Esto lo elimina
+    ui->KI3->show();       // Esto lo elimina
+    ui->KI4->show();       // Esto lo elimina
+    ui->KI5->show();       // Esto lo elimina
+    ui->KI6->show();       // Esto lo elimina
+
+    ui->KD1->close();
+    ui->KD2->close();
+    ui->KD3->close();
+    ui->KD4->close();
+    ui->KD5->close();
+    ui->KD6->close();
+
+    ui->Actuador2Label->show();
+    ui->Actuador3Label->show();
+    ui->Actuador4Label->show();
+    ui->Actuador5Label->show();
+    ui->Actuador6Label->show();
+
+}
+void MainWindow::on_PDCompGSel_clicked()
+{
+    ui->KPLabel->show();
+    ui->KILabel->show();
+    ui->KDLabel->show();
+
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KD");
+    ui->KDLabel->setText("K");
+
+    ui->KP1->show();       // Esto lo elimina
+    ui->KP2->show();       // Esto lo elimina
+    ui->KP3->show();       // Esto lo elimina
+    ui->KP4->show();       // Esto lo elimina
+    ui->KP5->show();       // Esto lo elimina
+    ui->KP6->show();       // Esto lo elimina
+
+    ui->KI1->show();       // Esto lo elimina
+    ui->KI2->show();       // Esto lo elimina
+    ui->KI3->show();       // Esto lo elimina
+    ui->KI4->show();       // Esto lo elimina
+    ui->KI5->show();       // Esto lo elimina
+    ui->KI6->show();       // Esto lo elimina
+
+    ui->KD1->show();
+    ui->KD2->show();
+    ui->KD3->show();
+    ui->KD4->show();
+    ui->KD5->show();
+    ui->KD6->show();
+
+    ui->Actuador2Label->show();
+    ui->Actuador3Label->show();
+    ui->Actuador4Label->show();
+    ui->Actuador5Label->show();
+    ui->Actuador6Label->show();
 
 }
 
-void MainWindow::on_PDSel_toggled(bool checked)
+void MainWindow::on_PdCancGSel_clicked()
 {
+    ui->KPLabel->show();
+    ui->KILabel->show();
+    ui->KDLabel->show();
+
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KD");
+    ui->KDLabel->setText("K");
+    // Falta asignarle los valores de KI a KD y de KD a K
+
+    ui->KP1->show();       // Esto lo elimina
+    ui->KP2->show();       // Esto lo elimina
+    ui->KP3->show();       // Esto lo elimina
+    ui->KP4->show();       // Esto lo elimina
+    ui->KP5->show();       // Esto lo elimina
+    ui->KP6->show();       // Esto lo elimina
+
+    ui->KI1->show();       // Esto lo elimina
+    ui->KI2->show();       // Esto lo elimina
+    ui->KI3->show();       // Esto lo elimina
+    ui->KI4->show();       // Esto lo elimina
+    ui->KI5->show();       // Esto lo elimina
+    ui->KI6->show();       // Esto lo elimina
+
+    ui->KD1->show();
+    ui->KD2->show();
+    ui->KD3->show();
+    ui->KD4->show();
+    ui->KD5->show();
+    ui->KD6->show();
+
+    ui->Actuador2Label->show();
+    ui->Actuador3Label->show();
+    ui->Actuador4Label->show();
+    ui->Actuador5Label->show();
+    ui->Actuador6Label->show();
+}
+
+void MainWindow::on_PdCompGSel_clicked()
+{
+    ui->KPLabel->show();
+    ui->KILabel->show();
+    ui->KDLabel->show();
+
+    ui->KPLabel->setText("KP");
+    ui->KILabel->setText("KD");
+    ui->KDLabel->setText("K");
+
+    ui->KP1->show();       // Esto lo elimina
+    ui->KP2->show();       // Esto lo elimina
+    ui->KP3->show();       // Esto lo elimina
+    ui->KP4->show();       // Esto lo elimina
+    ui->KP5->show();       // Esto lo elimina
+    ui->KP6->show();       // Esto lo elimina
+
+    ui->KI1->show();       // Esto lo elimina
+    ui->KI2->show();       // Esto lo elimina
+    ui->KI3->show();       // Esto lo elimina
+    ui->KI4->show();       // Esto lo elimina
+    ui->KI5->show();       // Esto lo elimina
+    ui->KI6->show();       // Esto lo elimina
+
+    ui->KD1->show();
+    ui->KD2->show();
+    ui->KD3->show();
+    ui->KD4->show();
+    ui->KD5->show();
+    ui->KD6->show();
+
+    ui->Actuador2Label->show();
+    ui->Actuador3Label->show();
+    ui->Actuador4Label->show();
+    ui->Actuador5Label->show();
+    ui->Actuador6Label->show();
 
 }
 
@@ -263,6 +482,7 @@ void MainWindow::on_KD6_valueChanged(double arg1)
 }
 
 //----------------------------------------------------------------------------------------------//
+
 
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>914</width>
-    <height>407</height>
+    <width>911</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
       <x>20</x>
       <y>330</y>
       <width>242</width>
-      <height>26</height>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="ConectarLO">
@@ -51,7 +51,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QCheckBox" name="MarkConeccion">
+      <widget class="QCheckBox" name="coneccionMark">
        <property name="font">
         <font>
          <family>Arial</family>
@@ -540,10 +540,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="controladoresCB">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>90</x>
       <y>290</y>
       <width>101</width>
       <height>24</height>
@@ -570,7 +570,7 @@
      <rect>
       <x>30</x>
       <y>60</y>
-      <width>202</width>
+      <width>211</width>
       <height>211</height>
      </rect>
     </property>
@@ -592,7 +592,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QRadioButton" name="PDComGSel">
+        <widget class="QRadioButton" name="PDCompGSel">
          <property name="text">
           <string>PD+CompG</string>
          </property>
@@ -669,7 +669,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>640</x>
@@ -703,7 +703,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>914</width>
+     <width>911</width>
      <height>21</height>
     </rect>
    </property>
@@ -721,7 +721,7 @@
   <tabstop>PDSel</tabstop>
   <tabstop>PIDSel</tabstop>
   <tabstop>PDCancGSel</tabstop>
-  <tabstop>PDComGSel</tabstop>
+  <tabstop>PDCompGSel</tabstop>
   <tabstop>PdCancGSel</tabstop>
   <tabstop>PdCompGSel</tabstop>
   <tabstop>PDSel_2</tabstop>
@@ -752,8 +752,8 @@
   <tabstop>CambiarTiempoPB</tabstop>
   <tabstop>IniciarPB</tabstop>
   <tabstop>DetenerPB</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>MarkConeccion</tabstop>
+  <tabstop>controladoresCB</tabstop>
+  <tabstop>coneccionMark</tabstop>
   <tabstop>errorTextBrowser</tabstop>
  </tabstops>
  <resources/>
