@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->KD6->installEventFilter(this);
 
     ui->coneccionMark->setEnabled(false);
+    ui->progressBar->setValue(0);
 }
 
 MainWindow::~MainWindow()
@@ -678,7 +679,10 @@ void MainWindow::on_TiempoS_valueChanged(int arg1)
 
 void MainWindow::on_CambiarTiempoPB_clicked()
 {
-    bTiempo=true;
+    if(tiempo==0)
+        bTiempo=false;  // Y quizá algo mas para que no crashee el programa
+    else
+        bTiempo=true;
     // Setear el tiempo con el cesar
 }
 
@@ -779,11 +783,18 @@ void MainWindow::on_IniciarPB_clicked()
 
 void MainWindow::on_DetenerPB_clicked()
 {
+    // ---------------------- Re-acondicionamos banderas ------------------------//
+    bGanancia = false;
+    bqd = false;
+    bTiempo = false;
+
+    // ---------------------- Reactivacion de modulos ------------------------//
     ui->TiempoS->setEnabled(true);
     ui->CambiarTiempoPB->setEnabled(true);
     ui->ConectarPB->setEnabled(true);
     ui->cambiarControlPB->setEnabled(true);
     ui->guardarGananciasPB->setEnabled(true);
+    ui->progressBar->setValue(0);
 
     for (int i = 0; i < ui->GananciasLO->count(); ++i)
         {
