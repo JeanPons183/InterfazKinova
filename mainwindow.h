@@ -26,19 +26,17 @@ public:
 
 
 private slots:
-    bool eventFilter(QObject *object, QEvent *event) override;
-    void on_PDSel_clicked();
-    void on_PIDSel_clicked();
-    void on_PDCancGSel_clicked();
-    void on_PDCompGSel_clicked();
-    void on_PdCancGSel_clicked();
-    void on_PdCompGSel_clicked();
+
+    //--------------------------------- funciones de coneccion -------------------------//
+    void on_ConectarPB_clicked();
+    void on_coneccionMark_stateChanged(int arg1);
+
+    //--------------------------------- funciones de seleccion de control -------------------------//
+    void on_cambiarControlPB_clicked();
+    void deshabilitarControlador();
 
 
-    // void on_ConectarPB_clicked();
-    // void on_DetenerPB_clicked();
-
-   // int on_CambiarTiempoPB_clicked();
+    void on_guardarGananciasPB_clicked();
 
     void on_CambiarTiempoPB_clicked();
     void on_TiempoS_valueChanged(int arg1);
@@ -65,10 +63,22 @@ private slots:
     void on_KI5_valueChanged(double arg1);
     void on_KI6_valueChanged(double arg1);
 
+    bool eventFilter(QObject *object, QEvent *event) override;
+    void on_PDCancGSel_clicked();
+    void on_PDCompGSel_clicked();
+    void on_PdCancGSel_clicked();
+    void on_PdCompGSel_clicked();
+    void on_sPsdCancGSel_clicked();
+    void on_sPsdCompGSel_clicked();
+
     void on_IniciarPB_clicked();
 
 
-    void on_guardarPB_clicked();
+
+
+
+
+    void on_DetenerPB_clicked();
 
 private:
     Ui::MainWindow *ui;

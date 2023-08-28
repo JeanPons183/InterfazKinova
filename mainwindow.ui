@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
-    <height>514</height>
+    <width>913</width>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QLabel" name="TItuloLabel">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>211</width>
-      <height>41</height>
+      <x>10</x>
+      <y>20</y>
+      <width>197</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="font">
@@ -36,10 +36,10 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>330</y>
+      <x>220</x>
+      <y>10</y>
       <width>242</width>
-      <height>61</height>
+      <height>56</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="ConectarLO">
@@ -52,6 +52,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QCheckBox" name="coneccionMark">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <family>Arial</family>
@@ -61,6 +64,9 @@
        <property name="text">
         <string>Conección exitosa</string>
        </property>
+       <property name="tristate">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -68,15 +74,15 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>60</y>
+      <x>170</x>
+      <y>90</y>
       <width>371</width>
-      <height>251</height>
+      <height>261</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="GananciasLO">
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="KP1">
+     <item row="2" column="3">
+      <widget class="QDoubleSpinBox" name="KD2">
        <property name="maximum">
         <double>100.000000000000000</double>
        </property>
@@ -85,8 +91,22 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
-      <widget class="QDoubleSpinBox" name="KI2">
+     <item row="0" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="ActuadorLabel">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Actuador</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="KP1">
        <property name="maximum">
         <double>100.000000000000000</double>
        </property>
@@ -105,8 +125,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="Actuador1Label">
+     <item row="3" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="Actuador3Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -115,127 +135,7 @@
         </font>
        </property>
        <property name="text">
-        <string>         1:        </string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QDoubleSpinBox" name="KI5">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="Actuador4Label">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>         4:        </string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="KP4">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="KPLabel">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>     KP</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="Actuador6Label">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>         6:        </string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="3">
-      <widget class="QDoubleSpinBox" name="KD4">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="Actuador2Label">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>         2:        </string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QDoubleSpinBox" name="KD2">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="KP5">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="KDLabel">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>     KD</string>
+        <string>3:</string>
        </property>
       </widget>
      </item>
@@ -249,8 +149,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="ActuadorLabel">
+     <item row="6" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="Actuador6Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -259,51 +159,7 @@
         </font>
        </property>
        <property name="text">
-        <string>  Actuador</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="KILabel">
-       <property name="font">
-        <font>
-         <family>Arial Black</family>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>     KI</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="KP2">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="3">
-      <widget class="QDoubleSpinBox" name="KD5">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QDoubleSpinBox" name="KI1">
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
+        <string>6:</string>
        </property>
       </widget>
      </item>
@@ -317,8 +173,8 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QDoubleSpinBox" name="KP6">
+     <item row="5" column="2">
+      <widget class="QDoubleSpinBox" name="KI5">
        <property name="maximum">
         <double>100.000000000000000</double>
        </property>
@@ -327,8 +183,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="Actuador3Label">
+     <item row="4" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="Actuador4Label">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -337,12 +193,12 @@
         </font>
        </property>
        <property name="text">
-        <string>         3:        </string>
+        <string>4:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="Actuador5Label">
+     <item row="0" column="3" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="KDLabel">
        <property name="font">
         <font>
          <family>Arial Black</family>
@@ -351,12 +207,12 @@
         </font>
        </property>
        <property name="text">
-        <string>         5:        </string>
+        <string>KD</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="KP3">
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="KP2">
        <property name="maximum">
         <double>100.000000000000000</double>
        </property>
@@ -375,6 +231,64 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="Actuador1Label">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="KP4">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QDoubleSpinBox" name="KD5">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="KPLabel">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>KP</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QDoubleSpinBox" name="KI1">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="3">
       <widget class="QDoubleSpinBox" name="KD1">
        <property name="maximum">
@@ -382,6 +296,98 @@
        </property>
        <property name="singleStep">
         <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="KP5">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QDoubleSpinBox" name="KD4">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QDoubleSpinBox" name="KP6">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="Actuador5Label">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>5:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="KILabel">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>KI</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QDoubleSpinBox" name="KI2">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="KP3">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="Actuador2Label">
+       <property name="font">
+        <font>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>2:</string>
        </property>
       </widget>
      </item>
@@ -428,86 +434,28 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>150</y>
-      <width>191</width>
-      <height>90</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="EjecutarLO">
-     <item row="0" column="0">
-      <layout class="QGridLayout" name="IniciarLO">
-       <item row="0" column="0">
-        <widget class="QLabel" name="EjecutarLabel">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Ejecutar</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="IniciarPB">
-         <property name="text">
-          <string>Play</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0">
-      <widget class="QProgressBar" name="progressBar">
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <layout class="QGridLayout" name="DetenerLO">
-       <item row="0" column="0">
-        <widget class="QLabel" name="DetenerLabel">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Detener</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="DetenerPB">
-         <property name="text">
-          <string>Stop</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>60</y>
-      <width>204</width>
-      <height>81</height>
+      <x>590</x>
+      <y>200</y>
+      <width>261</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="TiempoLO">
-     <item row="2" column="0" colspan="2">
-      <widget class="QPushButton" name="CambiarTiempoPB">
+     <item row="0" column="0" colspan="4" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="TALabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Cambiar</string>
+        <string>Tiempo de Accion</string>
        </property>
       </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QSpinBox" name="TiempoS"/>
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="SegundosLabel">
@@ -522,11 +470,307 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QSpinBox" name="TiempoS"/>
+     <item row="1" column="2" colspan="2">
+      <widget class="QPushButton" name="CambiarTiempoPB">
+       <property name="text">
+        <string>Cambiar</string>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="TALabel">
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="guardarGananciasPB">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>360</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Guardar</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>80</y>
+      <width>131</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="controladoresLO">
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="PDCancGSel">
+       <property name="text">
+        <string>PD+ CancG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="PDCompGSel">
+       <property name="text">
+        <string>PD+CompG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="PdCancGSel">
+       <property name="text">
+        <string>P'D'+CancG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="PdCompGSel">
+       <property name="text">
+        <string>P'D'+CompG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="sPsdCancGSel">
+       <property name="text">
+        <string>sPsD + CancG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft">
+      <widget class="QRadioButton" name="sPsdCompGSel">
+       <property name="text">
+        <string>sPsD + CompG</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QPushButton" name="cambiarControlPB">
+       <property name="text">
+        <string>Cambiar</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>50</y>
+      <width>343</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="pdLO">
+     <item row="2" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd3Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>q3:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd4Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>q4:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd1Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>q1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd2Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>q2:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QDoubleSpinBox" name="qd2">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QDoubleSpinBox" name="qd6">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QDoubleSpinBox" name="qd4">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="qd1">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="qd3">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd5Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>q5:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="qd6Label">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>q6:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="qd5">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="3">
+      <widget class="QLabel" name="pdLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="text">
+        <string>Posicion Deseada (deg)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>280</y>
+      <width>261</width>
+      <height>110</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="ejecutarLO">
+     <item row="2" column="1" alignment="Qt::AlignHCenter">
+      <widget class="QPushButton" name="DetenerPB">
+       <property name="minimumSize">
+        <size>
+         <width>126</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>126</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="IniciarPB">
+       <property name="text">
+        <string>Play</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" alignment="Qt::AlignLeft">
+      <widget class="QLabel" name="DetenerLabel">
        <property name="font">
         <font>
          <family>Arial</family>
@@ -534,153 +778,50 @@
         </font>
        </property>
        <property name="text">
-        <string>Tiempo de Accion</string>
+        <string>Detener</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QProgressBar" name="progressBar">
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="EjecutarLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Ejecutar</string>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QComboBox" name="controladoresCB">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>290</y>
-      <width>101</width>
-      <height>24</height>
+      <x>590</x>
+      <y>400</y>
+      <width>261</width>
+      <height>111</height>
      </rect>
     </property>
-    <item>
-     <property name="text">
-      <string>PD + CancG</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>P'D' + CancG</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>S</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>211</width>
-      <height>211</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="ControladoresLO">
-     <item>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="PIDSel">
-         <property name="text">
-          <string>PID Lineal</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QRadioButton" name="PDCancGSel">
-         <property name="text">
-          <string>PD+ CancG</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QRadioButton" name="PDCompGSel">
-         <property name="text">
-          <string>PD+CompG</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QRadioButton" name="PdCompGSel">
-         <property name="text">
-          <string>P'D'+Comp</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QRadioButton" name="PdCancGSel">
-         <property name="text">
-          <string>P'D'+Canc</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="PDSel">
-         <property name="text">
-          <string>PD Lineal</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QFormLayout" name="formLayout_2">
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="PIDSel_2">
-         <property name="text">
-          <string>PID Lineal</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QRadioButton" name="PDCancGSel_2">
-         <property name="text">
-          <string>PD+ CancG</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QRadioButton" name="PDComGSel_2">
-         <property name="text">
-          <string>PD+CompG</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QRadioButton" name="PdCompGSel_2">
-         <property name="text">
-          <string>P'D'+Comp</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QRadioButton" name="PdCancGSel_2">
-         <property name="text">
-          <string>P'D'+Canc</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="PDSel_2">
-         <property name="text">
-          <string>PD Lineal</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>250</y>
-      <width>258</width>
-      <height>121</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="ErroresLO">
+    <layout class="QFormLayout" name="erroresLO">
      <item row="0" column="0">
       <widget class="QLabel" name="ErroresLabel">
+       <property name="maximumSize">
+        <size>
+         <width>52</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Arial</family>
@@ -692,23 +833,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QTextBrowser" name="errorTextBrowser"/>
      </item>
     </layout>
-   </widget>
-   <widget class="QPushButton" name="guardarPB">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>330</y>
-      <width>91</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Guardar</string>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -716,7 +844,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>911</width>
+     <width>913</width>
      <height>21</height>
     </rect>
    </property>
@@ -725,24 +853,67 @@
      <string>README</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuGraficas">
+    <property name="title">
+     <string>Graficas</string>
+    </property>
+    <addaction name="actionQ1"/>
+    <addaction name="actionq2"/>
+    <addaction name="actionq3"/>
+    <addaction name="actionq4"/>
+    <addaction name="actionq5"/>
+    <addaction name="actionq6"/>
+    <addaction name="actionq"/>
+   </widget>
    <addaction name="menuREADME"/>
+   <addaction name="menuGraficas"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQ1">
+   <property name="text">
+    <string>q1</string>
+   </property>
+  </action>
+  <action name="actionq2">
+   <property name="text">
+    <string>q2</string>
+   </property>
+  </action>
+  <action name="actionq3">
+   <property name="text">
+    <string>q3</string>
+   </property>
+  </action>
+  <action name="actionq4">
+   <property name="text">
+    <string>q4</string>
+   </property>
+  </action>
+  <action name="actionq5">
+   <property name="text">
+    <string>q5</string>
+   </property>
+  </action>
+  <action name="actionq6">
+   <property name="text">
+    <string>q6</string>
+   </property>
+  </action>
+  <action name="actionq">
+   <property name="text">
+    <string>q</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>ConectarPB</tabstop>
-  <tabstop>PDSel</tabstop>
-  <tabstop>PIDSel</tabstop>
   <tabstop>PDCancGSel</tabstop>
   <tabstop>PDCompGSel</tabstop>
   <tabstop>PdCancGSel</tabstop>
   <tabstop>PdCompGSel</tabstop>
-  <tabstop>PDSel_2</tabstop>
-  <tabstop>PIDSel_2</tabstop>
-  <tabstop>PDCancGSel_2</tabstop>
-  <tabstop>PDComGSel_2</tabstop>
-  <tabstop>PdCancGSel_2</tabstop>
-  <tabstop>PdCompGSel_2</tabstop>
+  <tabstop>sPsdCancGSel</tabstop>
+  <tabstop>sPsdCompGSel</tabstop>
+  <tabstop>cambiarControlPB</tabstop>
   <tabstop>KP1</tabstop>
   <tabstop>KP2</tabstop>
   <tabstop>KP3</tabstop>
@@ -761,11 +932,17 @@
   <tabstop>KD4</tabstop>
   <tabstop>KD5</tabstop>
   <tabstop>KD6</tabstop>
+  <tabstop>guardarGananciasPB</tabstop>
+  <tabstop>qd1</tabstop>
+  <tabstop>qd2</tabstop>
+  <tabstop>qd3</tabstop>
+  <tabstop>qd4</tabstop>
+  <tabstop>qd5</tabstop>
+  <tabstop>qd6</tabstop>
   <tabstop>TiempoS</tabstop>
   <tabstop>CambiarTiempoPB</tabstop>
   <tabstop>IniciarPB</tabstop>
   <tabstop>DetenerPB</tabstop>
-  <tabstop>controladoresCB</tabstop>
   <tabstop>coneccionMark</tabstop>
   <tabstop>errorTextBrowser</tabstop>
  </tabstops>

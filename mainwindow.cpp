@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+
+bool banderaSeleccionControl = false;
+
 int tiempo;
 bool iniciar = true;
 
@@ -10,6 +13,7 @@ double kp3;         const double kp3Max = 20.0;
 double kp4;         const double kp4Max = 20.0;
 double kp5;         const double kp5Max = 20.0;
 double kp6;         const double kp6Max = 20.0;
+double KP[6] = {kp1,kp2,kp3,kp4,kp5,kp6};
 
 double ki1;         const double ki1Max = 20.0;
 double ki2;         const double ki2Max = 20.0;
@@ -17,6 +21,7 @@ double ki3;         const double ki3Max = 20.0;
 double ki4;         const double ki4Max = 20.0;
 double ki5;         const double ki5Max = 20.0;
 double ki6;         const double ki6Max = 20.0;
+double KI[6] = {ki1,ki2,ki3,ki4,ki5,ki6};
 
 double kd1;         const double kd1Max = 20.0;
 double kd2;         const double kd2Max = 20.0;
@@ -24,6 +29,7 @@ double kd3;         const double kd3Max = 20.0;
 double kd4;         const double kd4Max = 20.0;
 double kd5;         const double kd5Max = 20.0;
 double kd6;         const double kd6Max = 20.0;
+double KD[6] = {kd1,kd2,kd3,kd4,kd5,kd6};
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -54,90 +60,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//--------------------------------- funciones de coneccion -------------------------//
 
-
-void MainWindow::on_PDSel_clicked()
+void MainWindow::on_coneccionMark_stateChanged(int arg1)
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
-
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KI");
-    ui->KDLabel->close();
-
-    ui->KP1->show(); // Esto lo muestra
-    ui->KI1->show(); // Esto lo muestra
-
-    ui->KP2->close(); // Esto lo elimina
-    ui->KP3->close(); // Esto lo elimina
-    ui->KP4->close(); // Esto lo elimina
-    ui->KP5->close(); // Esto lo elimina
-    ui->KP6->close(); // Esto lo elimina
-
-    ui->KI2->close(); // Esto lo elimina
-    ui->KI3->close(); // Esto lo elimina
-    ui->KI4->close(); // Esto lo elimina
-    ui->KI5->close(); // Esto lo elimina
-    ui->KI6->close(); // Esto lo elimina
-
-    ui->KD1->close(); // Esto lo elimina
-    ui->KD2->close(); // Esto lo elimina
-    ui->KD3->close(); // Esto lo elimina
-    ui->KD4->close(); // Esto lo elimina
-    ui->KD5->close(); // Esto lo elimina
-    ui->KD6->close(); // Esto lo elimina
-
-    ui->Actuador2Label->close();
-    ui->Actuador3Label->close();
-    ui->Actuador4Label->close();
-    ui->Actuador5Label->close();
-    ui->Actuador6Label->close();
 }
 
-void MainWindow::on_PIDSel_clicked()
+void MainWindow::on_ConectarPB_clicked()
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
+    // Si la conexion es un exito, que lo haga sino nel
+    // Aqui una bandera para la conexion y mandarla a la funcion de debajo
+    ui->coneccionMark->setChecked(true); // Establece el estado del QCheckBox como marcado
 
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KI");
-    ui->KDLabel->setText("KD");
+}
 
-    ui->Actuador2Label->close();
-    ui->Actuador3Label->close();
-    ui->Actuador4Label->close();
-    ui->Actuador5Label->close();
-    ui->Actuador6Label->close();
+//--------------------------------- funciones de seleccion de control -------------------------//
 
-    ui->KP1->show();
-    ui->KI1->show();
-    ui->KD1->show();
-
-    ui->KP2->close(); // Esto lo elimina
-    ui->KP3->close(); // Esto lo elimina
-    ui->KP4->close(); // Esto lo elimina
-    ui->KP5->close(); // Esto lo elimina
-    ui->KP6->close(); // Esto lo elimina
-
-    ui->KI2->close(); // Esto lo elimina
-    ui->KI3->close(); // Esto lo elimina
-    ui->KI4->close(); // Esto lo elimina
-    ui->KI5->close(); // Esto lo elimina
-    ui->KI6->close(); // Esto lo elimina
-
-    ui->KD2->close(); // Esto lo elimina
-    ui->KD3->close(); // Esto lo elimina
-    ui->KD4->close(); // Esto lo elimina
-    ui->KD5->close(); // Esto lo elimina
-    ui->KD6->close(); // Esto lo elimina
+void MainWindow::on_cambiarControlPB_clicked()
+{
+    for (int i = 0; i < ui->controladoresLO->count(); ++i)
+        {
+            QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(true); // Deshabilitar el widget
+        }
 }
 
 void MainWindow::on_PDCancGSel_clicked()
 {
+    deshabilitarControlador();
     ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KD"); // Asignar los valores de KI a KD
+    ui->KILabel->setText("KD");
+
     ui->KDLabel->close();
 
     ui->KP1->show(); // Esto lo elimina
@@ -160,15 +114,12 @@ void MainWindow::on_PDCancGSel_clicked()
     ui->KD4->close();
     ui->KD5->close();
     ui->KD6->close();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
 }
+
 void MainWindow::on_PDCompGSel_clicked()
 {
+    deshabilitarControlador();
+
     ui->KPLabel->show();
     ui->KILabel->show();
     ui->KDLabel->show();
@@ -197,16 +148,12 @@ void MainWindow::on_PDCompGSel_clicked()
     ui->KD4->show();
     ui->KD5->show();
     ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
 }
 
 void MainWindow::on_PdCancGSel_clicked()
 {
+    deshabilitarControlador();
+
     ui->KPLabel->show();
     ui->KILabel->show();
     ui->KDLabel->show();
@@ -236,16 +183,12 @@ void MainWindow::on_PdCancGSel_clicked()
     ui->KD4->show();
     ui->KD5->show();
     ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
 }
 
 void MainWindow::on_PdCompGSel_clicked()
 {
+    deshabilitarControlador();
+
     ui->KPLabel->show();
     ui->KILabel->show();
     ui->KDLabel->show();
@@ -274,31 +217,162 @@ void MainWindow::on_PdCompGSel_clicked()
     ui->KD4->show();
     ui->KD5->show();
     ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
 }
 
-void MainWindow::on_CambiarTiempoPB_clicked()
-{
-    // Setear el tiempo con el cesar
-}
+void MainWindow::on_sPsdCancGSel_clicked()
+    {
+        deshabilitarControlador();
+
+        ui->KPLabel->show();
+        ui->KILabel->show();
+        ui->KDLabel->show();
+
+        ui->KPLabel->setText("KP");
+        ui->KILabel->setText("KD");
+        ui->KDLabel->setText("K");
+
+        ui->KP1->show(); // Esto lo elimina
+        ui->KP2->show(); // Esto lo elimina
+        ui->KP3->show(); // Esto lo elimina
+        ui->KP4->show(); // Esto lo elimina
+        ui->KP5->show(); // Esto lo elimina
+        ui->KP6->show(); // Esto lo elimina
+
+        ui->KI1->show(); // Esto lo elimina
+        ui->KI2->show(); // Esto lo elimina
+        ui->KI3->show(); // Esto lo elimina
+        ui->KI4->show(); // Esto lo elimina
+        ui->KI5->show(); // Esto lo elimina
+        ui->KI6->show(); // Esto lo elimina
+
+        ui->KD1->show();
+        ui->KD2->show();
+        ui->KD3->show();
+        ui->KD4->show();
+        ui->KD5->show();
+        ui->KD6->show();
+    }
+
+void MainWindow::on_sPsdCompGSel_clicked()
+    {
+        deshabilitarControlador();
+
+        ui->KPLabel->show();
+        ui->KILabel->show();
+        ui->KDLabel->show();
+
+        ui->KPLabel->setText("KP");
+        ui->KILabel->setText("KD");
+        ui->KDLabel->setText("K");
+
+        ui->KP1->show(); // Esto lo elimina
+        ui->KP2->show(); // Esto lo elimina
+        ui->KP3->show(); // Esto lo elimina
+        ui->KP4->show(); // Esto lo elimina
+        ui->KP5->show(); // Esto lo elimina
+        ui->KP6->show(); // Esto lo elimina
+
+        ui->KI1->show(); // Esto lo elimina
+        ui->KI2->show(); // Esto lo elimina
+        ui->KI3->show(); // Esto lo elimina
+        ui->KI4->show(); // Esto lo elimina
+        ui->KI5->show(); // Esto lo elimina
+        ui->KI6->show(); // Esto lo elimina
+
+        ui->KD1->show();
+        ui->KD2->show();
+        ui->KD3->show();
+        ui->KD4->show();
+        ui->KD5->show();
+        ui->KD6->show();
+    }
+
+
+//--------------------------------- funciones de tiempo -------------------------//
 
 void MainWindow::on_TiempoS_valueChanged(int arg1)
 {
     tiempo = arg1;
 }
 
-void MainWindow::on_IniciarPB_clicked()
+void MainWindow::on_CambiarTiempoPB_clicked()
 {
-    // setear las ganancias e iniciar las acciones
-    // No se si aqui dejar la validacion o nel
+
+    // Setear el tiempo con el cesar
 }
 
+//--------------------------------- funciones de ejecucion -------------------------//
 
+void MainWindow::on_IniciarPB_clicked()
+{
+    // ---------------------- Deshabilitacion de elementos ------------------------//
+    ui->TiempoS->setEnabled(false);
+    ui->ConectarPB->setEnabled(false);
+    ui->cambiarControlPB->setEnabled(false);
+
+    for (int i = 0; i < ui->GananciasLO->count(); ++i)
+        {
+            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(false); // Deshabilitar el widget ganancias
+        }
+    for (int i = 0; i < ui->pdLO->count(); ++i)
+        {
+            QWidget *widget = ui->pdLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(false); // Deshabilitar el widget qDeseada
+        }
+
+    // setear las ganancias e iniciar las acciones
+    // No se si aqui dejar la validacion o nel
+
+    // ---------------------- Inicia el programa ------------------------//
+
+    ui->EjecutarLabel->setText("Pausar");
+    ui->IniciarPB->setText("Pause");
+    int muestra = 0;
+    for(int i=0;i<tiempo+100;i++)
+            {
+                muestra = ((i*100)/tiempo);
+                QString cadena = QString::number(muestra);
+                qDebug() << "El número como cadena: " << cadena << "Tiempo: " << tiempo;
+                ui->progressBar->setValue(muestra);
+
+                // Esto vuelve al estado inicial
+                if(muestra>=100)
+                {
+                    ui->EjecutarLabel->setText("Ejecutar");
+                    ui->IniciarPB->setText("Play");
+                    ui->progressBar->setValue(100);
+
+                    on_DetenerPB_clicked();             //Importante, se debe de tener claro que se desea aqui
+
+                    break;
+                }
+            }
+}
+
+void MainWindow::on_DetenerPB_clicked()
+{
+    ui->TiempoS->setEnabled(true);
+    ui->ConectarPB->setEnabled(true);
+    ui->cambiarControlPB->setEnabled(true);
+
+    for (int i = 0; i < ui->GananciasLO->count(); ++i)
+        {
+            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(true); // habilitar el widget
+        }
+    for (int i = 0; i < ui->pdLO->count(); ++i)
+        {
+            QWidget *widget = ui->pdLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(true); // habilitar el widget
+        }
+}
+
+//--------------------------------- funciones de seleccion de controladores -------------------------//
 
 //--------------------------------- funciones de Ganancias -------------------------//
 void MainWindow::on_KP1_valueChanged(double arg1)
@@ -378,7 +452,7 @@ void MainWindow::on_KD6_valueChanged(double arg1)
 
 // Muestra de errores y quiza la notificaciones de las ganancias con el errorTextBrowser
 //----------------------------------------------------------------------------------------------//
-void MainWindow::on_guardarPB_clicked()
+void MainWindow::on_guardarGananciasPB_clicked()
 {
     ui->errorTextBrowser->clear();
     if (kp1 > kp1Max)
@@ -630,3 +704,18 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
     }
     return false;
 }
+
+
+void MainWindow::deshabilitarControlador()
+{
+    for (int i = 0; i < ui->controladoresLO->count()-1; ++i)
+        {
+            QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(false); // Deshabilitar el widget
+        }
+}
+
+
+
+
