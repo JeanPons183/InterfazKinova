@@ -35,13 +35,8 @@ private slots:
     void on_cambiarControlPB_clicked();
     void deshabilitarControlador();
 
-
-    void on_guardarGananciasPB_clicked();
-
-    void on_CambiarTiempoPB_clicked();
-    void on_TiempoS_valueChanged(int arg1);
-
     //--------------------------------- funciones de Ganancias -------------------------//
+    void on_guardarGananciasPB_clicked();
     void on_KP1_valueChanged(double arg1);
     void on_KP2_valueChanged(double arg1);
     void on_KP3_valueChanged(double arg1);
@@ -71,14 +66,23 @@ private slots:
     void on_sPsdCancGSel_clicked();
     void on_sPsdCompGSel_clicked();
 
+
+    //--------------------------------- funciones de qdeseado -------------------------//
+    void on_qd1_valueChanged(double arg1);
+    void on_qd2_valueChanged(double arg1);
+    void on_qd3_valueChanged(double arg1);
+    void on_qd4_valueChanged(double arg1);
+    void on_qd5_valueChanged(double arg1);
+    void on_qd6_valueChanged(double arg1);
+
+    //--------------------------------- funciones de tiempo -------------------------//
+    void on_CambiarTiempoPB_clicked();
+    void on_TiempoS_valueChanged(int arg1);
+
+    //--------------------------------- funciones de ejecucion -------------------------//
     void on_IniciarPB_clicked();
-
-
-
-
-
-
     void on_DetenerPB_clicked();
+
 
 private:
     Ui::MainWindow *ui;

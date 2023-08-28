@@ -1,11 +1,16 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-
-bool banderaSeleccionControl = false;
+bool bConectar = false;
+bool bSeleccionControl = false;
+bool bGanancia = false;
+bool bqd = false;
+bool bTiempo = false;
 
 int tiempo;
 bool iniciar = true;
+
+double qd[6];
 
 double kp1;         const double kp1Max = 20.0;
 double kp2;         const double kp2Max = 20.0;
@@ -53,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->KD4->installEventFilter(this);
     ui->KD5->installEventFilter(this);
     ui->KD6->installEventFilter(this);
+
+    ui->coneccionMark->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -62,14 +69,11 @@ MainWindow::~MainWindow()
 
 //--------------------------------- funciones de coneccion -------------------------//
 
-void MainWindow::on_coneccionMark_stateChanged(int arg1)
-{
-}
-
 void MainWindow::on_ConectarPB_clicked()
 {
     // Si la conexion es un exito, que lo haga sino nel
     // Aqui una bandera para la conexion y mandarla a la funcion de debajo
+    bConectar=true;
     ui->coneccionMark->setChecked(true); // Establece el estado del QCheckBox como marcado
 
 }
@@ -78,11 +82,23 @@ void MainWindow::on_ConectarPB_clicked()
 
 void MainWindow::on_cambiarControlPB_clicked()
 {
+    bSeleccionControl = false;
     for (int i = 0; i < ui->controladoresLO->count(); ++i)
         {
             QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
             if (widget)
                 widget->setEnabled(true); // Deshabilitar el widget
+        }
+}
+
+void MainWindow::deshabilitarControlador()
+{
+    bSeleccionControl=true;
+    for (int i = 0; i < ui->controladoresLO->count()-1; ++i)
+        {
+            QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(false); // Deshabilitar el widget
         }
 }
 
@@ -288,92 +304,6 @@ void MainWindow::on_sPsdCompGSel_clicked()
     }
 
 
-//--------------------------------- funciones de tiempo -------------------------//
-
-void MainWindow::on_TiempoS_valueChanged(int arg1)
-{
-    tiempo = arg1;
-}
-
-void MainWindow::on_CambiarTiempoPB_clicked()
-{
-
-    // Setear el tiempo con el cesar
-}
-
-//--------------------------------- funciones de ejecucion -------------------------//
-
-void MainWindow::on_IniciarPB_clicked()
-{
-    // ---------------------- Deshabilitacion de elementos ------------------------//
-    ui->TiempoS->setEnabled(false);
-    ui->ConectarPB->setEnabled(false);
-    ui->cambiarControlPB->setEnabled(false);
-
-    for (int i = 0; i < ui->GananciasLO->count(); ++i)
-        {
-            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
-            if (widget)
-                widget->setEnabled(false); // Deshabilitar el widget ganancias
-        }
-    for (int i = 0; i < ui->pdLO->count(); ++i)
-        {
-            QWidget *widget = ui->pdLO->itemAt(i)->widget();
-            if (widget)
-                widget->setEnabled(false); // Deshabilitar el widget qDeseada
-        }
-
-    // setear las ganancias e iniciar las acciones
-    // No se si aqui dejar la validacion o nel
-
-    // ---------------------- Inicia el programa ------------------------//
-
-    ui->EjecutarLabel->setText("Pausar");
-    ui->IniciarPB->setText("Pause");
-    int muestra = 0;
-    for(int i=0;i<tiempo+100;i++)
-            {
-                muestra = ((i*100)/tiempo);
-                QString cadena = QString::number(muestra);
-                qDebug() << "El número como cadena: " << cadena << "Tiempo: " << tiempo;
-                ui->progressBar->setValue(muestra);
-
-                // Esto vuelve al estado inicial
-                if(muestra>=100)
-                {
-                    ui->EjecutarLabel->setText("Ejecutar");
-                    ui->IniciarPB->setText("Play");
-                    ui->progressBar->setValue(100);
-
-                    on_DetenerPB_clicked();             //Importante, se debe de tener claro que se desea aqui
-
-                    break;
-                }
-            }
-}
-
-void MainWindow::on_DetenerPB_clicked()
-{
-    ui->TiempoS->setEnabled(true);
-    ui->ConectarPB->setEnabled(true);
-    ui->cambiarControlPB->setEnabled(true);
-
-    for (int i = 0; i < ui->GananciasLO->count(); ++i)
-        {
-            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
-            if (widget)
-                widget->setEnabled(true); // habilitar el widget
-        }
-    for (int i = 0; i < ui->pdLO->count(); ++i)
-        {
-            QWidget *widget = ui->pdLO->itemAt(i)->widget();
-            if (widget)
-                widget->setEnabled(true); // habilitar el widget
-        }
-}
-
-//--------------------------------- funciones de seleccion de controladores -------------------------//
-
 //--------------------------------- funciones de Ganancias -------------------------//
 void MainWindow::on_KP1_valueChanged(double arg1)
 {
@@ -454,6 +384,7 @@ void MainWindow::on_KD6_valueChanged(double arg1)
 //----------------------------------------------------------------------------------------------//
 void MainWindow::on_guardarGananciasPB_clicked()
 {
+    bGanancia=true;
     ui->errorTextBrowser->clear();
     if (kp1 > kp1Max)
     {
@@ -461,41 +392,42 @@ void MainWindow::on_guardarGananciasPB_clicked()
         QString titulo = "Error en KP1";
         ui->errorTextBrowser->append(titulo);
         ui->errorTextBrowser->append(mensaje);
+        bGanancia = false;
     }
-     if (kp2 > kp2Max)
+    if (kp2 > kp2Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kp3Max);
         QString titulo = "Error en KP2";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kp3 > kp3Max)
+    if (kp3 > kp3Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kp4Max);
         QString titulo = "Error en KP3";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kp4 > kp4Max)
+    if (kp4 > kp4Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
         QString titulo = "Error en KP4";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kp5 > kp5Max)
+    if (kp5 > kp5Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
         QString titulo = "Error en KP5";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kp6 > kp6Max)
+    if (kp6 > kp6Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kp6Max);
         QString titulo = "Error en KP6";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
 
     //----------------------------------------
@@ -504,42 +436,42 @@ void MainWindow::on_guardarGananciasPB_clicked()
         QString mensaje = "El valor es mayor que " + QString::number(ki1Max);
         QString titulo = "Error en KI1";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (ki2 > ki2Max)
+    if (ki2 > ki2Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(ki3Max);
         QString titulo = "Error en KI2";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (ki3 > ki3Max)
+    if (ki3 > ki3Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(ki4Max);
         QString titulo = "Error en KI3";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (ki4 > ki4Max)
+    if (ki4 > ki4Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
         QString titulo = "Error en KI4";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (ki5 > ki5Max)
+    if (ki5 > ki5Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
         QString titulo = "Error en KI5";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (ki6 > ki6Max)
+    if (ki6 > ki6Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(ki6Max);
         QString titulo = "Error en KI6";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
     //-----------------------------------------------------------
     if (kd1 > kd1Max)
@@ -547,42 +479,42 @@ void MainWindow::on_guardarGananciasPB_clicked()
         QString mensaje = "El valor es mayor que " + QString::number(kd1Max);
         QString titulo = "Error en KD1";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kd2 > kd2Max)
+    if (kd2 > kd2Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kd2Max);
         QString titulo = "Error en KD2";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kd3 > kd3Max)
+    if (kd3 > kd3Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kd3Max);
         QString titulo = "Error en KD3";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kd4 > kd4Max)
+    if (kd4 > kd4Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kd4Max);
         QString titulo = "Error en KD4";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kd5 > kd5Max)
+    if (kd5 > kd5Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kd5Max);
         QString titulo = "Error en KD5";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
-     if (kd6 > kd6Max)
+    if (kd6 > kd6Max)
     {
         QString mensaje = "El valor es mayor que " + QString::number(kd6Max);
         QString titulo = "Error en KD6";
         ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+        ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
 }
 
@@ -705,16 +637,170 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
     return false;
 }
 
-
-void MainWindow::deshabilitarControlador()
+//--------------------------------- funciones de qdeseado -------------------------//
+void MainWindow::on_qd1_valueChanged(double arg1)
 {
-    for (int i = 0; i < ui->controladoresLO->count()-1; ++i)
+    bqd = true;
+    qd[0] = arg1;
+}
+
+void MainWindow::on_qd2_valueChanged(double arg1)
+{
+    qd[1] = arg1;
+}
+
+void MainWindow::on_qd3_valueChanged(double arg1)
+{
+    qd[2] = arg1;
+}
+
+void MainWindow::on_qd4_valueChanged(double arg1)
+{
+    qd[3] = arg1;
+}
+
+void MainWindow::on_qd5_valueChanged(double arg1)
+{
+    qd[4] = arg1;
+}
+
+void MainWindow::on_qd6_valueChanged(double arg1)
+{
+    qd[5] = arg1;
+}
+
+//--------------------------------- funciones de tiempo -------------------------//
+
+void MainWindow::on_TiempoS_valueChanged(int arg1)
+{
+    tiempo = arg1;
+}
+
+void MainWindow::on_CambiarTiempoPB_clicked()
+{
+    bTiempo=true;
+    // Setear el tiempo con el cesar
+}
+
+//--------------------------------- funciones de ejecucion -------------------------//
+
+void MainWindow::on_IniciarPB_clicked()
+{
+    ui->errorTextBrowser->clear();
+    if(bConectar==false)
         {
-            QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
+            QString mensaje = "Existe un problema de Conexión";
+            QString titulo = "Error en Conexión";
+            ui->errorTextBrowser->append(titulo);
+            ui->errorTextBrowser->append(mensaje);
+        }
+    else if(bSeleccionControl==false)
+        {
+            QString mensaje = "No se ha seleccionado un controlador";
+            QString titulo = "Error en la seleccion de controlador";
+            ui->errorTextBrowser->append(titulo);
+            ui->errorTextBrowser->append(mensaje);
+        }
+    else if(bGanancia==false)
+        {
+            QString mensaje = "Se han excedido los límites de ganancia o hay ganancias no guardadas.";
+            QString titulo = "Error en el ajuste de ganancias";
+            ui->errorTextBrowser->append(titulo);
+            ui->errorTextBrowser->append(mensaje);
+        }
+    else if(bqd==false)
+        {
+            QString mensaje = "No se puede alcanzar esa posición";
+            QString titulo = "Error en la posición deseada";
+            ui->errorTextBrowser->append(titulo);
+            ui->errorTextBrowser->append(mensaje);
+        }
+    else if(bTiempo==false)
+        {
+            QString mensaje = "No se ha puesto un tiempo de simulación";
+            QString titulo = "Error en la asignación del tiempo";
+            ui->errorTextBrowser->append(titulo);
+            ui->errorTextBrowser->append(mensaje);
+        }
+
+    if(bConectar && bSeleccionControl && bGanancia && bqd && bTiempo)
+    {
+        // ---------------------- Deshabilitacion de elementos ------------------------//
+        ui->TiempoS->setEnabled(false);
+        ui->CambiarTiempoPB->setEnabled(false);
+        ui->ConectarPB->setEnabled(false);
+        ui->cambiarControlPB->setEnabled(false);
+        ui->guardarGananciasPB->setEnabled(false);
+
+        for (int i = 0; i < ui->GananciasLO->count(); ++i)
+            {
+                QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
+                if (widget)
+                    widget->setEnabled(false); // Deshabilitar el widget ganancias
+            }
+        for (int i = 0; i < ui->pdLO->count(); ++i)
+            {
+                QWidget *widget = ui->pdLO->itemAt(i)->widget();
+                if (widget)
+                    widget->setEnabled(false); // Deshabilitar el widget qDeseada
+            }
+
+        // setear las ganancias e iniciar las acciones
+        // No se si aqui dejar la validacion o nel
+
+        // ---------------------- Inicia el programa ------------------------//
+
+        ui->EjecutarLabel->setText("Pausar");
+        ui->IniciarPB->setText("Pause");
+        int muestra = 0;
+        for(int i=0;i<tiempo+100;i++)
+                {
+                    muestra = ((i*100)/tiempo);
+                    QString cadena = QString::number(muestra);
+                    qDebug() << "El número como cadena: " << cadena << "Tiempo: " << tiempo;
+                    ui->progressBar->setValue(muestra);
+
+                    // Esto vuelve al estado inicial
+                    if(muestra>=100)
+                    {
+                        ui->EjecutarLabel->setText("Ejecutar");
+                        ui->IniciarPB->setText("Play");
+                        ui->progressBar->setValue(100);
+                        break;
+
+                        on_DetenerPB_clicked();             //Importante, se debe de tener claro que se desea aqui
+
+                        break;
+                    }
+                }
+    }
+
+}
+
+void MainWindow::on_DetenerPB_clicked()
+{
+    ui->TiempoS->setEnabled(true);
+    ui->CambiarTiempoPB->setEnabled(true);
+    ui->ConectarPB->setEnabled(true);
+    ui->cambiarControlPB->setEnabled(true);
+    ui->guardarGananciasPB->setEnabled(true);
+
+    for (int i = 0; i < ui->GananciasLO->count(); ++i)
+        {
+            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
             if (widget)
-                widget->setEnabled(false); // Deshabilitar el widget
+                widget->setEnabled(true); // habilitar el widget
+        }
+    for (int i = 0; i < ui->pdLO->count(); ++i)
+        {
+            QWidget *widget = ui->pdLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(true); // habilitar el widget
         }
 }
+
+
+
 
 
 
