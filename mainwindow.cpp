@@ -61,6 +61,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->coneccionMark->setEnabled(false);
     ui->progressBar->setValue(0);
+
+    ui->pausarPB->setEnabled(false);
+    ui->pausarPB->hide();
+    ui->statusbar->showMessage("by @JeanPons183",100000);
 }
 
 MainWindow::~MainWindow()
@@ -88,7 +92,10 @@ void MainWindow::on_cambiarControlPB_clicked()
         {
             QWidget *widget = ui->controladoresLO->itemAt(i)->widget();
             if (widget)
+            {
                 widget->setEnabled(true); // Deshabilitar el widget
+//                if(widget == )
+            }
         }
 }
 
@@ -517,7 +524,28 @@ void MainWindow::on_guardarGananciasPB_clicked()
         ui->errorTextBrowser->append(titulo);
         ui->errorTextBrowser->append(mensaje);bGanancia = false;
     }
+
+    if(bGanancia)
+        for(int i =0;i<ui->GananciasLO->count();i++)
+            {
+               QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
+               if (widget)
+                   widget->setEnabled(false); // habilitar el widget
+            }
 }
+
+
+void MainWindow::on_cambiarGananciasPB_clicked()
+{
+    for(int i =0;i<ui->GananciasLO->count();i++)
+         {
+            QWidget *widget = ui->GananciasLO->itemAt(i)->widget();
+            if (widget)
+                widget->setEnabled(true); // habilitar el widget
+         }
+}
+
+
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
@@ -735,6 +763,8 @@ void MainWindow::on_IniciarPB_clicked()
         ui->ConectarPB->setEnabled(false);
         ui->cambiarControlPB->setEnabled(false);
         ui->guardarGananciasPB->setEnabled(false);
+        ui->IniciarPB->hide();
+        ui->IniciarPB->setEnabled(false);
 
         for (int i = 0; i < ui->GananciasLO->count(); ++i)
             {
@@ -755,7 +785,9 @@ void MainWindow::on_IniciarPB_clicked()
         // ---------------------- Inicia el programa ------------------------//
 
         ui->EjecutarLabel->setText("Pausar");
-        ui->IniciarPB->setText("Pause");
+        ui->pausarPB->setEnabled(true);
+        ui->pausarPB->show();
+
         int muestra = 0;
         for(int i=0;i<tiempo+100;i++)
                 {
@@ -770,6 +802,7 @@ void MainWindow::on_IniciarPB_clicked()
                         ui->EjecutarLabel->setText("Ejecutar");
                         ui->IniciarPB->setText("Play");
                         ui->progressBar->setValue(100);
+                        ui->pausarPB->setEnabled(false);
                         break;
 
                         on_DetenerPB_clicked();             //Importante, se debe de tener claro que se desea aqui
@@ -794,6 +827,10 @@ void MainWindow::on_DetenerPB_clicked()
     ui->ConectarPB->setEnabled(true);
     ui->cambiarControlPB->setEnabled(true);
     ui->guardarGananciasPB->setEnabled(true);
+    ui->IniciarPB->show();
+    ui->IniciarPB->setEnabled(true);
+    ui->pausarPB->setEnabled(false);
+    ui->pausarPB->hide();
     ui->progressBar->setValue(0);
 
     for (int i = 0; i < ui->GananciasLO->count(); ++i)
@@ -812,7 +849,8 @@ void MainWindow::on_DetenerPB_clicked()
 
 
 
+void MainWindow::on_coneccionMark_stateChanged(int arg1)
+{
 
-
-
+}
 

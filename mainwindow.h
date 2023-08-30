@@ -37,6 +37,8 @@ private slots:
 
     //--------------------------------- funciones de Ganancias -------------------------//
     void on_guardarGananciasPB_clicked();
+    void on_cambiarGananciasPB_clicked();
+
     void on_KP1_valueChanged(double arg1);
     void on_KP2_valueChanged(double arg1);
     void on_KP3_valueChanged(double arg1);
@@ -82,6 +84,7 @@ private slots:
     //--------------------------------- funciones de ejecucion -------------------------//
     void on_IniciarPB_clicked();
     void on_DetenerPB_clicked();
+
 
 
 private:

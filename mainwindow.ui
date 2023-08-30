@@ -479,20 +479,23 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="guardarGananciasPB">
+   <widget class="QPushButton" name="pausarPB">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>360</y>
-      <width>80</width>
-      <height>24</height>
+      <x>725</x>
+      <y>290</y>
+      <width>121</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Guardar</string>
+     <string>Pause</string>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -553,7 +556,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -730,13 +733,13 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>590</x>
       <y>280</y>
       <width>261</width>
-      <height>110</height>
+      <height>116</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="ejecutarLO">
@@ -756,6 +759,19 @@
        </property>
        <property name="text">
         <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="EjecutarLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Ejecutar</string>
        </property>
       </widget>
      </item>
@@ -789,22 +805,9 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="EjecutarLabel">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Ejecutar</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>590</x>
@@ -835,6 +838,32 @@
      </item>
      <item row="2" column="0">
       <widget class="QTextBrowser" name="errorTextBrowser"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>360</y>
+      <width>168</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="guardarGananciasPB">
+       <property name="text">
+        <string>Guardar</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cambiarGananciasPB">
+       <property name="text">
+        <string>Cambiar</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -932,7 +961,7 @@
   <tabstop>KD4</tabstop>
   <tabstop>KD5</tabstop>
   <tabstop>KD6</tabstop>
-  <tabstop>guardarGananciasPB</tabstop>
+  <tabstop>cambiarGananciasPB</tabstop>
   <tabstop>qd1</tabstop>
   <tabstop>qd2</tabstop>
   <tabstop>qd3</tabstop>
