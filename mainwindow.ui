@@ -468,6 +468,9 @@
        <property name="text">
         <string>Segundos</string>
        </property>
+       <property name="buddy">
+        <cstring>CambiarTiempoPB</cstring>
+       </property>
       </widget>
      </item>
      <item row="1" column="2" colspan="2">
@@ -578,6 +581,9 @@
        <property name="text">
         <string>q3:</string>
        </property>
+       <property name="buddy">
+        <cstring>qd3</cstring>
+       </property>
       </widget>
      </item>
      <item row="2" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
@@ -591,6 +597,9 @@
        </property>
        <property name="text">
         <string>q4:</string>
+       </property>
+       <property name="buddy">
+        <cstring>qd4</cstring>
        </property>
       </widget>
      </item>
@@ -609,6 +618,9 @@
        <property name="text">
         <string>q1:</string>
        </property>
+       <property name="buddy">
+        <cstring>qd1</cstring>
+       </property>
       </widget>
      </item>
      <item row="1" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
@@ -623,6 +635,9 @@
        </property>
        <property name="text">
         <string>q2:</string>
+       </property>
+       <property name="buddy">
+        <cstring>qd2</cstring>
        </property>
       </widget>
      </item>
@@ -688,6 +703,9 @@
        <property name="text">
         <string>q5:</string>
        </property>
+       <property name="buddy">
+        <cstring>qd5</cstring>
+       </property>
       </widget>
      </item>
      <item row="3" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
@@ -701,6 +719,9 @@
        </property>
        <property name="text">
         <string>q6:</string>
+       </property>
+       <property name="buddy">
+        <cstring>qd6</cstring>
        </property>
       </widget>
      </item>
@@ -773,6 +794,9 @@
        <property name="text">
         <string>Ejecutar</string>
        </property>
+       <property name="buddy">
+        <cstring>IniciarPB</cstring>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -795,6 +819,9 @@
        </property>
        <property name="text">
         <string>Detener</string>
+       </property>
+       <property name="buddy">
+        <cstring>DetenerPB</cstring>
        </property>
       </widget>
      </item>
@@ -841,10 +868,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>320</x>
       <y>360</y>
       <width>168</width>
       <height>26</height>
@@ -961,6 +988,7 @@
   <tabstop>KD4</tabstop>
   <tabstop>KD5</tabstop>
   <tabstop>KD6</tabstop>
+  <tabstop>guardarGananciasPB</tabstop>
   <tabstop>cambiarGananciasPB</tabstop>
   <tabstop>qd1</tabstop>
   <tabstop>qd2</tabstop>
@@ -974,6 +1002,7 @@
   <tabstop>DetenerPB</tabstop>
   <tabstop>coneccionMark</tabstop>
   <tabstop>errorTextBrowser</tabstop>
+  <tabstop>pausarPB</tabstop>
  </tabstops>
  <resources/>
  <connections/>
