@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>120</y>
+      <y>150</y>
       <width>351</width>
       <height>241</height>
      </rect>
@@ -428,9 +428,9 @@
    <widget class="QWidget" name="TiempoAccion" native="true">
     <property name="geometry">
      <rect>
-      <x>960</x>
+      <x>910</x>
       <y>280</y>
-      <width>221</width>
+      <width>321</width>
       <height>121</height>
      </rect>
     </property>
@@ -740,9 +740,9 @@
     <property name="geometry">
      <rect>
       <x>339</x>
-      <y>358</y>
+      <y>398</y>
       <width>80</width>
-      <height>51</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -765,9 +765,9 @@
    <widget class="QSpinBox" name="TiempoValueSB">
     <property name="geometry">
      <rect>
-      <x>970</x>
+      <x>920</x>
       <y>350</y>
-      <width>91</width>
+      <width>141</width>
       <height>41</height>
      </rect>
     </property>
@@ -787,13 +787,19 @@
      <rect>
       <x>910</x>
       <y>30</y>
-      <width>311</width>
+      <width>321</width>
       <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="ControlScreen">
      <item>
       <widget class="QLabel" name="label_9">
+       <property name="maximumSize">
+        <size>
+         <width>303</width>
+         <height>74</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Arial</family>
@@ -808,7 +814,7 @@
         <enum>QFrame::Sunken</enum>
        </property>
        <property name="text">
-        <string>                            Control</string>
+        <string>                              Control</string>
        </property>
       </widget>
      </item>
@@ -979,8 +985,8 @@
    <widget class="QPushButton" name="cambiarGainsPB">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>390</y>
+      <x>660</x>
+      <y>430</y>
       <width>166</width>
       <height>31</height>
      </rect>
@@ -1038,9 +1044,9 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>370</y>
+      <y>391</y>
       <width>51</width>
-      <height>32</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -1064,8 +1070,8 @@
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>370</y>
-      <width>81</width>
+      <y>400</y>
+      <width>80</width>
       <height>31</height>
      </rect>
     </property>
@@ -1120,7 +1126,7 @@
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>Cambiar Control</string>
+     <string>Seleccionar Control</string>
     </property>
    </widget>
    <widget class="QWidget" name="QdSreenInputSB" native="true">
@@ -1129,7 +1135,7 @@
       <x>1730</x>
       <y>90</y>
       <width>81</width>
-      <height>291</height>
+      <height>281</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="QdSreenInput">
@@ -1408,7 +1414,7 @@
      <enum>QFrame::Sunken</enum>
     </property>
     <property name="text">
-     <string>Ejecutar</string>
+     <string>Ejecutar:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="GuardarTrayectoriaPB">
@@ -1437,8 +1443,8 @@
    <widget class="QPushButton" name="EliminarGraficaPB">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>930</y>
+      <x>990</x>
+      <y>940</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -1459,8 +1465,8 @@
    <widget class="QPushButton" name="AgregarGraficaPB">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>900</y>
+      <x>990</x>
+      <y>910</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -1481,8 +1487,8 @@
    <widget class="QComboBox" name="ElegirGraficaCB">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>900</y>
+      <x>600</x>
+      <y>910</y>
       <width>321</width>
       <height>23</height>
      </rect>
@@ -1523,134 +1529,6 @@
      <string>Gráficas:</string>
     </property>
    </widget>
-   <widget class="QWidget" name="grafica1" native="true">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>530</y>
-      <width>681</width>
-      <height>361</height>
-     </rect>
-    </property>
-    <widget class="Line" name="line_7">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>-10</y>
-       <width>681</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_8">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>351</y>
-       <width>681</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_9">
-     <property name="geometry">
-      <rect>
-       <x>670</x>
-       <y>0</y>
-       <width>21</width>
-       <height>391</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_12">
-     <property name="geometry">
-      <rect>
-       <x>-10</x>
-       <y>0</y>
-       <width>21</width>
-       <height>391</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="grafica2" native="true">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>530</y>
-      <width>1151</width>
-      <height>361</height>
-     </rect>
-    </property>
-    <widget class="Line" name="line_6">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>-10</y>
-       <width>681</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_3">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>351</y>
-       <width>1151</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_10">
-     <property name="geometry">
-      <rect>
-       <x>-10</x>
-       <y>0</y>
-       <width>21</width>
-       <height>391</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_11">
-     <property name="geometry">
-      <rect>
-       <x>1120</x>
-       <y>0</y>
-       <width>61</width>
-       <height>391</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-    <zorder>line_3</zorder>
-    <zorder>line_6</zorder>
-    <zorder>line_10</zorder>
-    <zorder>line_11</zorder>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -1689,7 +1567,7 @@
       <x>1290</x>
       <y>60</y>
       <width>201</width>
-      <height>291</height>
+      <height>301</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -1991,7 +1869,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>60</y>
+      <y>90</y>
       <width>581</width>
       <height>291</height>
      </rect>
@@ -2203,7 +2081,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>119</y>
+      <y>149</y>
       <width>351</width>
       <height>241</height>
      </rect>
@@ -2463,6 +2341,138 @@
      </item>
     </layout>
    </widget>
+   <widget class="QCustomPlot" name="grafica1" native="true">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>540</y>
+      <width>900</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <widget class="Line" name="line_8">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>350</y>
+       <width>899</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_7">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>-11</y>
+       <width>899</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_9">
+     <property name="geometry">
+      <rect>
+       <x>890</x>
+       <y>-1</y>
+       <width>21</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_12">
+     <property name="geometry">
+      <rect>
+       <x>-10</x>
+       <y>-1</y>
+       <width>21</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <zorder>line_12</zorder>
+    <zorder>line_9</zorder>
+    <zorder>line_8</zorder>
+    <zorder>line_7</zorder>
+   </widget>
+   <widget class="QCustomPlot" name="grafica2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>540</y>
+      <width>900</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <widget class="Line" name="line_15">
+     <property name="geometry">
+      <rect>
+       <x>-10</x>
+       <y>0</y>
+       <width>21</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_10">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>-10</y>
+       <width>899</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_11">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>351</y>
+       <width>899</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_14">
+     <property name="geometry">
+      <rect>
+       <x>890</x>
+       <y>0</y>
+       <width>21</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <zorder>line_14</zorder>
+    <zorder>line_11</zorder>
+    <zorder>line_15</zorder>
+    <zorder>line_10</zorder>
+   </widget>
    <zorder>LabelsGainsActuators</zorder>
    <zorder>LabelsGainsLabels</zorder>
    <zorder>PlayPausePB</zorder>
@@ -2499,14 +2509,14 @@
    <zorder>AgregarGraficaPB</zorder>
    <zorder>ElegirGraficaCB</zorder>
    <zorder>label_Graficas</zorder>
-   <zorder>grafica1</zorder>
-   <zorder>grafica2</zorder>
    <zorder>label</zorder>
    <zorder>line_13</zorder>
    <zorder>PosRobotLabels</zorder>
    <zorder>PosDeseadaRobotLabels</zorder>
    <zorder>GainScreenInputSB</zorder>
    <zorder>QdSreenInputSB</zorder>
+   <zorder>grafica1</zorder>
+   <zorder>grafica2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -2530,11 +2540,21 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionKinova_Gen3_Lite_User_Manual">
+   <property name="icon">
+    <iconset>
+     <normalon>:/PDF_file_icon.svg.ico</normalon>
+    </iconset>
+   </property>
    <property name="text">
     <string>Kinova Gen3 Lite User Manual</string>
    </property>
   </action>
   <action name="actionRobot_Control_Class_Notes">
+   <property name="icon">
+    <iconset>
+     <normalon>:/PDF_file_icon.svg.ico</normalon>
+    </iconset>
+   </property>
    <property name="text">
     <string>Robot Control Class Notes</string>
    </property>
@@ -2545,6 +2565,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

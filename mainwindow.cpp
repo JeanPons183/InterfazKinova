@@ -100,6 +100,8 @@ void MainWindow::on_ConectarPB_clicked()
     ui->ControlSelect->addItem("sPs'D' + Compensación de Gravedad");
 
     Labels("ActivarTodo");
+    ui->ControlSelect->setVisible(false);
+    ui->label_ControlSelected->setText("Seleccione un controlador");
 
     RobotConectado=true;
 }
@@ -235,6 +237,7 @@ void MainWindow::on_CambiarControlPB_clicked()
         ControlActivadoBoton=false;
     }else{
         ui->CambiarControlPB->setText("Guardar");
+        ui->ControlSelect->setVisible(true);
         ui->ControlSelect->setEnabled(true);
         ControlActivado=false;
         ControlActivadoBoton=true;
@@ -281,6 +284,14 @@ void MainWindow::on_CambiarTiempoPB_clicked()
 void MainWindow::on_CambiarQdPB_clicked()
 {
     if(PosicionDeseadaBoton){
+
+        qd[0]= ui->qd1SB->value();
+        qd[1]= ui->qd2SB->value();
+        qd[2]= ui->qd3SB->value();
+        qd[3]= ui->qd4SB->value();
+        qd[4]= ui->qd5SB->value();
+        qd[5]= ui->qd6SB->value();
+
         Labels("ActivarLabelsQd");
         Labels("BorrarSpinBoxQd");
 
