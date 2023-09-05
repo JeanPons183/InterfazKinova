@@ -2,12 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QLCDNumber>
-#include <QDoubleSpinBox>
-// Para mostrar las notificaciones
-#include <QMessageBox>
-
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,57 +15,42 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public:
-    void showNotification(const QString &title, const QString &message);
-
-
 private slots:
-    bool eventFilter(QObject *object, QEvent *event) override;
-    void on_PDSel_clicked();
-    void on_PIDSel_clicked();
-    void on_PDCancGSel_clicked();
-    void on_PDCompGSel_clicked();
-    void on_PdCancGSel_clicked();
-    void on_PdCompGSel_clicked();
 
+    void Labels(QString Selected);
 
-    // void on_ConectarPB_clicked();
-    // void on_DetenerPB_clicked();
+    void on_ConectarPB_clicked();
 
-   // int on_CambiarTiempoPB_clicked();
+    void on_PlayPausePB_clicked();
+
+    void on_StopPB_clicked();
+
+    void on_Graficas_checkBox_stateChanged(int arg1);
+
+    void on_GuardarTrayectoriaPB_clicked();
+
+    void on_cambiarGainsPB_clicked();
+
+    void on_CambiarControlPB_clicked();
 
     void on_CambiarTiempoPB_clicked();
-    void on_TiempoS_valueChanged(int arg1);
 
-    //--------------------------------- funciones de Ganancias -------------------------//
-    void on_KP1_valueChanged(double arg1);
-    void on_KP2_valueChanged(double arg1);
-    void on_KP3_valueChanged(double arg1);
-    void on_KP4_valueChanged(double arg1);
-    void on_KP5_valueChanged(double arg1);
-    void on_KP6_valueChanged(double arg1);
+    void on_CambiarQdPB_clicked();
 
-    void on_KD1_valueChanged(double arg1);
-    void on_KD2_valueChanged(double arg1);
-    void on_KD3_valueChanged(double arg1);
-    void on_KD4_valueChanged(double arg1);
-    void on_KD5_valueChanged(double arg1);
-    void on_KD6_valueChanged(double arg1);
+    void on_PosPackPB_clicked();
 
-    void on_KI1_valueChanged(double arg1);
-    void on_KI2_valueChanged(double arg1);
-    void on_KI3_valueChanged(double arg1);
-    void on_KI4_valueChanged(double arg1);
-    void on_KI5_valueChanged(double arg1);
-    void on_KI6_valueChanged(double arg1);
+    void on_PosZeroPB_clicked();
 
-    void on_IniciarPB_clicked();
+    void on_radioButton_clicked(bool checked);
 
+    void on_AgregarGraficaPB_clicked();
 
-    void on_guardarPB_clicked();
+    void on_EliminarGraficaPB_clicked();
+
+    void Robot();
+
 
 private:
     Ui::MainWindow *ui;
-
 };
 #endif // MAINWINDOW_H

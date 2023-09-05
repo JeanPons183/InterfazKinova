@@ -1,52 +1,75 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QMessageBox>
 
-int tiempo;
-bool iniciar = true;
+//bool Go=false; // bandera para el boton de iniciar
 
-double kp1;         const double kp1Max = 20.0;
-double kp2;         const double kp2Max = 20.0;
-double kp3;         const double kp3Max = 20.0;
-double kp4;         const double kp4Max = 20.0;
-double kp5;         const double kp5Max = 20.0;
-double kp6;         const double kp6Max = 20.0;
+//Banderas para iniciar la acción del robot--------------------
+bool RobotConectado=false;
+bool GananciasActivado=false;
+bool TiempoActivado=false;
+bool ControlActivado=false;
+//bool banderaPausa=false;
+bool PosicionDeseada=false;
+bool GraficasActivado=false;
+//------------------------------------------------------------
 
-double ki1;         const double ki1Max = 20.0;
-double ki2;         const double ki2Max = 20.0;
-double ki3;         const double ki3Max = 20.0;
-double ki4;         const double ki4Max = 20.0;
-double ki5;         const double ki5Max = 20.0;
-double ki6;         const double ki6Max = 20.0;
+//Banderas para los botones de la GUI-------------------------
+bool GananciasActivadoBoton=false;
+bool TiempoActivadoBoton=false;
+bool ControlActivadoBoton=false;
+bool banderaPausaBoton=false;
+bool PosicionDeseadaBoton=false;
+bool GraficasActivadoBoton=false;
+bool StopTotal=false;
+//-------------------------------------------------------------
 
-double kd1;         const double kd1Max = 20.0;
-double kd2;         const double kd2Max = 20.0;
-double kd3;         const double kd3Max = 20.0;
-double kd4;         const double kd4Max = 20.0;
-double kd5;         const double kd5Max = 20.0;
-double kd6;         const double kd6Max = 20.0;
+int segundos=0; // Tiempo seleccionado para la acción del Robot
+double deltaT=0.001; // Periodo de tiempo de acción
+
+double kp[6];   // Ganancias Kp
+double ki[6];   // Ganancias Ki
+double kd[6];   // Ganancias Kd
+
+double Maxkp[6];   // Valores maximos para las Ganancias Kp
+double Maxki[6];   // Valores maximos para las Ganancias Ki
+double Maxkd[6];   // Valores maximos para las Ganancias Kd
+
+double Mc=0; //Valor de la masa virtual del controlador
+
+double q[6];    // Coordenadas generalizadas del Robot (deg)
+long double q_rad[6]; // Posicion actual en radianes
+
+double qd[6];  // Coordenadas generalizadas de la posición deseada (deg)
+long double qd_rad[6]; // Posicion deseada en radianes
+
+bool banderaPID=false; // bandera para activar ganancias Ki
+
+//Selector={"BorrarTodo", "BorrarLabelsGanancias", "BorrarSpinBoxGanancias", "BorrarLabelsTiempo", "BorrarSpinBoxTiempo", "BorrarLabelsQd", "BorrarSpinBoxQd","BorrarGraficas"};
+//Lista de opciones para la función Labels, la cual activa o desactiva partes de la interfaz
+
+//añadir detener ui a la funcion labels
+
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->KP1->installEventFilter(this);
-    ui->KP2->installEventFilter(this);
-    ui->KP3->installEventFilter(this);
-    ui->KP4->installEventFilter(this);
-    ui->KP5->installEventFilter(this);
-    ui->KP6->installEventFilter(this);
-    ui->KI1->installEventFilter(this);
-    ui->KI2->installEventFilter(this);
-    ui->KI3->installEventFilter(this);
-    ui->KI4->installEventFilter(this);
-    ui->KI5->installEventFilter(this);
-    ui->KI6->installEventFilter(this);
-    ui->KD1->installEventFilter(this);
-    ui->KD2->installEventFilter(this);
-    ui->KD3->installEventFilter(this);
-    ui->KD4->installEventFilter(this);
-    ui->KD5->installEventFilter(this);
-    ui->KD6->installEventFilter(this);
+
+    this->setWindowTitle("Kinova Gen3 Lite");
+    MainWindow::setWindowState(Qt::WindowMaximized);
+    //SET stretch max and min
+    Labels("BorrarTodo");
+    ui->PlayPausePB->setDisabled(true);
+    ui->StopPB->setVisible(false);
+    ui->GuardarTrayectoriaPB->setDisabled(true);
+    ui->Graficas_checkBox->setDisabled(true);
+    ui->ControlSelect->setEnabled(false);
+    //ui->Graficas_checkBox->setDisabled(true);
+    //Labels("BorrarTodo");
+
+
 }
 
 MainWindow::~MainWindow()
@@ -55,578 +78,552 @@ MainWindow::~MainWindow()
 }
 
 
-
-void MainWindow::on_PDSel_clicked()
+void MainWindow::on_ConectarPB_clicked()
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
 
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KI");
-    ui->KDLabel->close();
+    //conectar robot
 
-    ui->KP1->show(); // Esto lo muestra
-    ui->KI1->show(); // Esto lo muestra
+    //activar interfaz
+    ui->ConectarPB->setVisible(false);
+    ui->ConeccionCB->setChecked(true);
+    ui->ConeccionCB->setEnabled(false);
+    QMessageBox::information(this,tr("Robot Conectado"),tr("Conección exitosa con el robot"));
 
-    ui->KP2->close(); // Esto lo elimina
-    ui->KP3->close(); // Esto lo elimina
-    ui->KP4->close(); // Esto lo elimina
-    ui->KP5->close(); // Esto lo elimina
-    ui->KP6->close(); // Esto lo elimina
+    // agregar controladores
+    ui->ControlSelect->addItem("PD + Cancelación de Gravedad");
+    ui->ControlSelect->addItem("PD + Compensación de Gravedad");
+    ui->ControlSelect->addItem("P'D' + Cancelación de Gravedad");
+    ui->ControlSelect->addItem("P'D' + Compensación de Gravedad");
+    ui->ControlSelect->addItem("sPsD + Cancelación de Gravedad");
+    ui->ControlSelect->addItem("sPsD + Compensación de Gravedad");
+    ui->ControlSelect->addItem("sPs'D' + Cancelación de Gravedad");
+    ui->ControlSelect->addItem("sPs'D' + Compensación de Gravedad");
 
-    ui->KI2->close(); // Esto lo elimina
-    ui->KI3->close(); // Esto lo elimina
-    ui->KI4->close(); // Esto lo elimina
-    ui->KI5->close(); // Esto lo elimina
-    ui->KI6->close(); // Esto lo elimina
+    Labels("ActivarTodo");
 
-    ui->KD1->close(); // Esto lo elimina
-    ui->KD2->close(); // Esto lo elimina
-    ui->KD3->close(); // Esto lo elimina
-    ui->KD4->close(); // Esto lo elimina
-    ui->KD5->close(); // Esto lo elimina
-    ui->KD6->close(); // Esto lo elimina
-
-    ui->Actuador2Label->close();
-    ui->Actuador3Label->close();
-    ui->Actuador4Label->close();
-    ui->Actuador5Label->close();
-    ui->Actuador6Label->close();
+    RobotConectado=true;
 }
 
-void MainWindow::on_PIDSel_clicked()
+
+void MainWindow::on_PlayPausePB_clicked()
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
-
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KI");
-    ui->KDLabel->setText("KD");
-
-    ui->Actuador2Label->close();
-    ui->Actuador3Label->close();
-    ui->Actuador4Label->close();
-    ui->Actuador5Label->close();
-    ui->Actuador6Label->close();
-
-    ui->KP1->show();
-    ui->KI1->show();
-    ui->KD1->show();
-
-    ui->KP2->close(); // Esto lo elimina
-    ui->KP3->close(); // Esto lo elimina
-    ui->KP4->close(); // Esto lo elimina
-    ui->KP5->close(); // Esto lo elimina
-    ui->KP6->close(); // Esto lo elimina
-
-    ui->KI2->close(); // Esto lo elimina
-    ui->KI3->close(); // Esto lo elimina
-    ui->KI4->close(); // Esto lo elimina
-    ui->KI5->close(); // Esto lo elimina
-    ui->KI6->close(); // Esto lo elimina
-
-    ui->KD2->close(); // Esto lo elimina
-    ui->KD3->close(); // Esto lo elimina
-    ui->KD4->close(); // Esto lo elimina
-    ui->KD5->close(); // Esto lo elimina
-    ui->KD6->close(); // Esto lo elimina
+    ui->Graficas_checkBox->setDisabled(true);
+    if(banderaPausaBoton){
+        ui->PlayPausePB->setText("Continuar");
+        banderaPausaBoton=false;
+    }else{
+        Labels("Detener");
+        ui->StopPB->setVisible(true);
+        ui->StopPB->setEnabled(true);
+        ui->PlayPausePB->setText("Pausar");
+        //banderaPausaBoton=true;
+        //Robot();
+        banderaPausaBoton=true;
+    }
+    Robot();
 }
 
-void MainWindow::on_PDCancGSel_clicked()
+
+void MainWindow::on_StopPB_clicked()
 {
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KD"); // Asignar los valores de KI a KD
-    ui->KDLabel->close();
-
-    ui->KP1->show(); // Esto lo elimina
-    ui->KP2->show(); // Esto lo elimina
-    ui->KP3->show(); // Esto lo elimina
-    ui->KP4->show(); // Esto lo elimina
-    ui->KP5->show(); // Esto lo elimina
-    ui->KP6->show(); // Esto lo elimina
-
-    ui->KI1->show(); // Esto lo elimina
-    ui->KI2->show(); // Esto lo elimina
-    ui->KI3->show(); // Esto lo elimina
-    ui->KI4->show(); // Esto lo elimina
-    ui->KI5->show(); // Esto lo elimina
-    ui->KI6->show(); // Esto lo elimina
-
-    ui->KD1->close();
-    ui->KD2->close();
-    ui->KD3->close();
-    ui->KD4->close();
-    ui->KD5->close();
-    ui->KD6->close();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
-}
-void MainWindow::on_PDCompGSel_clicked()
-{
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
-
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KD");
-    ui->KDLabel->setText("K");
-
-    ui->KP1->show(); // Esto lo elimina
-    ui->KP2->show(); // Esto lo elimina
-    ui->KP3->show(); // Esto lo elimina
-    ui->KP4->show(); // Esto lo elimina
-    ui->KP5->show(); // Esto lo elimina
-    ui->KP6->show(); // Esto lo elimina
-
-    ui->KI1->show(); // Esto lo elimina
-    ui->KI2->show(); // Esto lo elimina
-    ui->KI3->show(); // Esto lo elimina
-    ui->KI4->show(); // Esto lo elimina
-    ui->KI5->show(); // Esto lo elimina
-    ui->KI6->show(); // Esto lo elimina
-
-    ui->KD1->show();
-    ui->KD2->show();
-    ui->KD3->show();
-    ui->KD4->show();
-    ui->KD5->show();
-    ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
+    Labels("Continuar");
+    ui->PlayPausePB->setText("Iniciar");
+    ui->Graficas_checkBox->setEnabled(true);
+    ui->StopPB->setVisible(false);
+    banderaPausaBoton=false;
+    StopTotal=true;
 }
 
-void MainWindow::on_PdCancGSel_clicked()
+
+void MainWindow::on_Graficas_checkBox_stateChanged(int arg1)
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
-
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KD");
-    ui->KDLabel->setText("K");
-    // Falta asignarle los valores de KI a KD y de KD a K
-
-    ui->KP1->show(); // Esto lo elimina
-    ui->KP2->show(); // Esto lo elimina
-    ui->KP3->show(); // Esto lo elimina
-    ui->KP4->show(); // Esto lo elimina
-    ui->KP5->show(); // Esto lo elimina
-    ui->KP6->show(); // Esto lo elimina
-
-    ui->KI1->show(); // Esto lo elimina
-    ui->KI2->show(); // Esto lo elimina
-    ui->KI3->show(); // Esto lo elimina
-    ui->KI4->show(); // Esto lo elimina
-    ui->KI5->show(); // Esto lo elimina
-    ui->KI6->show(); // Esto lo elimina
-
-    ui->KD1->show();
-    ui->KD2->show();
-    ui->KD3->show();
-    ui->KD4->show();
-    ui->KD5->show();
-    ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
+    if(arg1==2){
+        Labels("ActivarGraficas");
+        //agregar opciones a combo box de las graficas
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 1");
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 2");
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 3");
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 4");
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 5");
+        ui->ElegirGraficaCB->addItem("Posición de la Articulación 6");
+        ui->ElegirGraficaCB->addItem("Posición deseada 1");
+        ui->ElegirGraficaCB->addItem("Posición deseada 2");
+        ui->ElegirGraficaCB->addItem("Posición deseada 3");
+        ui->ElegirGraficaCB->addItem("Posición deseada 4");
+        ui->ElegirGraficaCB->addItem("Posición deseada 5");
+        ui->ElegirGraficaCB->addItem("Posición deseada 6");
+        //GraficasActivado=true;
+    }else if(arg1==0){
+        Labels("BorrarGraficas");
+        //GraficasActivado=false;
+    }else{
+        QMessageBox::warning(this,tr("Error!"),tr("Hay un error en las gráficas, Error 02"));
+        ui->MostrarErrores->append("Hay un error en las gráficas");
+    }
 }
 
-void MainWindow::on_PdCompGSel_clicked()
+
+void MainWindow::on_GuardarTrayectoriaPB_clicked()
 {
-    ui->KPLabel->show();
-    ui->KILabel->show();
-    ui->KDLabel->show();
 
-    ui->KPLabel->setText("KP");
-    ui->KILabel->setText("KD");
-    ui->KDLabel->setText("K");
-
-    ui->KP1->show(); // Esto lo elimina
-    ui->KP2->show(); // Esto lo elimina
-    ui->KP3->show(); // Esto lo elimina
-    ui->KP4->show(); // Esto lo elimina
-    ui->KP5->show(); // Esto lo elimina
-    ui->KP6->show(); // Esto lo elimina
-
-    ui->KI1->show(); // Esto lo elimina
-    ui->KI2->show(); // Esto lo elimina
-    ui->KI3->show(); // Esto lo elimina
-    ui->KI4->show(); // Esto lo elimina
-    ui->KI5->show(); // Esto lo elimina
-    ui->KI6->show(); // Esto lo elimina
-
-    ui->KD1->show();
-    ui->KD2->show();
-    ui->KD3->show();
-    ui->KD4->show();
-    ui->KD5->show();
-    ui->KD6->show();
-
-    ui->Actuador2Label->show();
-    ui->Actuador3Label->show();
-    ui->Actuador4Label->show();
-    ui->Actuador5Label->show();
-    ui->Actuador6Label->show();
 }
+
+
+void MainWindow::on_cambiarGainsPB_clicked()
+{
+    if(GananciasActivadoBoton){
+        ui->cambiarGainsPB->setText("Cambiar Ganancias");
+
+        kp[0]= ui->kp1SB->value();
+        kp[1]= ui->kp2SB->value();
+        kp[2]= ui->kp3SB->value();
+        kp[3]= ui->kp4SB->value();
+        kp[4]= ui->kp5SB->value();
+        kp[5]= ui->kp6SB->value();
+        //ki[0]= ui->ki1SB->value();
+        //ki[1]= ui->ki2SB->value();
+        //ki[2]= ui->ki3SB->value();
+        //ki[3]= ui->ki4SB->value();
+        //ki[4]= ui->ki5SB->value();
+        //ki[5]= ui->ki6SB->value();
+        kd[0]= ui->kd1SB->value();
+        kd[1]= ui->kd2SB->value();
+        kd[2]= ui->kd3SB->value();
+        kd[3]= ui->kd4SB->value();
+        kd[4]= ui->kd5SB->value();
+        kd[5]= ui->kd6SB->value();
+
+
+        Labels("BorrarSpinBoxGanancias");
+        Labels("ActivarLabelsGanancias");
+        GananciasActivado=true;
+        GananciasActivadoBoton=false;
+
+    }else{
+        if(ControlActivado==false){//elegir controlador previamente
+            QMessageBox::warning(this,tr("Error!"),tr("Por favor seleccione un controlador."));
+            ui->MostrarErrores->append("No hay un controlador seleccionado");
+        }else{
+            Labels("BorrarLabelsGanancias");
+            Labels("ActivarSpinBoxGanancias");
+
+            ui->cambiarGainsPB->setText("Guardar");
+
+            GananciasActivado=false;
+            GananciasActivadoBoton=true;
+        }
+
+    }
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->PlayPausePB->setEnabled(true);
+    }else{
+        ui->PlayPausePB->setEnabled(false);
+    }
+
+}
+
+
+void MainWindow::on_CambiarControlPB_clicked()
+{
+    if(ControlActivadoBoton){
+        ui->label_ControlSelected->setText(ui->ControlSelect->currentText());
+        ui->CambiarControlPB->setText("Cambiar Control");
+        ui->ControlSelect->setEnabled(false);
+        ui->LabelsGainsLabels->setVisible(true);
+        Labels("ActivarLabelsGanancias");
+        ControlActivado=true;
+        ControlActivadoBoton=false;
+    }else{
+        ui->CambiarControlPB->setText("Guardar");
+        ui->ControlSelect->setEnabled(true);
+        ControlActivado=false;
+        ControlActivadoBoton=true;
+    }
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->PlayPausePB->setEnabled(true);
+    }else{
+        ui->PlayPausePB->setEnabled(false);
+    }
+}
+
 
 void MainWindow::on_CambiarTiempoPB_clicked()
 {
-    // Setear el tiempo con el cesar
-}
-
-void MainWindow::on_TiempoS_valueChanged(int arg1)
-{
-    tiempo = arg1;
-}
-
-void MainWindow::on_IniciarPB_clicked()
-{
-    // setear las ganancias e iniciar las acciones
-    // No se si aqui dejar la validacion o nel
-}
-
-
-
-//--------------------------------- funciones de Ganancias -------------------------//
-void MainWindow::on_KP1_valueChanged(double arg1)
-{
-    kp1 = arg1;
-}
-void MainWindow::on_KP2_valueChanged(double arg1)
-{
-    kp2 = arg1;
-}
-void MainWindow::on_KP3_valueChanged(double arg1)
-{
-    kp3 = arg1;
-}
-void MainWindow::on_KP4_valueChanged(double arg1)
-{
-    kp4 = arg1;
-}
-
-void MainWindow::on_KP5_valueChanged(double arg1)
-{
-    kp5 = arg1;
-}
-void MainWindow::on_KP6_valueChanged(double arg1)
-{
-    kp6 = arg1;
-}
-void MainWindow::on_KI1_valueChanged(double arg1)
-{
-    ki1 = arg1;
-}
-void MainWindow::on_KI2_valueChanged(double arg1)
-{
-    ki2 = arg1;
-}
-void MainWindow::on_KI3_valueChanged(double arg1)
-{
-    ki3 = arg1;
-}
-void MainWindow::on_KI4_valueChanged(double arg1)
-{
-    ki4 = arg1;
-}
-void MainWindow::on_KI5_valueChanged(double arg1)
-{
-    ki5 = arg1;
-}
-void MainWindow::on_KI6_valueChanged(double arg1)
-{
-    ki6 = arg1;
-}
-
-void MainWindow::on_KD1_valueChanged(double arg1)
-{
-    kd1 = arg1;
-}
-void MainWindow::on_KD2_valueChanged(double arg1)
-{
-    kd2 = arg1;
-}
-void MainWindow::on_KD3_valueChanged(double arg1)
-{
-    kd3 = arg1;
-}
-void MainWindow::on_KD4_valueChanged(double arg1)
-{
-    kd4 = arg1;
-}
-void MainWindow::on_KD5_valueChanged(double arg1)
-{
-    kd5 = arg1;
-}
-void MainWindow::on_KD6_valueChanged(double arg1)
-{
-    kd6 = arg1;
-}
-
-// Muestra de errores y quiza la notificaciones de las ganancias con el errorTextBrowser
-//----------------------------------------------------------------------------------------------//
-void MainWindow::on_guardarPB_clicked()
-{
-    ui->errorTextBrowser->clear();
-    if (kp1 > kp1Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp1Max);
-        QString titulo = "Error en KP1";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+    if(TiempoActivadoBoton){
+        if((ui->TiempoValueSB->value())!=0){// comprobando que el tiempo no sea igual a 0
+            ui->CambiarTiempoPB->setText("Cambiar Tiempo");
+            segundos=ui->TiempoValueSB->value();
+            Labels("ActivarLabelsTiempo");
+            Labels("BorrarSpinBoxTiempo");
+            ui->label_Tiempo->setText(QString::number(segundos));
+            TiempoActivado=true;
+            TiempoActivadoBoton=false;
+        }else{ //Error, numero igual a 0
+            QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
+            ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoValueSB->value())+" no es correcto");
+        }
+    }else{
+        ui->CambiarTiempoPB->setText("Guardar");
+        Labels("BorrarLabelsTiempo");
+        Labels("ActivarSpinBoxTiempo");
+        ui->TiempoValueSB->setValue(segundos);
+        TiempoActivado=false;
+        TiempoActivadoBoton=true;
     }
-     if (kp2 > kp2Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp3Max);
-        QString titulo = "Error en KP2";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kp3 > kp3Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp4Max);
-        QString titulo = "Error en KP3";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kp4 > kp4Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
-        QString titulo = "Error en KP4";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kp5 > kp5Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
-        QString titulo = "Error en KP5";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kp6 > kp6Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kp6Max);
-        QString titulo = "Error en KP6";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-
-    //----------------------------------------
-    if (ki1 > ki1Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki1Max);
-        QString titulo = "Error en KI1";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (ki2 > ki2Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki3Max);
-        QString titulo = "Error en KI2";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (ki3 > ki3Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki4Max);
-        QString titulo = "Error en KI3";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (ki4 > ki4Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
-        QString titulo = "Error en KI4";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (ki5 > ki5Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
-        QString titulo = "Error en KI5";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (ki6 > ki6Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(ki6Max);
-        QString titulo = "Error en KI6";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-    //-----------------------------------------------------------
-    if (kd1 > kd1Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd1Max);
-        QString titulo = "Error en KD1";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kd2 > kd2Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd2Max);
-        QString titulo = "Error en KD2";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kd3 > kd3Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd3Max);
-        QString titulo = "Error en KD3";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kd4 > kd4Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd4Max);
-        QString titulo = "Error en KD4";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kd5 > kd5Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd5Max);
-        QString titulo = "Error en KD5";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
-    }
-     if (kd6 > kd6Max)
-    {
-        QString mensaje = "El valor es mayor que " + QString::number(kd6Max);
-        QString titulo = "Error en KD6";
-        ui->errorTextBrowser->append(titulo);
-        ui->errorTextBrowser->append(mensaje);
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->PlayPausePB->setEnabled(true);
+    }else{
+        ui->PlayPausePB->setEnabled(false);
     }
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
+
+void MainWindow::on_CambiarQdPB_clicked()
 {
-    if (event->type() == QEvent::FocusOut)
-    {
-        if (object == ui->KP1 && kp1 > kp1Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp1Max);
-            QString titulo = "Error en KP1";
-            QMessageBox::warning(this, titulo, mensaje);
+    if(PosicionDeseadaBoton){
+        Labels("ActivarLabelsQd");
+        Labels("BorrarSpinBoxQd");
+
+        ui->CambiarQdPB->setText("Cambiar Posición Deseada");
+        ui->PosPackPB->setDisabled(false);
+        ui->PosZeroPB->setDisabled(false);
+        PosicionDeseada=true;
+        PosicionDeseadaBoton=false;
+    }else{
+        Labels("BorrarLabelsQd");
+        Labels("ActivarSpinBoxQd");
+        ui->PosPackPB->setDisabled(true);
+        ui->PosZeroPB->setDisabled(true);
+
+        ui->CambiarQdPB->setText("Guardar");
+        PosicionDeseada=false;
+        PosicionDeseadaBoton=true;
+    }
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->PlayPausePB->setEnabled(true);
+    }else{
+        ui->PlayPausePB->setEnabled(false);
+    }
+}
+
+
+void MainWindow::on_PosPackPB_clicked()
+{
+    //check if it's not the position it is already in
+    qd[0]=0;
+    qd[1]=0;
+    qd[2]=0;
+    qd[3]=0;
+    qd[4]=0;
+    qd[5]=0;
+    PosicionDeseada=true;
+    Labels("ActivarLabelsQd");
+}
+
+
+void MainWindow::on_PosZeroPB_clicked()
+{
+    //check if it's not the position it is already in
+    for (int i = 0; i < 6; i++) {
+        qd[i]=0;
+    }
+    PosicionDeseada=true;
+    Labels("ActivarLabelsQd");
+}
+
+
+void MainWindow::on_radioButton_clicked(bool checked)
+{
+
+}
+
+
+void MainWindow::on_AgregarGraficaPB_clicked()
+{
+
+}
+
+
+void MainWindow::on_EliminarGraficaPB_clicked()
+{
+
+}
+
+void MainWindow::Robot()
+{
+
+    double size= segundos / deltaT;
+    int size2 = size;
+    ui->ProgresoPBar->reset();
+    ui->ProgresoPBar->setMinimum(0);
+    ui->ProgresoPBar->setMaximum(size);
+    double Time[ size2 ];
+    int i=0;
+    for (i = 0; i < size2; i++) {
+        ui->ProgresoPBar->setValue(i+1);
+        /*
+        if(banderaPausaBoton){  //botonPausa
+            if(StopTotal){  //Stop Total se activo el boton de detener
+                break;
+            }
         }
-        else if (object == ui->KP2 && kp2 > kp2Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp3Max);
-            QString titulo = "Error en KP2";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KP3 && kp3 > kp3Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp4Max);
-            QString titulo = "Error en KP3";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KP4 && kp4 > kp4Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
-            QString titulo = "Error en KP4";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KP5 && kp5 > kp5Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp5Max);
-            QString titulo = "Error en KP5";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KP6 && kp6 > kp6Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kp6Max);
-            QString titulo = "Error en KP6";
-            QMessageBox::warning(this, titulo, mensaje);
+        */
+    }
+    if(i == size2){ // se acabó la simulación
+        ui->StopPB->setEnabled(false);
+        ui->PlayPausePB->setText("Iniciar");
+        Labels("Continuar");
+        ui->GuardarTrayectoriaPB->setVisible(true);
+        ui->GuardarTrayectoriaPB->setEnabled(true);
+    }
+}
+
+void MainWindow::Labels(QString Selected)
+{
+    /*Opciones Borrar:
+     * "BorrarTodo", "BorrarLabelsGanancias", "BorrarSpinBoxGanancias", "BorrarLabelsTiempo", "BorrarSpinBoxTiempo", "BorrarLabelsQd", "BorrarSpinBoxQd","BorrarGraficas"
+     *
+     *
+     *Opciones Activar:
+     * "ActivarTodo", "ActivarLabelsGanancias", "ActivarSpinBoxGanancias", "ActivarLabelsTiempo", "ActivarSpinBoxTiempo", "ActivarLabelsQd", "ActivarSpinBoxQd","ActivarGraficas"
+     *
+     */
+    //Opciones Borrar:---------------------------------------------------------------------------------------------------------
+    if (Selected == "BorrarTodo")    {
+        //----------------------------------------------------------------------------- Borrar
+        //BorraGraficas
+        ui->GuardarTrayectoriaPB->setVisible(false);
+        ui->label_Graficas->setVisible(false);
+        ui->grafica1->setVisible(false);
+        ui->grafica2->setVisible(false);
+        ui->AgregarGraficaPB->setVisible(false);
+        ui->EliminarGraficaPB->setVisible(false);
+        ui->ElegirGraficaCB->setVisible(false);
+        ui->GraficasTiempoRealRB->setVisible(false);
+
+        //-----------------------------------------------
+        //BorraControl/Tiempo
+        ui->ControlScreenCB->setVisible(false);
+        ui->label_ControlSelected->setVisible(false);
+        ui->CambiarControlPB->setVisible(false);
+
+        ui->TiempoAccion->setVisible(false);
+        ui->TiempoValueSB->setVisible(false);
+        ui->CambiarTiempoPB->setVisible(false);
+        //-------------------------------------------
+        //BorraGanancias
+
+        ui->LabelsGainsActuators->setVisible(false); //labels del actuador y controlador
+        ui->GainScreenInputSB->setVisible(false); // spin boxes
+        ui->LabelsGainsLabels->setVisible(false); //labels valor ganancias
+        ui->mcvalueSB->setVisible(false); //spinbox mc
+
+        ui->label_mc->setVisible(false); //label mc
+
+        ui->label_mcvalue->setVisible(false);//label value of mc
+
+        ui->cambiarGainsPB->setVisible(false); //push button de cambiar ganancias
+
+        ui->label_ControlSelected->setText(""); //borrar el texto del controlador seleccionado
+
+        //-----------------------------------------
+        //BorraPosiciones
+
+        ui->PosRobotLabels->setVisible(false);
+        ui->QScreenLabels->setVisible(false);  //borra las etiquetas de la posición del robot
+
+
+        ui->PosDeseadaRobotLabels->setVisible(false);
+        ui->QdScreenLabels->setVisible(false); //borra las etiquetas de posición deseada del robot
+        ui->QdSreenInputSB->setVisible(false); //borra los spinbox de qd
+
+        ui->ChangePosScreenButtons->setVisible(false); // borra los botones para cambiar qd
+        //---------------------------------------------------
+        // ...
+    }else if (Selected == "BorrarLabelsGanancias")    {
+
+        // ...
+        ui->LabelsGainsLabels->setVisible(false); //labels valor ganancias
+        //ui->label_ControlSelected->setText(""); //borrar el texto del controlador seleccionado
+        if(ui->ControlSelect->currentText()=="P'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="P'D' + Compensación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Compensación de Gravedad"){
+            ui->label_mcvalue->setVisible(false);
         }
 
-        //----------------------------------------
-        if (object == ui->KI1 && ki1 > ki1Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki1Max);
-            QString titulo = "Error en KI1";
-            QMessageBox::warning(this, titulo, mensaje);
+    }else if (Selected == "BorrarSpinBoxGanancias")    {
+        // ...
+        ui->GainScreenInputSB->setVisible(false);
+        if(ui->ControlSelect->currentText()=="P'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="P'D' + Compensación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Compensación de Gravedad"){
+            ui->mcvalueSB->setVisible(false);
         }
-        else if (object == ui->KI2 && ki2 > ki2Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki3Max);
-            QString titulo = "Error en KI2";
-            QMessageBox::warning(this, titulo, mensaje);
+    }else if (Selected == "BorrarLabelsTiempo")    {
+        // ...
+        ui->label_Tiempo->setVisible(false);
+    }else if (Selected == "BorrarSpinBoxTiempo")    {
+        // ...
+        ui->TiempoValueSB->setVisible(false);
+    }else if (Selected == "BorrarLabelsQd")    {
+        // ...
+        ui->QdScreenLabels->setVisible(false);
+
+    }else if (Selected == "BorrarSpinBoxQd")    {
+        // ...
+        ui->QdSreenInputSB->setVisible(false);
+    }else if (Selected == "BorrarGraficas")    {
+        // ...
+        ui->label_Graficas->setVisible(false);
+        ui->grafica1->setVisible(false);
+        ui->grafica2->setVisible(false);
+        ui->AgregarGraficaPB->setVisible(false);
+        ui->EliminarGraficaPB->setVisible(false);
+        ui->ElegirGraficaCB->setVisible(false);
+        ui->GraficasTiempoRealRB->setVisible(false);
+    }//------------------------------------------------------------------------------------------------------------------------- Activar
+    else if (Selected == "ActivarTodo")    {
+        // ...
+        ui->ControlScreenCB->setVisible(true);
+        ui->label_ControlSelected->setVisible(true);
+        ui->CambiarControlPB->setVisible(true);
+        ui->Graficas_checkBox->setDisabled(false);
+
+        ui->TiempoAccion->setVisible(true);
+        ui->CambiarTiempoPB->setVisible(true);
+
+        ui->LabelsGainsActuators->setVisible(true); //labels del actuador y controlador
+        ui->LabelsGainsLabels->setVisible(true); //labels valor ganancias
+
+        ui->cambiarGainsPB->setVisible(true); //push button de cambiar ganancias
+
+        ui->PosRobotLabels->setVisible(true);
+        ui->QScreenLabels->setVisible(true);  //borra las etiquetas de la posición del robot
+
+
+        ui->PosDeseadaRobotLabels->setVisible(true);
+        ui->QdScreenLabels->setVisible(true); //borra las etiquetas de posición deseada del robot
+        ui->ChangePosScreenButtons->setVisible(true);
+
+    }else if (Selected == "ActivarLabelsGanancias")    {
+        // ...
+        ui->LabelsGainsLabels->setVisible(true); //labels valor ganancias
+        ui->label_FirstG->setText("Kp");
+        ui->label_kp1->setText(QString::number(kp[0]));
+        ui->label_kp2->setText(QString::number(kp[1]));
+        ui->label_kp3->setText(QString::number(kp[2]));
+        ui->label_kp4->setText(QString::number(kp[3]));
+        ui->label_kp5->setText(QString::number(kp[4]));
+        ui->label_kp6->setText(QString::number(kp[5]));
+        /*
+        ui->label_SecondG->setText("Ki");
+        ui->label_ki1->setText(QString::number(ki[0]));
+        ui->label_ki2->setText(QString::number(ki[1]));
+        ui->label_ki3->setText(QString::number(ki[2]));
+        ui->label_ki4->setText(QString::number(ki[3]));
+        ui->label_ki5->setText(QString::number(ki[4]));
+        ui->label_ki6->setText(QString::number(ki[5]));
+        */
+        ui->label_ThirdG->setText("Kd");
+        ui->label_kd1->setText(QString::number(kd[0]));
+        ui->label_kd2->setText(QString::number(kd[1]));
+        ui->label_kd3->setText(QString::number(kd[2]));
+        ui->label_kd4->setText(QString::number(kd[3]));
+        ui->label_kd5->setText(QString::number(kd[4]));
+        ui->label_kd6->setText(QString::number(kd[5]));
+        if(ui->ControlSelect->currentText()=="P'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="P'D' + Compensación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Compensación de Gravedad"){
+            ui->label_mc->setVisible(true);
+            ui->label_mcvalue->setVisible(true);
+            ui->label_mcvalue->setText(QString::number(Mc));
         }
-        else if (object == ui->KI3 && ki3 > ki3Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki4Max);
-            QString titulo = "Error en KI3";
-            QMessageBox::warning(this, titulo, mensaje);
+
+    }else if (Selected == "ActivarSpinBoxGanancias")    {
+        // ...
+        ui->GainScreenInputSB->setVisible(true);
+        if(banderaPID==false){
+            ui->ki1SB->setVisible(false);
+            ui->ki2SB->setVisible(false);
+            ui->ki3SB->setVisible(false);
+            ui->ki4SB->setVisible(false);
+            ui->ki5SB->setVisible(false);
+            ui->ki6SB->setVisible(false);
         }
-        else if (object == ui->KI4 && ki4 > ki4Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
-            QString titulo = "Error en KI4";
-            QMessageBox::warning(this, titulo, mensaje);
+        ui->label_FirstG->setText("Kp");
+        ui->kp1SB->setValue(kp[0]);
+        ui->kp2SB->setValue(kp[1]);
+        ui->kp3SB->setValue(kp[2]);
+        ui->kp4SB->setValue(kp[3]);
+        ui->kp5SB->setValue(kp[4]);
+        ui->kp6SB->setValue(kp[5]);
+        //ui->ki1SB->setValue(ki[0]);
+        //ui->ki2SB->setValue(ki[1]);
+        //ui->ki3SB->setValue(ki[2]);
+        //ui->ki4SB->setValue(ki[3]);
+        //ui->ki5SB->setValue(ki[4]);
+        //ui->ki6SB->setValue(ki[5]);
+        ui->label_ThirdG->setText("Kd");
+        ui->kd1SB->setValue(kd[0]);
+        ui->kd2SB->setValue(kd[1]);
+        ui->kd3SB->setValue(kd[2]);
+        ui->kd4SB->setValue(kd[3]);
+        ui->kd5SB->setValue(kd[4]);
+        ui->kd6SB->setValue(kd[5]);
+        if(ui->ControlSelect->currentText()=="P'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="P'D' + Compensación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Cancelación de Gravedad"||ui->ControlSelect->currentText()=="sPs'D' + Compensación de Gravedad"){
+            ui->label_mc->setVisible(true);
+            ui->mcvalueSB->setVisible(true);
         }
-        else if (object == ui->KI5 && ki5 > ki5Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki5Max);
-            QString titulo = "Error en KI5";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KI6 && ki6 > ki6Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(ki6Max);
-            QString titulo = "Error en KI6";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        //-----------------------------------------------------------
-        if (object == ui->KD1 && kd1 > kd1Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd1Max);
-            QString titulo = "Error en KD1";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KD2 && kd2 > kd2Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd2Max);
-            QString titulo = "Error en KD2";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KD3 && kd3 > kd3Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd3Max);
-            QString titulo = "Error en KD3";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KD4 && kd4 > kd4Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd4Max);
-            QString titulo = "Error en KD4";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KD5 && kd5 > kd5Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd5Max);
-            QString titulo = "Error en KD5";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
-        else if (object == ui->KD6 && kd6 > kd6Max)
-        {
-            QString mensaje = "El valor es mayor que " + QString::number(kd6Max);
-            QString titulo = "Error en KD6";
-            QMessageBox::warning(this, titulo, mensaje);
-        }
+
+    }else if (Selected == "ActivarLabelsTiempo")    {
+        // ...
+        ui->label_Tiempo->setVisible(true);
+
+    }else if (Selected == "ActivarSpinBoxTiempo")    {
+        // ...
+        ui->TiempoValueSB->setVisible(true);
+
+    }else if (Selected == "ActivarLabelsQd")    {
+        // ...
+        ui->QdScreenLabels->setVisible(true); //Activa las etiquetas de los valores de las ganancias
+
+        ui->label_posqd1->setText(QString::number(qd[0])); //Cambia el valor en las etiquetas por los valores guardados
+        ui->label_posqd2->setText(QString::number(qd[1]));
+        ui->label_posqd3->setText(QString::number(qd[2]));
+        ui->label_posqd4->setText(QString::number(qd[3]));
+        ui->label_posqd5->setText(QString::number(qd[4]));
+        ui->label_posqd6->setText(QString::number(qd[5]));
+
+
+    }else if (Selected == "ActivarSpinBoxQd")    {
+        // ...
+        ui->QdSreenInputSB->setVisible(true);
+
+        ui->qd1SB->setValue(qd[0]);
+        ui->qd2SB->setValue(qd[1]);
+        ui->qd3SB->setValue(qd[2]);
+        ui->qd4SB->setValue(qd[3]);
+        ui->qd5SB->setValue(qd[4]);
+        ui->qd6SB->setValue(qd[5]);
+
+    }else if (Selected == "ActivarGraficas")    {
+        // ...
+        ui->label_Graficas->setVisible(true);
+        ui->grafica1->setVisible(true);
+        ui->grafica2->setVisible(true);
+        ui->AgregarGraficaPB->setVisible(true);
+        ui->EliminarGraficaPB->setVisible(true);
+        ui->ElegirGraficaCB->setVisible(true);
+        ui->GraficasTiempoRealRB->setVisible(true);
+
+    }else if(Selected == "Detener"){
+        ui->CambiarTiempoPB->setDisabled(true);
+        ui->CambiarControlPB->setDisabled(true);
+        ui->ChangePosScreenButtons->setDisabled(true);
+        ui->cambiarGainsPB->setDisabled(true);
+
+    }else if(Selected == "Continuar"){
+        ui->CambiarTiempoPB->setDisabled(false);
+        ui->CambiarControlPB->setDisabled(false);
+        ui->ChangePosScreenButtons->setDisabled(false);
+        ui->cambiarGainsPB->setDisabled(false);
+
+    }//-------------------------------------------------------------------------------------------------------------------------
+    else{
+        QMessageBox::warning(this,tr("Error en el programa"),tr("Hubo un error a la hora de correr el programa. Error: 01"));
     }
-    return false;
 }
