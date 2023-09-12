@@ -1,7 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>Icono-guardar.ico</file>
-        <file>PDF_file_icon.svg.ico</file>
-        <file>robot.ico</file>
+        <file>appicon.ico</file>
+        <file>pdficon.ico</file>
+        <file>ipv4icon.ico</file>
+        <file>settingsicon.ico</file>
     </qresource>
 </RCC>
