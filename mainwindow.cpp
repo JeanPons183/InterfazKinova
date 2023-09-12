@@ -249,7 +249,20 @@ void MainWindow::on_CambiarTiempoPB_clicked()
 
 void MainWindow::on_ActivarGraficasPB_clicked()
 {
-
+    if(GraficasActivadoBoton){
+        ui->ActivarGraficasPB->setText("Activar Gráficas");
+        ui->Plots->resize(1901,51);
+        ui->GraficasTiempoRealRB->setVisible(false);
+        ui->GraficasDespuesRB->setVisible(false);
+        GraficasActivadoBoton=false;
+    }else{
+        ui->ActivarGraficasPB->setText("Desactivar Gráficas");
+        ui->Plots->resize(1901,541);
+        ui->GraficasTiempoRealRB->setVisible(true);
+        ui->GraficasDespuesRB->setVisible(true);
+        ui->GraficasDespuesRB->setChecked(true);
+        GraficasActivadoBoton=true;
+    }
 }
 
 
