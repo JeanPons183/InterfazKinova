@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <RCC>
     <qresource prefix="/">
         <file>Icono-guardar.ico</file>
@@ -6,12 +5,3 @@
         <file>robot.ico</file>
     </qresource>
 </RCC>
-=======
-<RCC>
-    <qresource prefix="/">
-        <file>Icono-guardar.ico</file>
-        <file>PDF_file_icon.svg.ico</file>
-        <file>robot.ico</file>
-    </qresource>
-</RCC>
->>>>>>> Jean
