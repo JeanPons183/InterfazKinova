@@ -2767,7 +2767,7 @@
         </widget>
        </item>
        <item row="8" column="3">
-        <widget class="QLabel" name="label_104">
+        <widget class="QLabel" name="label_EFz">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -2803,7 +2803,7 @@
         </widget>
        </item>
        <item row="4" column="2" colspan="2">
-        <widget class="QLabel" name="label_71">
+        <widget class="QLabel" name="label_q4">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -2899,7 +2899,7 @@
         </widget>
        </item>
        <item row="5" column="2" colspan="2">
-        <widget class="QLabel" name="label_72">
+        <widget class="QLabel" name="label_q5">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -2923,7 +2923,7 @@
         </widget>
        </item>
        <item row="8" column="1">
-        <widget class="QLabel" name="label_101">
+        <widget class="QLabel" name="label_EFx">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -2941,7 +2941,7 @@
         </widget>
        </item>
        <item row="3" column="2" colspan="2">
-        <widget class="QLabel" name="label_70">
+        <widget class="QLabel" name="label_q3">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -2965,7 +2965,7 @@
         </widget>
        </item>
        <item row="1" column="2" colspan="2">
-        <widget class="QLabel" name="label_67">
+        <widget class="QLabel" name="label_q1">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -3025,7 +3025,7 @@
         </widget>
        </item>
        <item row="6" column="2" colspan="2">
-        <widget class="QLabel" name="label_73">
+        <widget class="QLabel" name="label_q6">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -3049,7 +3049,7 @@
         </widget>
        </item>
        <item row="2" column="2" colspan="2">
-        <widget class="QLabel" name="label_69">
+        <widget class="QLabel" name="label_q2">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -3073,7 +3073,7 @@
         </widget>
        </item>
        <item row="8" column="2">
-        <widget class="QLabel" name="label_93">
+        <widget class="QLabel" name="label_EFy">
          <property name="font">
           <font>
            <pointsize>12</pointsize>

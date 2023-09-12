@@ -14,7 +14,7 @@ bool TiempoActivado=false;
 bool ControlActivado=false;
 //bool banderaPausa=false;
 bool PosicionDeseada=false;
-bool GraficasActivado=false;
+//bool GraficasActivado=false;
 //------------------------------------------------------------
 
 //Banderas para los botones de la GUI-------------------------
@@ -39,6 +39,8 @@ double Maxkp[6];   // Valores maximos para las Ganancias Kp
 double Maxki[6];   // Valores maximos para las Ganancias Ki
 double Maxkd[6];   // Valores maximos para las Ganancias Kd
 double Maxkc[6];   // Valores maximos para las Ganancias Kc
+
+int GripperValue=0; // valor del porcentaje de posición del gripper 0 - 100% 0 -> Abierto, 100-> Cerrado
 
 double Mc=0; //Valor de la masa virtual del controlador
 
@@ -287,13 +289,49 @@ void MainWindow::on_cambiarGainsPB_clicked()
 
 void MainWindow::on_PosZeroPB_clicked()
 {
+    //check if it's not the position it is already in
 
+    // cambia la posicon deseada a q=[0,0,0,0,0,0]' (cero deg° para cada articulación)
+
+    qd[0]=0;
+    qd[1]=0;
+    qd[2]=0;
+    qd[3]=0;
+    qd[4]=0;
+    qd[5]=0;
+
+    ui->label_posqd1->setText(QString::number(qd[0]));
+    ui->label_posqd2->setText(QString::number(qd[1]));
+    ui->label_posqd3->setText(QString::number(qd[2]));
+    ui->label_posqd4->setText(QString::number(qd[3]));
+    ui->label_posqd5->setText(QString::number(qd[4]));
+    ui->label_posqd6->setText(QString::number(qd[5]));
+
+    PosicionDeseada=true;
 }
 
 
 void MainWindow::on_PosPackPB_clicked()
 {
+    //check if it's not the position it is already in
 
+    // cambia la posición deseada a q=[0,0,0,0,0,0]' (deg°) posición Packaging
+
+    qd[0]=0;
+    qd[1]=0;
+    qd[2]=0;
+    qd[3]=0;
+    qd[4]=0;
+    qd[5]=0;
+
+    ui->label_posqd1->setText(QString::number(qd[0]));
+    ui->label_posqd2->setText(QString::number(qd[1]));
+    ui->label_posqd3->setText(QString::number(qd[2]));
+    ui->label_posqd4->setText(QString::number(qd[3]));
+    ui->label_posqd5->setText(QString::number(qd[4]));
+    ui->label_posqd6->setText(QString::number(qd[5]));
+
+    PosicionDeseada=true;
 }
 
 
@@ -307,6 +345,7 @@ void MainWindow::on_CambiarQdPB_clicked()
         qd[3]= ui->qd4SB->value();
         qd[4]= ui->qd5SB->value();
         qd[5]= ui->qd6SB->value();
+        GripperValue= ui->gripValueSB->value();
 
         //Checar rangos de las posiciones y por singularidades
 
@@ -318,6 +357,7 @@ void MainWindow::on_CambiarQdPB_clicked()
         ui->label_posqd4->setText(QString::number(qd[3]));
         ui->label_posqd5->setText(QString::number(qd[4]));
         ui->label_posqd6->setText(QString::number(qd[5]));
+        ui->label_gripperValueQd->setText(QString::number(GripperValue)+"%");
 
         ui->CambiarQdPB->setText("Cambiar Posición Deseada");
 
@@ -333,6 +373,7 @@ void MainWindow::on_CambiarQdPB_clicked()
         ui->qd4SB->setValue(qd[3]);
         ui->qd5SB->setValue(qd[4]);
         ui->qd6SB->setValue(qd[5]);
+        ui->gripValueSB->setValue(GripperValue);
 
         ui->CambiarQdPB->setText("Guardar");
         PosicionDeseada=false;
@@ -348,13 +389,14 @@ void MainWindow::on_CambiarQdPB_clicked()
 
 void MainWindow::on_actionKinova_Gen_3_Lite_User_Manual_triggered()
 {
-
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Gen3_lite_USER_GUIDE_R03.pdf"));
+    //ui->MostrarErrores->setText(qApp->applicationDirPath());
 }
 
 
 void MainWindow::on_actionControl_IV_Class_Notes_triggered()
 {
-
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV_v17-01-22.pdf"));
 }
 
 
@@ -371,6 +413,9 @@ void MainWindow::on_EliminarGraficaPB_clicked()
 
 void MainWindow::Controlador(int select) // selector te permite seleccionar la pantalla de etiquetas o la pantalla de SpinBox, valor 0 o 1
 {
+
+    // Juntar ifs con operador or || para cortar código
+
     ui->ScreenGains->setVisible(true);
     ui->cambiarGainsPB->setVisible(true);
 
@@ -530,12 +575,21 @@ void MainWindow::SetValues()
 
     if(banderaVirtual){ // select se usa si no se puede medir velocidad, para un controlador de segundo orden, utiliza los valores del controlador virtual
         ui->mcValueLabel->setText(QString::number(Mc));
+        ui->mcValueSB->setValue(Mc);
+
         ui->kc1SB->setValue(kc[0]);
         ui->kc2SB->setValue(kc[1]);
         ui->kc3SB->setValue(kc[2]);
         ui->kc4SB->setValue(kc[3]);
         ui->kc5SB->setValue(kc[4]);
         ui->kc6SB->setValue(kc[5]);
+
+        ui->kc1Label->setText(QString::number(kc[0]));
+        ui->kc2Label->setText(QString::number(kc[1]));
+        ui->kc3Label->setText(QString::number(kc[2]));
+        ui->kc4Label->setText(QString::number(kc[3]));
+        ui->kc5Label->setText(QString::number(kc[4]));
+        ui->kc6Label->setText(QString::number(kc[5]));
     }
     ui->kp1SB->setValue(kp[0]);
     ui->kp2SB->setValue(kp[1]);
@@ -543,6 +597,14 @@ void MainWindow::SetValues()
     ui->kp4SB->setValue(kp[3]);
     ui->kp5SB->setValue(kp[4]);
     ui->kp6SB->setValue(kp[5]);
+
+    ui->kp1Label->setText(QString::number(kp[0]));
+    ui->kp2Label->setText(QString::number(kp[1]));
+    ui->kp3Label->setText(QString::number(kp[2]));
+    ui->kp4Label->setText(QString::number(kp[3]));
+    ui->kp5Label->setText(QString::number(kp[4]));
+    ui->kp6Label->setText(QString::number(kp[5]));
+
     //--------------------------------
     /*
     ui->ki1SB->setValue(ki[0]);
@@ -553,12 +615,20 @@ void MainWindow::SetValues()
     ui->ki6SB->setValue(ki[5]);
     */
     //--------------------------------
+
     ui->kd1SB->setValue(kd[0]);
     ui->kd2SB->setValue(kd[1]);
     ui->kd3SB->setValue(kd[2]);
     ui->kd4SB->setValue(kd[3]);
     ui->kd5SB->setValue(kd[4]);
     ui->kd6SB->setValue(kd[5]);
+
+    ui->kd1Label->setText(QString::number(kd[0]));
+    ui->kd2Label->setText(QString::number(kd[1]));
+    ui->kd3Label->setText(QString::number(kd[2]));
+    ui->kd4Label->setText(QString::number(kd[3]));
+    ui->kd5Label->setText(QString::number(kd[4]));
+    ui->kd6Label->setText(QString::number(kd[5]));
 }
 
 
