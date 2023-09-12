@@ -67,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent)
     MainWindow::setWindowState(Qt::WindowMaximized);
     //ui->RobotSetting->setMinimumHeight(minimumHeight());
 
+    ui->ConeccionCB->setChecked(true);
+    ui->ConeccionCB->setVisible(false);
+
     ui->RobotSetting->resize(1611,21); // al abrir la aplicacion se esconde la pantalla
     ui->Ejecucion->resize(261,21);
     ui->Plots->resize(1901,21);
@@ -111,7 +114,7 @@ void MainWindow::on_ConectarPB_clicked()
 
     if(RobotConectado){
         ui->ConectarPB->setVisible(false); // eliminamos el botón
-        ui->ConeccionCB->setChecked(true);
+        ui->ConeccionCB->setVisible(true);
         ui->ConeccionCB->setEnabled(false);
 
         ui->RobotSetting->resize(1611,411); // desplegamos los widgets
@@ -157,31 +160,58 @@ void MainWindow::on_ConectarPB_clicked()
 
 void MainWindow::on_IniciarPB_clicked()
 {
+    ui->ActivarGraficasPB->setEnabled(false);
+    ui->GraficasDespuesRB->setEnabled(false);
+    ui->GraficasTiempoRealRB->setEnabled(false);
+    //--------------------------------------------
+    ui->CambiarTiempoPB->setEnabled(false);
+    ui->CambiarControlPB->setEnabled(false);
+    ui->CambiarQdPB->setEnabled(false);
+    ui->cambiarGainsPB->setEnabled(false);
+    ui->PosPackPB->setEnabled(false);
+    ui->PosZeroPB->setEnabled(false);
+    //--------------------------------------------
+    ui->CorrerRobotRB->setEnabled(false);
+    ui->SimulacionRB->setEnabled(false);
+    //--------------------------------------------
+    ui->ProgresoPBar->setVisible(true);
+    ui->RunStop->setCurrentIndex(1);
+
+    //Funcion del Robot();
 
 }
 
 
 void MainWindow::on_PausePB_clicked()
 {
-
+    //Mantener posición o pausar, no sé cual funcione
+    ui->RunStop->setCurrentIndex(2);
 }
 
+void MainWindow::on_ContinuarPB_clicked()
+{
+    //Reanudar la acción
+    ui->RunStop->setCurrentIndex(1);
+}
 
 void MainWindow::on_StopPB_clicked()
 {
-
+    //Detener todo
+    ui->RunStop->setCurrentIndex(3);
 }
 
 
 void MainWindow::on_StopPB_2_clicked()
 {
-
+    //tener una señal que se conecte con los dos botones de STOP
+    ui->RunStop->setCurrentIndex(3);
 }
 
 
 void MainWindow::on_RegresarPB_clicked()
 {
-
+    //Dejar que te permita hacer otra prueba
+    ui->RunStop->setCurrentIndex(0);
 }
 
 
@@ -230,7 +260,7 @@ void MainWindow::on_CambiarTiempoPB_clicked()
             TiempoActivadoBoton=false;
         }else{ //Error, numero igual a 0
             QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
-            ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoSB->value())+" no es correcto");
+            ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoSB->value())+" no es un valor valido");
         }
     }else{
         ui->CambiarTiempoPB->setText("Guardar");
@@ -321,6 +351,11 @@ void MainWindow::on_PosZeroPB_clicked()
     ui->label_posqd6->setText(QString::number(qd[5]));
 
     PosicionDeseada=true;
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->IniciarPB->setEnabled(true);
+    }else{
+        ui->IniciarPB->setEnabled(false);
+    }
 }
 
 
@@ -345,6 +380,11 @@ void MainWindow::on_PosPackPB_clicked()
     ui->label_posqd6->setText(QString::number(qd[5]));
 
     PosicionDeseada=true;
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->IniciarPB->setEnabled(true);
+    }else{
+        ui->IniciarPB->setEnabled(false);
+    }
 }
 
 
@@ -643,5 +683,8 @@ void MainWindow::SetValues()
     ui->kd5Label->setText(QString::number(kd[4]));
     ui->kd6Label->setText(QString::number(kd[5]));
 }
+
+
+
 
 

@@ -58,6 +58,8 @@ private slots:
 
     void SetValues();
 
+    void on_ContinuarPB_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

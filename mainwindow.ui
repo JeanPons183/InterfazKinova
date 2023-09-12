@@ -47,9 +47,9 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>0</y>
-      <width>341</width>
+      <width>351</width>
       <height>32</height>
      </rect>
     </property>
@@ -979,7 +979,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Ganancias del control virtual</string>
+            <string>Ganancias del Control Virtual</string>
            </property>
           </widget>
          </item>
@@ -3113,7 +3113,7 @@
        <rect>
         <x>310</x>
         <y>10</y>
-        <width>280</width>
+        <width>271</width>
         <height>350</height>
        </rect>
       </property>
@@ -3143,7 +3143,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>264</width>
+          <width>261</width>
           <height>277</height>
          </rect>
         </property>
@@ -3153,17 +3153,41 @@
          </font>
         </property>
         <layout class="QGridLayout" name="GridQdLabels">
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_42">
+         <item row="7" column="2">
+          <widget class="QLabel" name="label_gripperValueQd">
            <property name="minimumSize">
             <size>
              <width>0</width>
+             <height>29</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>0%</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_42">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
              <height>28</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
+             <width>30</width>
              <height>28</height>
             </size>
            </property>
@@ -3177,145 +3201,7 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="label_posqd6">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="text">
-            <string>0°</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="label_posqd4">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="text">
-            <string>0°</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="label_posqd2">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="text">
-            <string>0°</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_47">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>6:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_41">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Posición deseada del Robot (deg)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
+         <item row="3" column="2">
           <widget class="QLabel" name="label_posqd3">
            <property name="minimumSize">
             <size>
@@ -3345,7 +3231,133 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_43">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>2:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_44">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>3:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="label_47">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>6:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_posqd1">
+           <property name="minimumSize">
+            <size>
+             <width>113</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>113</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>0°</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_45">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>4:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
           <widget class="QLabel" name="label_posqd5">
            <property name="minimumSize">
             <size>
@@ -3375,80 +3387,8 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_44">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>3:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_46">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>5:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_45">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>4:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="label_posqd1">
+         <item row="6" column="2">
+          <widget class="QLabel" name="label_posqd6">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -3477,8 +3417,8 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_43">
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_posqd2">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -3496,12 +3436,91 @@
              <pointsize>12</pointsize>
             </font>
            </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
            <property name="text">
-            <string>2:</string>
+            <string>0°</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="5" column="1">
+          <widget class="QLabel" name="label_46">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>5:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLabel" name="label_posqd4">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>0°</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="minimumSize">
+            <size>
+             <width>15</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="2">
           <widget class="QLabel" name="label_105">
            <property name="minimumSize">
             <size>
@@ -3525,12 +3544,18 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <widget class="QLabel" name="label_gripperValueQd">
+         <item row="0" column="0" colspan="3">
+          <widget class="QLabel" name="label_41">
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>29</height>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
             </size>
            </property>
            <property name="font">
@@ -3538,14 +3563,8 @@
              <pointsize>12</pointsize>
             </font>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
            <property name="text">
-            <string>0%</string>
+            <string>Posición deseada del Robot (deg)</string>
            </property>
           </widget>
          </item>
@@ -3602,28 +3621,12 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>264</width>
+          <width>261</width>
           <height>278</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="GridQdSB">
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="qd2SB">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
+         <item row="1" column="2">
           <widget class="QSpinBox" name="qd1SB">
            <property name="minimumSize">
             <size>
@@ -3633,13 +3636,48 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
+             <width>123</width>
              <height>28</height>
             </size>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="2" column="2">
+          <widget class="QSpinBox" name="qd2SB">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>123</width>
+             <height>28</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_55">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>1:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
           <widget class="QSpinBox" name="qd6SB">
            <property name="minimumSize">
             <size>
@@ -3649,13 +3687,140 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
+             <width>123</width>
              <height>28</height>
             </size>
            </property>
           </widget>
          </item>
+         <item row="4" column="2">
+          <widget class="QSpinBox" name="qd4SB">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>123</width>
+             <height>28</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_56">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>2:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QSpinBox" name="gripValueSB">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>123</width>
+             <height>35</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="label_59">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>6:</string>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="1">
+          <widget class="QLabel" name="label_58">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>5:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_54">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>3:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_57">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>4:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
           <widget class="QSpinBox" name="qd5SB">
            <property name="minimumSize">
             <size>
@@ -3665,13 +3830,48 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
+             <width>123</width>
              <height>28</height>
             </size>
            </property>
           </widget>
          </item>
-         <item row="0" column="0" colspan="2">
+         <item row="3" column="2">
+          <widget class="QSpinBox" name="qd3SB">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>123</width>
+             <height>28</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="minimumSize">
+            <size>
+             <width>15</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
           <widget class="QLabel" name="label_61">
            <property name="minimumSize">
             <size>
@@ -3690,153 +3890,7 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_58">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>5:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_56">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>2:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_55">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>1:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_54">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>3:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_59">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>6:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QSpinBox" name="qd4SB">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QSpinBox" name="qd3SB">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_57">
-           <property name="minimumSize">
-            <size>
-             <width>128</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>4:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
+         <item row="7" column="0" colspan="2">
           <widget class="QLabel" name="label_107">
            <property name="minimumSize">
             <size>
@@ -3857,22 +3911,6 @@
            </property>
            <property name="text">
             <string>Claw Grip (0-100%):</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QSpinBox" name="gripValueSB">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>35</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>35</height>
-            </size>
            </property>
           </widget>
          </item>
@@ -4093,7 +4131,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>240</y>
+        <y>250</y>
         <width>221</width>
         <height>131</height>
        </rect>
@@ -4109,7 +4147,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>200</y>
+        <y>220</y>
         <width>81</width>
         <height>21</height>
        </rect>
@@ -4128,7 +4166,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>10</y>
+        <y>30</y>
         <width>221</width>
         <height>161</height>
        </rect>
@@ -4329,7 +4367,7 @@
    <widget class="QCheckBox" name="ConeccionCB">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>30</x>
       <y>40</y>
       <width>171</width>
       <height>31</height>
@@ -4347,9 +4385,9 @@
    <widget class="QPushButton" name="ConectarPB">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>30</x>
       <y>40</y>
-      <width>221</width>
+      <width>201</width>
       <height>41</height>
      </rect>
     </property>
