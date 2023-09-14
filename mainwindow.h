@@ -60,6 +60,8 @@ private slots:
 
     void on_ContinuarPB_clicked();
 
+    void Graficar(int select);
+
 private:
     Ui::MainWindow *ui;
 };

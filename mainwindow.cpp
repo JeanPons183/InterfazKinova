@@ -100,12 +100,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
 void MainWindow::on_ConectarPB_clicked()
 {
@@ -125,6 +123,7 @@ void MainWindow::on_ConectarPB_clicked()
         ui->SimulacionRB->setChecked(true); // por defecto se usa el modo simulación
 
         ui->ActivarGraficasPB->setVisible(true); // se activa el boton que permite graficar
+        ui->ActivarGraficasPB->setEnabled(false);
 
         ui->label_Estado->setVisible(true);    // se despliegan las etiquetas del estado del robot
         ui->label_EstadoActual->setVisible(true);
@@ -157,7 +156,6 @@ void MainWindow::on_ConectarPB_clicked()
     }
 }
 
-
 void MainWindow::on_IniciarPB_clicked()
 {
     ui->ActivarGraficasPB->setEnabled(false);
@@ -181,7 +179,6 @@ void MainWindow::on_IniciarPB_clicked()
 
 }
 
-
 void MainWindow::on_PausePB_clicked()
 {
     //Mantener posición o pausar, no sé cual funcione
@@ -200,26 +197,17 @@ void MainWindow::on_StopPB_clicked()
     ui->RunStop->setCurrentIndex(3);
 }
 
-
 void MainWindow::on_StopPB_2_clicked()
 {
     //tener una señal que se conecte con los dos botones de STOP
     ui->RunStop->setCurrentIndex(3);
 }
 
-
 void MainWindow::on_RegresarPB_clicked()
 {
     //Dejar que te permita hacer otra prueba
     ui->RunStop->setCurrentIndex(0);
 }
-
-
-void MainWindow::on_GuardarTrayectoriaPB_clicked()
-{
-
-}
-
 
 void MainWindow::on_CambiarControlPB_clicked()
 {
@@ -242,11 +230,12 @@ void MainWindow::on_CambiarControlPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_CambiarTiempoPB_clicked()
 {
@@ -260,7 +249,7 @@ void MainWindow::on_CambiarTiempoPB_clicked()
             TiempoActivadoBoton=false;
         }else{ //Error, numero igual a 0
             QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
-            ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoSB->value())+" no es un valor valido");
+            ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoSB->value())+", no es un valor valido");
         }
     }else{
         ui->CambiarTiempoPB->setText("Guardar");
@@ -271,11 +260,12 @@ void MainWindow::on_CambiarTiempoPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_ActivarGraficasPB_clicked()
 {
@@ -294,7 +284,6 @@ void MainWindow::on_ActivarGraficasPB_clicked()
         GraficasActivadoBoton=true;
     }
 }
-
 
 void MainWindow::on_cambiarGainsPB_clicked()
 {
@@ -324,11 +313,12 @@ void MainWindow::on_cambiarGainsPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_PosZeroPB_clicked()
 {
@@ -343,21 +333,22 @@ void MainWindow::on_PosZeroPB_clicked()
     qd[4]=0;
     qd[5]=0;
 
-    ui->label_posqd1->setText(QString::number(qd[0]));
-    ui->label_posqd2->setText(QString::number(qd[1]));
-    ui->label_posqd3->setText(QString::number(qd[2]));
-    ui->label_posqd4->setText(QString::number(qd[3]));
-    ui->label_posqd5->setText(QString::number(qd[4]));
-    ui->label_posqd6->setText(QString::number(qd[5]));
+    ui->label_posqd1->setText(QString::number(qd[0])+"°");
+    ui->label_posqd2->setText(QString::number(qd[1])+"°");
+    ui->label_posqd3->setText(QString::number(qd[2])+"°");
+    ui->label_posqd4->setText(QString::number(qd[3])+"°");
+    ui->label_posqd5->setText(QString::number(qd[4])+"°");
+    ui->label_posqd6->setText(QString::number(qd[5])+"°");
 
     PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_PosPackPB_clicked()
 {
@@ -372,21 +363,22 @@ void MainWindow::on_PosPackPB_clicked()
     qd[4]=0;
     qd[5]=0;
 
-    ui->label_posqd1->setText(QString::number(qd[0]));
-    ui->label_posqd2->setText(QString::number(qd[1]));
-    ui->label_posqd3->setText(QString::number(qd[2]));
-    ui->label_posqd4->setText(QString::number(qd[3]));
-    ui->label_posqd5->setText(QString::number(qd[4]));
-    ui->label_posqd6->setText(QString::number(qd[5]));
+    ui->label_posqd1->setText(QString::number(qd[0])+"°");
+    ui->label_posqd2->setText(QString::number(qd[1])+"°");
+    ui->label_posqd3->setText(QString::number(qd[2])+"°");
+    ui->label_posqd4->setText(QString::number(qd[3])+"°");
+    ui->label_posqd5->setText(QString::number(qd[4])+"°");
+    ui->label_posqd6->setText(QString::number(qd[5])+"°");
 
     PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_CambiarQdPB_clicked()
 {
@@ -404,12 +396,12 @@ void MainWindow::on_CambiarQdPB_clicked()
 
         ui->ScreenQd->setCurrentIndex(0);
 
-        ui->label_posqd1->setText(QString::number(qd[0])); //Cambia el valor en las etiquetas por los valores guardados
-        ui->label_posqd2->setText(QString::number(qd[1]));
-        ui->label_posqd3->setText(QString::number(qd[2]));
-        ui->label_posqd4->setText(QString::number(qd[3]));
-        ui->label_posqd5->setText(QString::number(qd[4]));
-        ui->label_posqd6->setText(QString::number(qd[5]));
+        ui->label_posqd1->setText(QString::number(qd[0])+"°"); //Cambia el valor en las etiquetas por los valores guardados
+        ui->label_posqd2->setText(QString::number(qd[1])+"°");
+        ui->label_posqd3->setText(QString::number(qd[2])+"°");
+        ui->label_posqd4->setText(QString::number(qd[3])+"°");
+        ui->label_posqd5->setText(QString::number(qd[4])+"°");
+        ui->label_posqd6->setText(QString::number(qd[5])+"°");
         ui->label_gripperValueQd->setText(QString::number(GripperValue)+"%");
 
         ui->CambiarQdPB->setText("Cambiar Posición Deseada");
@@ -434,11 +426,12 @@ void MainWindow::on_CambiarQdPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
+        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
+        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
-
 
 void MainWindow::on_actionKinova_Gen_3_Lite_User_Manual_triggered()
 {
@@ -446,20 +439,22 @@ void MainWindow::on_actionKinova_Gen_3_Lite_User_Manual_triggered()
     //ui->MostrarErrores->setText(qApp->applicationDirPath());
 }
 
-
 void MainWindow::on_actionControl_IV_Class_Notes_triggered()
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV_v17-01-22.pdf"));
 }
-
 
 void MainWindow::on_AgregarGraficaPB_clicked()
 {
 
 }
 
-
 void MainWindow::on_EliminarGraficaPB_clicked()
+{
+
+}
+
+void MainWindow::on_GuardarTrayectoriaPB_clicked()
 {
 
 }
@@ -487,91 +482,30 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
     ui->ki5SB->setVisible(false);
     ui->ki6SB->setVisible(false); // se desactivan las pertenencias de Ki
 
-    if((ui->label_ControlSelected->text())=="PD + Cancelación de Gravedad"){
+    /*Index del ComboBox
+     *0->PD + Cancelación de Gravedad
+     *1->PD + Compensación de Gravedad
+     *2->P'D' + Cancelación de Gravedad
+     *3->P'D' + Compensación de Gravedad
+     *4->sPsD + Cancelación de Gravedad
+     *5->sPsD + Compensación de Gravedad
+     *6->sPs'D' + Cancelación de Gravedad
+     *7->sPs'D' + Compensación de Gravedad
+     */
+
+    if((ui->ControlSelectCB->currentIndex())==0||(ui->ControlSelectCB->currentIndex())==1||(ui->ControlSelectCB->currentIndex())==4||(ui->ControlSelectCB->currentIndex())==5){
         banderaVirtual=false;
         ui->Screenmc->setVisible(false);
         ui->ScreenvirtualGains->setVisible(false);
         ui->label_Masavirtual->setVisible(false);
-        if(select){
+        if(select){ // Uno es la pantalla de entradas (SpinBox)
             ui->ScreenGains->setCurrentIndex(1);
 
         }else{ // Cero es la pantalla de etiquetas
 
             ui->ScreenGains->setCurrentIndex(0);
         }
-    }else if((ui->label_ControlSelected->text())=="PD + Compensación de Gravedad"){
-        banderaVirtual=false;
-        ui->Screenmc->setVisible(false);
-        ui->ScreenvirtualGains->setVisible(false);
-        ui->label_Masavirtual->setVisible(false);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="P'D' + Cancelación de Gravedad"){
-        banderaVirtual=true;
-        ui->Screenmc->setVisible(true);
-        ui->ScreenvirtualGains->setVisible(true);
-        ui->label_Masavirtual->setVisible(true);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-            ui->ScreenvirtualGains->setCurrentIndex(1);
-            ui->Screenmc->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-            ui->ScreenvirtualGains->setCurrentIndex(0);
-            ui->Screenmc->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="P'D' + Compensación de Gravedad"){
-        banderaVirtual=true;
-        ui->Screenmc->setVisible(true);
-        ui->ScreenvirtualGains->setVisible(true);
-        ui->label_Masavirtual->setVisible(true);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-            ui->ScreenvirtualGains->setCurrentIndex(1);
-            ui->Screenmc->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-            ui->ScreenvirtualGains->setCurrentIndex(0);
-            ui->Screenmc->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="sPsD + Cancelación de Gravedad"){
-        banderaVirtual=false;
-        ui->Screenmc->setVisible(false);
-        ui->ScreenvirtualGains->setVisible(false);
-        ui->label_Masavirtual->setVisible(false);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="sPsD + Compensación de Gravedad"){
-        banderaVirtual=false;
-        ui->Screenmc->setVisible(false);
-        ui->ScreenvirtualGains->setVisible(false);
-        ui->label_Masavirtual->setVisible(false);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="sPs'D' + Cancelación de Gravedad"){
-        banderaVirtual=true;
-        ui->Screenmc->setVisible(true);
-        ui->ScreenvirtualGains->setVisible(true);
-        ui->label_Masavirtual->setVisible(true);
-        if(select){
-            ui->ScreenGains->setCurrentIndex(1);
-            ui->ScreenvirtualGains->setCurrentIndex(1);
-            ui->Screenmc->setCurrentIndex(1);
-        }else{ // Cero es la pantalla de etiquetas
-            ui->ScreenGains->setCurrentIndex(0);
-            ui->ScreenvirtualGains->setCurrentIndex(0);
-            ui->Screenmc->setCurrentIndex(0);
-        }
-    }else if((ui->label_ControlSelected->text())=="sPs'D' + Compensación de Gravedad"){
+    }else if((ui->ControlSelectCB->currentIndex())==2||(ui->ControlSelectCB->currentIndex())==3||(ui->ControlSelectCB->currentIndex())==6||(ui->ControlSelectCB->currentIndex())==7){
         banderaVirtual=true;
         ui->Screenmc->setVisible(true);
         ui->ScreenvirtualGains->setVisible(true);
@@ -684,7 +618,83 @@ void MainWindow::SetValues()
     ui->kd6Label->setText(QString::number(kd[5]));
 }
 
+void MainWindow::Graficar(int select){
+
+    int TiempoTotal= segundos / deltaT;
+
+    ui->grafica1->addGraph();
+    ui->grafica1->legend->setVisible(true);
+    QFont legendFont = font();  // start out with MainWindow's font.
+    legendFont.setPointSize(9); // and make a bit smaller for legend
+    ui->grafica1->legend->setFont(legendFont);
+    ui->grafica1->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+
+    ui->grafica1->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+    ui->grafica1->xAxis->setLabel("Tiempo");
+    ui->grafica1->xAxis->setRange(0,TiempoTotal);
+    ui->grafica1->yAxis->setLabel("Rotación de la articulación (deg°)");
+    ui->grafica1->xAxis->setRange(-155,155);
+
+    ui->grafica1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
+
+    switch (select) {
+    case 0: //qd1
+        ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkCyan));
+        ui->grafica1->graph(0)->setName("Posición Deseada 1.");
+        break;
+    case 1: //q1
+        ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+        break;
+    case 2: //qd2
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkMagenta));
+        ui->grafica1->graph(0)->setName("Posición Deseada 2.");
+        break;
+    case 3: //q2
+        ui->grafica1->graph(0)->setPen(QPen(Qt::magenta));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 2.");
+        break;
+    case 4: //qd3
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkYellow));
+        ui->grafica1->graph(0)->setName("Posición Deseada 3.");
+        break;
+    case 5: //q3
+        ui->grafica1->graph(0)->setPen(QPen(Qt::yellow));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 3.");
+        break;
+    case 6: //qd4
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkGray));
+        ui->grafica1->graph(0)->setName("Posición Deseada 4.");
+        break;
+    case 7: //q4
+        ui->grafica1->graph(0)->setPen(QPen(Qt::gray));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 4.");
+        break;
+    case 8: //qd5
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkRed));
+        ui->grafica1->graph(0)->setName("Posición Deseada 5.");
+        break;
+    case 9: //q5
+        ui->grafica1->graph(0)->setPen(QPen(Qt::red));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 5.");
+        break;
+    case 10: //qd6
+        ui->grafica1->graph(0)->setPen(QPen(Qt::darkGreen));
+        ui->grafica1->graph(0)->setName("Posición Deseada 6.");
+        break;
+    case 11: //q6
+        ui->grafica1->graph(0)->setPen(QPen(Qt::green));
+        ui->grafica1->graph(0)->setName("Posición de la Articulación 6.");
+        break;
+    default: //error
+
+        break;
+    }
 
 
 
 
+
+}
