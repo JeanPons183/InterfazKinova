@@ -60,7 +60,9 @@ private slots:
 
     void on_ContinuarPB_clicked();
 
-    void Graficar(int select);
+    void SetGrafica(int select);
+
+    void GraficarTR(int select);
 
 private:
     Ui::MainWindow *ui;

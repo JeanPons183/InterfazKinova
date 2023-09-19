@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <qvector.h>
 
 //------------------------------------------------------------------------------------------------
 
@@ -282,6 +283,7 @@ void MainWindow::on_ActivarGraficasPB_clicked()
         ui->GraficasDespuesRB->setVisible(true);
         ui->GraficasDespuesRB->setChecked(true);
         GraficasActivadoBoton=true;
+        SetGrafica(ui->ElegirGraficaCB->currentIndex());
     }
 }
 
@@ -467,6 +469,7 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
     ui->ScreenGains->setVisible(true);
     ui->cambiarGainsPB->setVisible(true);
 
+    //------------------------------------------------------------------------
     ui->label_Ki->setVisible(false);
     ui->label_Ki_2->setVisible(false);
     ui->ki1Label->setVisible(false);
@@ -480,7 +483,8 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
     ui->ki3SB->setVisible(false);
     ui->ki4SB->setVisible(false);
     ui->ki5SB->setVisible(false);
-    ui->ki6SB->setVisible(false); // se desactivan las pertenencias de Ki
+    ui->ki6SB->setVisible(false);
+    // se desactivan las pertenencias de Ki ------------------------------------
 
     /*Index del ComboBox
      *0->PD + Cancelación de Gravedad
@@ -533,22 +537,21 @@ void MainWindow::SaveValues()
         kc[4]= ui->kc5SB->value();
         kc[5]= ui->kc6SB->value();
     }
+    if(banderaPID){
+        ki[0]= ui->ki1SB->value();
+        ki[1]= ui->ki2SB->value();
+        ki[2]= ui->ki3SB->value();
+        ki[3]= ui->ki4SB->value();
+        ki[4]= ui->ki5SB->value();
+        ki[5]= ui->ki6SB->value();
+    }
     kp[0]= ui->kp1SB->value();
     kp[1]= ui->kp2SB->value();
     kp[2]= ui->kp3SB->value();
     kp[3]= ui->kp4SB->value();
     kp[4]= ui->kp5SB->value();
     kp[5]= ui->kp6SB->value();
-    //--------------------------------
-    /*
-    ki[0]= ui->ki1SB->value();
-    ki[1]= ui->ki2SB->value();
-    ki[2]= ui->ki3SB->value();
-    ki[3]= ui->ki4SB->value();
-    ki[4]= ui->ki5SB->value();
-    ki[5]= ui->ki6SB->value();
-    */
-    //--------------------------------
+
     kd[0]= ui->kd1SB->value();
     kd[1]= ui->kd2SB->value();
     kd[2]= ui->kd3SB->value();
@@ -578,6 +581,21 @@ void MainWindow::SetValues()
         ui->kc5Label->setText(QString::number(kc[4]));
         ui->kc6Label->setText(QString::number(kc[5]));
     }
+    if(banderaPID){
+        ui->ki1SB->setValue(ki[0]);
+        ui->ki2SB->setValue(ki[1]);
+        ui->ki3SB->setValue(ki[2]);
+        ui->ki4SB->setValue(ki[3]);
+        ui->ki5SB->setValue(ki[4]);
+        ui->ki6SB->setValue(ki[5]);
+
+        ui->ki1Label->setText(QString::number(ki[0]));
+        ui->ki2Label->setText(QString::number(ki[1]));
+        ui->ki3Label->setText(QString::number(ki[2]));
+        ui->ki4Label->setText(QString::number(ki[3]));
+        ui->ki5Label->setText(QString::number(ki[4]));
+        ui->ki6Label->setText(QString::number(ki[5]));
+    }
     ui->kp1SB->setValue(kp[0]);
     ui->kp2SB->setValue(kp[1]);
     ui->kp3SB->setValue(kp[2]);
@@ -591,17 +609,6 @@ void MainWindow::SetValues()
     ui->kp4Label->setText(QString::number(kp[3]));
     ui->kp5Label->setText(QString::number(kp[4]));
     ui->kp6Label->setText(QString::number(kp[5]));
-
-    //--------------------------------
-    /*
-    ui->ki1SB->setValue(ki[0]);
-    ui->ki2SB->setValue(ki[1]);
-    ui->ki3SB->setValue(ki[2]);
-    ui->ki4SB->setValue(ki[3]);
-    ui->ki5SB->setValue(ki[4]);
-    ui->ki6SB->setValue(ki[5]);
-    */
-    //--------------------------------
 
     ui->kd1SB->setValue(kd[0]);
     ui->kd2SB->setValue(kd[1]);
@@ -618,11 +625,18 @@ void MainWindow::SetValues()
     ui->kd6Label->setText(QString::number(kd[5]));
 }
 
-void MainWindow::Graficar(int select){
+void MainWindow::SetGrafica(int select){
 
     int TiempoTotal= segundos / deltaT;
+    /*
+    QVector<double> Trayectoriaq1[TiempoTotal+1];
+    QVector<double> Trayectoriaq2[TiempoTotal+1];
+    QVector<double> Trayectoriaq3[TiempoTotal+1];
+    QVector<double> Trayectoriaq4[TiempoTotal+1];
+    QVector<double> Trayectoriaq5[TiempoTotal+1];
+    QVector<double> Trayectoriaq6[TiempoTotal+1];
+    */
 
-    ui->grafica1->addGraph();
     ui->grafica1->legend->setVisible(true);
     QFont legendFont = font();  // start out with MainWindow's font.
     legendFont.setPointSize(9); // and make a bit smaller for legend
@@ -634,67 +648,98 @@ void MainWindow::Graficar(int select){
     ui->grafica1->xAxis->setLabel("Tiempo");
     ui->grafica1->xAxis->setRange(0,TiempoTotal);
     ui->grafica1->yAxis->setLabel("Rotación de la articulación (deg°)");
-    ui->grafica1->xAxis->setRange(-155,155);
-
+    ui->grafica1->yAxis->setRange(-155,155);
     ui->grafica1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
 
     switch (select) {
-    case 0: //qd1
+    case 0: //q1
+        ui->grafica1->addGraph();
         ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
         ui->grafica1->graph(0)->setPen(QPen(Qt::darkCyan));
         ui->grafica1->graph(0)->setName("Posición Deseada 1.");
         break;
-    case 1: //q1
-        ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+    case 1: //q1 qd1
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(1)->setPen(QPen(Qt::cyan));
+        ui->grafica1->graph(1)->setName("Posición de la Articulación 1.");
         break;
-    case 2: //qd2
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkMagenta));
-        ui->grafica1->graph(0)->setName("Posición Deseada 2.");
+    case 2: //q2
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(2)->setPen(QPen(Qt::darkMagenta));
+        ui->grafica1->graph(2)->setName("Posición Deseada 2.");
         break;
-    case 3: //q2
-        ui->grafica1->graph(0)->setPen(QPen(Qt::magenta));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 2.");
+    case 3: //q2 qd2
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(3)->setPen(QPen(Qt::magenta));
+        ui->grafica1->graph(3)->setName("Posición de la Articulación 2.");
         break;
-    case 4: //qd3
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkYellow));
-        ui->grafica1->graph(0)->setName("Posición Deseada 3.");
+    case 4: //q3
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(4)->setPen(QPen(Qt::darkYellow));
+        ui->grafica1->graph(4)->setName("Posición Deseada 3.");
         break;
-    case 5: //q3
-        ui->grafica1->graph(0)->setPen(QPen(Qt::yellow));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 3.");
+    case 5: //q3 qd3
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(5)->setPen(QPen(Qt::yellow));
+        ui->grafica1->graph(5)->setName("Posición de la Articulación 3.");
         break;
-    case 6: //qd4
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkGray));
-        ui->grafica1->graph(0)->setName("Posición Deseada 4.");
+    case 6: //q4
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(6)->setPen(QPen(Qt::darkGray));
+        ui->grafica1->graph(6)->setName("Posición Deseada 4.");
         break;
-    case 7: //q4
-        ui->grafica1->graph(0)->setPen(QPen(Qt::gray));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 4.");
+    case 7: //q4 qd4
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(7)->setPen(QPen(Qt::gray));
+        ui->grafica1->graph(7)->setName("Posición de la Articulación 4.");
         break;
-    case 8: //qd5
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkRed));
-        ui->grafica1->graph(0)->setName("Posición Deseada 5.");
+    case 8: //q5
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(8)->setPen(QPen(Qt::darkRed));
+        ui->grafica1->graph(8)->setName("Posición Deseada 5.");
         break;
-    case 9: //q5
-        ui->grafica1->graph(0)->setPen(QPen(Qt::red));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 5.");
+    case 9: //q5 qd5
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(9)->setPen(QPen(Qt::red));
+        ui->grafica1->graph(9)->setName("Posición de la Articulación 5.");
         break;
-    case 10: //qd6
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkGreen));
-        ui->grafica1->graph(0)->setName("Posición Deseada 6.");
+    case 10: //q6
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(10)->setPen(QPen(Qt::darkGreen));
+        ui->grafica1->graph(10)->setName("Posición Deseada 6.");
         break;
-    case 11: //q6
-        ui->grafica1->graph(0)->setPen(QPen(Qt::green));
-        ui->grafica1->graph(0)->setName("Posición de la Articulación 6.");
+    case 11: //q6 qd6
+        ui->grafica1->addGraph();
+        ui->grafica1->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
+        ui->grafica1->graph(11)->setPen(QPen(Qt::green));
+        ui->grafica1->graph(11)->setName("Posición de la Articulación 6.");
+        break;
+    case 12: //all current positions
+
+        break;
+    case 13: //all signals
+
         break;
     default: //error
 
         break;
     }
+    ui->grafica1->rescaleAxes();
+    ui->grafica1->replot();
+    ui->grafica1->update();
+}
 
-
-
-
+void MainWindow::GraficarTR(int select)
+{
 
 }
