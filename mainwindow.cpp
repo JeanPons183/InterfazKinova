@@ -16,6 +16,7 @@ bool ControlActivado=false;
 //bool banderaPausa=false;
 bool PosicionDeseada=false;
 //bool GraficasActivado=false;
+bool TareaFinalizada=false;
 //------------------------------------------------------------
 
 //Banderas para los botones de la GUI-------------------------
@@ -30,6 +31,7 @@ bool StopTotal=false;
 
 int segundos=0; // Tiempo seleccionado para la acción del Robot
 double deltaT=0.001; // Periodo de tiempo de acción
+int TiempoTotal= 0;
 
 double kp[6];   // Ganancias Kp
 double ki[6];   // Ganancias Ki
@@ -73,7 +75,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->RobotSetting->resize(1611,21); // al abrir la aplicacion se esconde la pantalla
     ui->Ejecucion->resize(261,21);
-    ui->Plots->resize(1901,21);
+
+    ui->Plots->resize(1881,21); //pantalla de graficas reales
 
     ui->RunMode->setVisible(false); // se esconde el Run mode
 
@@ -118,10 +121,12 @@ void MainWindow::on_ConectarPB_clicked()
 
         ui->RobotSetting->resize(1611,411); // desplegamos los widgets
         ui->Ejecucion->resize(261,411);
-        ui->Plots->resize(1901,51);
+
+        ui->Plots->resize(1881,51);
 
         ui->RunMode->setVisible(true); // se despliega el Run mode
         ui->SimulacionRB->setChecked(true); // por defecto se usa el modo simulación
+        //ui->GraficasDespuesRB->setChecked(true);
 
         ui->ActivarGraficasPB->setVisible(true); // se activa el boton que permite graficar
         ui->ActivarGraficasPB->setEnabled(false);
@@ -134,15 +139,6 @@ void MainWindow::on_ConectarPB_clicked()
 
         //ui->label_IP->setText("IP");
 
-        //deshabilitamos funciones
-        ui->ControlSelectCB->addItem("PD + Cancelación de Gravedad");
-        ui->ControlSelectCB->addItem("PD + Compensación de Gravedad");
-        ui->ControlSelectCB->addItem("P'D' + Cancelación de Gravedad");
-        ui->ControlSelectCB->addItem("P'D' + Compensación de Gravedad");
-        ui->ControlSelectCB->addItem("sPsD + Cancelación de Gravedad");
-        ui->ControlSelectCB->addItem("sPsD + Compensación de Gravedad");
-        ui->ControlSelectCB->addItem("sPs'D' + Cancelación de Gravedad");
-        ui->ControlSelectCB->addItem("sPs'D' + Compensación de Gravedad");
         ui->ControlSelectCB->setDisabled(true);
 
         //conseguir q actual
@@ -159,55 +155,49 @@ void MainWindow::on_ConectarPB_clicked()
 
 void MainWindow::on_IniciarPB_clicked()
 {
-    ui->ActivarGraficasPB->setEnabled(false);
-    ui->GraficasDespuesRB->setEnabled(false);
-    ui->GraficasTiempoRealRB->setEnabled(false);
-    //--------------------------------------------
-    ui->CambiarTiempoPB->setEnabled(false);
-    ui->CambiarControlPB->setEnabled(false);
-    ui->CambiarQdPB->setEnabled(false);
-    ui->cambiarGainsPB->setEnabled(false);
-    ui->PosPackPB->setEnabled(false);
-    ui->PosZeroPB->setEnabled(false);
-    //--------------------------------------------
-    ui->CorrerRobotRB->setEnabled(false);
-    ui->SimulacionRB->setEnabled(false);
+    PausarUI();
     //--------------------------------------------
     ui->ProgresoPBar->setVisible(true);
-    ui->RunStop->setCurrentIndex(1);
+    ui->ScreenRunStop->setCurrentIndex(1);
 
-    //Funcion del Robot();
+    //Funcion del Robot(); poner al final de su funcion la bandera TareaFinalizada
+    TareaFinalizada=true; //prueba
 
-}
-
-void MainWindow::on_PausePB_clicked()
-{
-    //Mantener posición o pausar, no sé cual funcione
-    ui->RunStop->setCurrentIndex(2);
-}
-
-void MainWindow::on_ContinuarPB_clicked()
-{
-    //Reanudar la acción
-    ui->RunStop->setCurrentIndex(1);
 }
 
 void MainWindow::on_StopPB_clicked()
 {
     //Detener todo
-    ui->RunStop->setCurrentIndex(3);
+    //parar en posicion
+    //controlar mediante cancelación de gravedad
+    ui->ScreenRunStop->setCurrentIndex(3);
 }
 
-void MainWindow::on_StopPB_2_clicked()
+void MainWindow::on_GuardarTrayectoriaPB_clicked()
 {
-    //tener una señal que se conecte con los dos botones de STOP
-    ui->RunStop->setCurrentIndex(3);
+
 }
 
-void MainWindow::on_RegresarPB_clicked()
+void MainWindow::on_CancelarGravedadPB_clicked()//boton que se muestra cuando se detiene la simulación
 {
-    //Dejar que te permita hacer otra prueba
-    ui->RunStop->setCurrentIndex(0);
+
+}
+
+void MainWindow::on_RegresarZeroPB_clicked()//boton que se muestra cuando se detiene la simulación
+{
+
+}
+
+void MainWindow::on_FinalizarPB_clicked() //boton que se muestra cuando se detiene la simulación
+{
+    //Detener Robot
+}
+
+void MainWindow::on_FinalizarPB_2_clicked() //boton que se muestra ya que el robot termino la acción
+{
+    PlayUI();
+
+    ui->ScreenRunStop->setCurrentIndex(0);
 }
 
 void MainWindow::on_CambiarControlPB_clicked()
@@ -231,10 +221,8 @@ void MainWindow::on_CambiarControlPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
 
@@ -248,6 +236,8 @@ void MainWindow::on_CambiarTiempoPB_clicked()
             ui->label_Segundos->setText(QString::number(segundos));
             TiempoActivado=true;
             TiempoActivadoBoton=false;
+            TiempoTotal= segundos / deltaT;
+            ui->MostrarErrores->setText(QString::number(TiempoTotal));
         }else{ //Error, numero igual a 0
             QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
             ui->MostrarErrores->append("El tiempo: " +QString::number(ui->TiempoSB->value())+", no es un valor valido");
@@ -261,29 +251,62 @@ void MainWindow::on_CambiarTiempoPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
+    if(TiempoActivado){
+        ui->ActivarGraficasPB->setEnabled(true);
+    }
+
 }
 
 void MainWindow::on_ActivarGraficasPB_clicked()
 {
-    if(GraficasActivadoBoton){
+
+    if(GraficasActivadoBoton){ //se desactivan las graficas
         ui->ActivarGraficasPB->setText("Activar Gráficas");
-        ui->Plots->resize(1901,51);
+        ui->Plots->resize(1881,51);
+
+        ui->GraficasTiempoRealRB->setEnabled(false);
+        ui->GraficasDespuesRB->setEnabled(false);
+        ui->GraficasDespuesRB->setChecked(false);
         ui->GraficasTiempoRealRB->setVisible(false);
         ui->GraficasDespuesRB->setVisible(false);
+
         GraficasActivadoBoton=false;
-    }else{
+    }else{ //activamos las graficas
         ui->ActivarGraficasPB->setText("Desactivar Gráficas");
-        ui->Plots->resize(1901,541);
-        ui->GraficasTiempoRealRB->setVisible(true);
-        ui->GraficasDespuesRB->setVisible(true);
-        ui->GraficasDespuesRB->setChecked(true);
+        ui->Plots->resize(1881,481);
+        SetGrafica();
+        if(ui->SimulacionRB->isChecked())//activa las opciones de simulación
+        {
+            ui->GraficasTiempoRealRB->setVisible(false);
+            ui->GraficasDespuesRB->setVisible(false);
+            ui->ScreenGrafica->setCurrentIndex(0);
+            PlotSignals(ui->ElegirGraficaSimCB->currentIndex());
+        }
+        else if(ui->CorrerRobotRB->isChecked()) //activa las opciones de acción real
+        {
+
+            ui->GraficasTiempoRealRB->setVisible(true);
+            ui->GraficasDespuesRB->setVisible(true);
+            ui->GraficasTiempoRealRB->setEnabled(true);
+            ui->GraficasDespuesRB->setEnabled(true);
+            ui->GraficasDespuesRB->setChecked(true);
+
+            if(ui->GraficasDespuesRB->isChecked()) //activa las graficas si se seleccionó graficar despues
+            {
+                ui->ScreenGrafica->setCurrentIndex(1);
+                PlotSignals(ui->ElegirGraficaCB->currentIndex());
+            }
+            else if(ui->GraficasTiempoRealRB->isChecked()) //activa las graficas de tiempo real
+            {
+                ui->ScreenGrafica->setCurrentIndex(2);
+                PlotSignals(ui->ElegirGraficaTrCB->currentIndex());
+            }
+        }
+
         GraficasActivadoBoton=true;
-        SetGrafica(ui->ElegirGraficaCB->currentIndex());
     }
 }
 
@@ -315,10 +338,8 @@ void MainWindow::on_cambiarGainsPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
 
@@ -345,10 +366,8 @@ void MainWindow::on_PosZeroPB_clicked()
     PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
 
@@ -375,10 +394,8 @@ void MainWindow::on_PosPackPB_clicked()
     PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
 
@@ -428,37 +445,20 @@ void MainWindow::on_CambiarQdPB_clicked()
     }
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
         ui->IniciarPB->setEnabled(true);
-        ui->ActivarGraficasPB->setEnabled(true);
     }else{
         ui->IniciarPB->setEnabled(false);
-        ui->ActivarGraficasPB->setEnabled(false);
     }
 }
 
 void MainWindow::on_actionKinova_Gen_3_Lite_User_Manual_triggered()
 {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Gen3_lite_USER_GUIDE_R03.pdf"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Gen3_lite_USER_GUIDE.pdf"));
     //ui->MostrarErrores->setText(qApp->applicationDirPath());
 }
 
 void MainWindow::on_actionControl_IV_Class_Notes_triggered()
 {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV_v17-01-22.pdf"));
-}
-
-void MainWindow::on_AgregarGraficaPB_clicked()
-{
-
-}
-
-void MainWindow::on_EliminarGraficaPB_clicked()
-{
-
-}
-
-void MainWindow::on_GuardarTrayectoriaPB_clicked()
-{
-
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV.pdf"));
 }
 
 void MainWindow::Controlador(int select) // selector te permite seleccionar la pantalla de etiquetas o la pantalla de SpinBox, valor 0 o 1
@@ -469,22 +469,23 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
     ui->ScreenGains->setVisible(true);
     ui->cambiarGainsPB->setVisible(true);
 
+    if(!banderaPID){ // se desactivan las pertenencias de Ki si no es un controlador PID ------------------------------------
+        ui->label_Ki->setVisible(false);
+        ui->label_Ki_2->setVisible(false);
+        ui->ki1Label->setVisible(false);
+        ui->ki2Label->setVisible(false);
+        ui->ki3Label->setVisible(false);
+        ui->ki4Label->setVisible(false);
+        ui->ki5Label->setVisible(false);
+        ui->ki6Label->setVisible(false);
+        ui->ki1SB->setVisible(false);
+        ui->ki2SB->setVisible(false);
+        ui->ki3SB->setVisible(false);
+        ui->ki4SB->setVisible(false);
+        ui->ki5SB->setVisible(false);
+        ui->ki6SB->setVisible(false);
+    }
     //------------------------------------------------------------------------
-    ui->label_Ki->setVisible(false);
-    ui->label_Ki_2->setVisible(false);
-    ui->ki1Label->setVisible(false);
-    ui->ki2Label->setVisible(false);
-    ui->ki3Label->setVisible(false);
-    ui->ki4Label->setVisible(false);
-    ui->ki5Label->setVisible(false);
-    ui->ki6Label->setVisible(false);
-    ui->ki1SB->setVisible(false);
-    ui->ki2SB->setVisible(false);
-    ui->ki3SB->setVisible(false);
-    ui->ki4SB->setVisible(false);
-    ui->ki5SB->setVisible(false);
-    ui->ki6SB->setVisible(false);
-    // se desactivan las pertenencias de Ki ------------------------------------
 
     /*Index del ComboBox
      *0->PD + Cancelación de Gravedad
@@ -495,6 +496,12 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
      *5->sPsD + Compensación de Gravedad
      *6->sPs'D' + Cancelación de Gravedad
      *7->sPs'D' + Compensación de Gravedad
+     *
+     *Index select
+     *
+     *0->Robot puede medir velocidad
+     *1->Robot no puede medir velocidad
+     *
      */
 
     if((ui->ControlSelectCB->currentIndex())==0||(ui->ControlSelectCB->currentIndex())==1||(ui->ControlSelectCB->currentIndex())==4||(ui->ControlSelectCB->currentIndex())==5){
@@ -625,121 +632,778 @@ void MainWindow::SetValues()
     ui->kd6Label->setText(QString::number(kd[5]));
 }
 
-void MainWindow::SetGrafica(int select){
+void MainWindow::SetGrafica(){
 
-    int TiempoTotal= segundos / deltaT;
-    /*
-    QVector<double> Trayectoriaq1[TiempoTotal+1];
-    QVector<double> Trayectoriaq2[TiempoTotal+1];
-    QVector<double> Trayectoriaq3[TiempoTotal+1];
-    QVector<double> Trayectoriaq4[TiempoTotal+1];
-    QVector<double> Trayectoriaq5[TiempoTotal+1];
-    QVector<double> Trayectoriaq6[TiempoTotal+1];
-    */
+    //int TiempoTotal= segundos / deltaT;
 
-    ui->grafica1->legend->setVisible(true);
     QFont legendFont = font();  // start out with MainWindow's font.
     legendFont.setPointSize(9); // and make a bit smaller for legend
-    ui->grafica1->legend->setFont(legendFont);
-    ui->grafica1->legend->setBrush(QBrush(QColor(255,255,255,230)));
-    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
 
-    ui->grafica1->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
-    ui->grafica1->xAxis->setLabel("Tiempo");
-    ui->grafica1->xAxis->setRange(0,TiempoTotal);
-    ui->grafica1->yAxis->setLabel("Rotación de la articulación (deg°)");
-    ui->grafica1->yAxis->setRange(-155,155);
-    ui->grafica1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
+    if(ui->ScreenGrafica->currentIndex()==0){
+        ui->grafica0->legend->setVisible(true);
+        ui->grafica0->legend->setFont(legendFont);
+        ui->grafica0->legend->setBrush(QBrush(QColor(255,255,255,230)));
+        // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
 
-    switch (select) {
-    case 0: //q1
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(0)->setPen(QPen(Qt::darkCyan));
-        ui->grafica1->graph(0)->setName("Posición Deseada 1.");
-        break;
-    case 1: //q1 qd1
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(1)->setPen(QPen(Qt::cyan));
-        ui->grafica1->graph(1)->setName("Posición de la Articulación 1.");
-        break;
-    case 2: //q2
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(2)->setPen(QPen(Qt::darkMagenta));
-        ui->grafica1->graph(2)->setName("Posición Deseada 2.");
-        break;
-    case 3: //q2 qd2
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(3)->setPen(QPen(Qt::magenta));
-        ui->grafica1->graph(3)->setName("Posición de la Articulación 2.");
-        break;
-    case 4: //q3
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(4)->setPen(QPen(Qt::darkYellow));
-        ui->grafica1->graph(4)->setName("Posición Deseada 3.");
-        break;
-    case 5: //q3 qd3
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(5)->setPen(QPen(Qt::yellow));
-        ui->grafica1->graph(5)->setName("Posición de la Articulación 3.");
-        break;
-    case 6: //q4
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(6)->setPen(QPen(Qt::darkGray));
-        ui->grafica1->graph(6)->setName("Posición Deseada 4.");
-        break;
-    case 7: //q4 qd4
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(7)->setPen(QPen(Qt::gray));
-        ui->grafica1->graph(7)->setName("Posición de la Articulación 4.");
-        break;
-    case 8: //q5
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(8)->setPen(QPen(Qt::darkRed));
-        ui->grafica1->graph(8)->setName("Posición Deseada 5.");
-        break;
-    case 9: //q5 qd5
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(9)->setPen(QPen(Qt::red));
-        ui->grafica1->graph(9)->setName("Posición de la Articulación 5.");
-        break;
-    case 10: //q6
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(10)->setPen(QPen(Qt::darkGreen));
-        ui->grafica1->graph(10)->setName("Posición Deseada 6.");
-        break;
-    case 11: //q6 qd6
-        ui->grafica1->addGraph();
-        ui->grafica1->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
-        ui->grafica1->graph(11)->setPen(QPen(Qt::green));
-        ui->grafica1->graph(11)->setName("Posición de la Articulación 6.");
-        break;
-    case 12: //all current positions
+        ui->grafica0->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+        ui->grafica0->xAxis->setLabel("Tiempo");
+        ui->grafica0->xAxis->setRange(0,TiempoTotal);
+        ui->grafica0->yAxis->setLabel("Rotación de la articulación (deg°)");
+        ui->grafica0->yAxis->setRange(-155,155);
+        ui->grafica0->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
 
-        break;
-    case 13: //all signals
+        ui->grafica0->rescaleAxes(); // funciones que hacen update a la gráfica
+        ui->grafica0->replot();
+        ui->grafica0->update();
 
-        break;
-    default: //error
+    }else if(ui->ScreenGrafica->currentIndex()==1){
+        ui->grafica1->legend->setVisible(true);
+        ui->grafica1->legend->setFont(legendFont);
+        ui->grafica1->legend->setBrush(QBrush(QColor(255,255,255,230)));
+        // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
 
-        break;
+        ui->grafica1->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+        ui->grafica1->xAxis->setLabel("Tiempo");
+        ui->grafica1->xAxis->setRange(0,TiempoTotal);
+        ui->grafica1->yAxis->setLabel("Rotación de la articulación (deg°)");
+        ui->grafica1->yAxis->setRange(-155,155);
+        ui->grafica1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
+
+        ui->grafica1->rescaleAxes(); // funciones que hacen update a la gráfica
+        ui->grafica1->replot();
+        ui->grafica1->update();
+
+    }else if(ui->ScreenGrafica->currentIndex()==2){
+        ui->grafica2->legend->setVisible(true);
+        ui->grafica2->legend->setFont(legendFont);
+        ui->grafica2->legend->setBrush(QBrush(QColor(255,255,255,230)));
+        // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+
+        ui->grafica2->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+        ui->grafica2->xAxis->setLabel("Tiempo");
+        ui->grafica2->xAxis->setRange(0,TiempoTotal);
+        ui->grafica2->yAxis->setLabel("Rotación de la articulación (deg°)");
+        ui->grafica2->yAxis->setRange(-155,155);
+        ui->grafica2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables); //  Plottables are selectable (e.g. graphs, curves, bars,... see QCPAbstractPlottable) tbd
+
+        ui->grafica2->rescaleAxes(); // funciones que hacen update a la gráfica
+        ui->grafica2->replot();
+        ui->grafica2->update();
     }
-    ui->grafica1->rescaleAxes();
-    ui->grafica1->replot();
-    ui->grafica1->update();
+
+
 }
 
-void MainWindow::GraficarTR(int select)
+void MainWindow::on_GraficasDespuesRB_toggled(bool checked)
+{
+    if(checked){
+        ui->ScreenGrafica->setCurrentIndex(1);
+        //SetGrafica();
+        /*
+        if(TareaFinalizada){
+            SetGrafica();
+        }else{
+
+        }
+        */
+    }else{
+        if(ui->GraficasTiempoRealRB->isChecked()){
+            ui->ScreenGrafica->setCurrentIndex(2);
+            //SetGrafica();
+        }else{
+
+        }
+    }
+
+}
+
+void MainWindow::on_ElegirGraficaCB_currentIndexChanged(int index)
+{
+    PlotSignals(index);
+}
+
+void MainWindow::on_ElegirGraficaSimCB_currentIndexChanged(int index)
+{
+    PlotSignals(index);
+}
+
+void MainWindow::on_ElegirGraficaTrCB_currentIndexChanged(int index)
+{
+    PlotSignals(index);
+}
+
+void MainWindow::on_SimulacionRB_toggled(bool checked)
+{
+    if(checked){
+        //poner en la pantalla de simulación
+
+        ui->ScreenGrafica->setCurrentIndex(0);
+        /*
+        ui->GraficasTiempoRealRB->setEnabled(false);
+        ui->GraficasDespuesRB->setEnabled(false);
+        ui->GraficasDespuesRB->setChecked(false);
+        ui->GraficasTiempoRealRB->setVisible(false);
+        ui->GraficasDespuesRB->setVisible(false);
+        */
+        //SetGrafica();
+
+    }else{
+        if(ui->CorrerRobotRB->isChecked()){
+            //poner en la pantalla de accion real
+            ui->ScreenGrafica->setCurrentIndex(1);
+            /*
+            ui->GraficasTiempoRealRB->setVisible(true);
+            ui->GraficasDespuesRB->setVisible(true);
+            ui->GraficasTiempoRealRB->setEnabled(true);
+            ui->GraficasDespuesRB->setEnabled(true);
+            ui->GraficasDespuesRB->setChecked(true);
+            */
+            //SetGrafica();
+
+        }else{
+        //no esta accionado ningun RB
+        }
+    }
+}
+
+void MainWindow::PausarUI()
+{
+    ui->ActivarGraficasPB->setEnabled(false);
+    ui->GraficasDespuesRB->setEnabled(false);
+    ui->GraficasTiempoRealRB->setEnabled(false);
+    //--------------------------------------------
+    ui->CambiarTiempoPB->setEnabled(false);
+    ui->CambiarControlPB->setEnabled(false);
+    ui->CambiarQdPB->setEnabled(false);
+    ui->cambiarGainsPB->setEnabled(false);
+    ui->PosPackPB->setEnabled(false);
+    ui->PosZeroPB->setEnabled(false);
+    //--------------------------------------------
+    ui->CorrerRobotRB->setEnabled(false);
+    ui->SimulacionRB->setEnabled(false);
+}
+
+void MainWindow::PlayUI()
+{
+    ui->ActivarGraficasPB->setEnabled(true);
+    ui->GraficasDespuesRB->setEnabled(true);
+    ui->GraficasTiempoRealRB->setEnabled(true);
+    //--------------------------------------------
+    ui->CambiarTiempoPB->setEnabled(true);
+    ui->CambiarControlPB->setEnabled(true);
+    ui->CambiarQdPB->setEnabled(true);
+    ui->cambiarGainsPB->setEnabled(true);
+    ui->PosPackPB->setEnabled(true);
+    ui->PosZeroPB->setEnabled(true);
+    //--------------------------------------------
+    ui->CorrerRobotRB->setEnabled(true);
+    ui->SimulacionRB->setEnabled(true);
+}
+
+void MainWindow::PlotSignals(int index)
 {
 
+    if(ui->ScreenGrafica->currentIndex()==0){//Simulacion
+        /*
+        ui->grafica0->graph(0)->data()->clear();
+        ui->grafica0->graph(1)->data()->clear();
+        ui->grafica0->graph(2)->data()->clear();
+        ui->grafica0->graph(3)->data()->clear();
+        ui->grafica0->graph(4)->data()->clear();
+        ui->grafica0->graph(5)->data()->clear();
+        ui->grafica0->graph(6)->data()->clear();
+        ui->grafica0->graph(7)->data()->clear();
+        ui->grafica0->graph(8)->data()->clear();
+        ui->grafica0->graph(9)->data()->clear();
+        ui->grafica0->graph(10)->data()->clear();
+        ui->grafica0->graph(11)->data()->clear();
+*/
+
+        ui->grafica0->replot();
+        ui->grafica0->update();
+
+        switch (index) {
+        case 0: //q1
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 1.");
+            break;
+        case 1: //q1 qd1
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica0->graph(1)->setName("Posición Deseada 1.");
+            break;
+        case 2: //q2
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 2.");
+            break;
+        case 3: //q2 qd2
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 2.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica0->graph(1)->setName("Posición Deseada 2.");
+            break;
+        case 4: //q3
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 3.");
+            break;
+        case 5: //q3 qd3
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 3.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkYellow));
+            ui->grafica0->graph(1)->setName("Posición Deseada 3.");
+            break;
+        case 6: //q4
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 4.");
+            break;
+        case 7: //q4 qd4
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 4.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkGray));
+            ui->grafica0->graph(1)->setName("Posición Deseada 4.");
+            break;
+        case 8: //q5
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 5.");
+            break;
+        case 9: //q5 qd5
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 5.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkRed));
+            ui->grafica0->graph(1)->setName("Posición Deseada 5.");
+            break;
+        case 10: //q6
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 6.");
+            break;
+        case 11: //q6 qd6
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 6.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkGreen));
+            ui->grafica0->graph(1)->setName("Posición Deseada 6.");
+            break;
+        case 12: //all current positions
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::magenta));
+            ui->grafica0->graph(1)->setName("Posición de la Articulación 2.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(2)->setPen(QPen(Qt::yellow));
+            ui->grafica0->graph(2)->setName("Posición de la Articulación 3.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(3)->setPen(QPen(Qt::gray));
+            ui->grafica0->graph(3)->setName("Posición de la Articulación 4.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(4)->setPen(QPen(Qt::red));
+            ui->grafica0->graph(4)->setName("Posición de la Articulación 5.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(5)->setPen(QPen(Qt::green));
+            ui->grafica0->graph(5)->setName("Posición de la Articulación 6.");
+            break;
+        case 13: //all signals
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica0->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica0->graph(1)->setName("Posición Deseada 1.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(2)->setPen(QPen(Qt::magenta));
+            ui->grafica0->graph(2)->setName("Posición de la Articulación 2.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(3)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica0->graph(3)->setName("Posición Deseada 2.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(4)->setPen(QPen(Qt::yellow));
+            ui->grafica0->graph(4)->setName("Posición de la Articulación 3.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(5)->setPen(QPen(Qt::darkYellow));
+            ui->grafica0->graph(5)->setName("Posición Deseada 3.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(6)->setPen(QPen(Qt::gray));
+            ui->grafica0->graph(6)->setName("Posición de la Articulación 4.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(7)->setPen(QPen(Qt::darkGray));
+            ui->grafica0->graph(7)->setName("Posición Deseada 4.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(8)->setPen(QPen(Qt::red));
+            ui->grafica0->graph(8)->setName("Posición de la Articulación 5.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(9)->setPen(QPen(Qt::darkRed));
+            ui->grafica0->graph(9)->setName("Posición Deseada 5.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(10)->setPen(QPen(Qt::green));
+            ui->grafica0->graph(10)->setName("Posición de la Articulación 6.");
+            ui->grafica0->addGraph();
+            ui->grafica0->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica0->graph(11)->setPen(QPen(Qt::darkGreen));
+            ui->grafica0->graph(11)->setName("Posición Deseada 6.");
+            break;
+        default: //error
+
+            break;
+        }
+        ui->grafica0->rescaleAxes();
+        ui->grafica0->replot();
+        ui->grafica0->update();
+
+    }else if(ui->ScreenGrafica->currentIndex()==1){//Despues
+        ui->grafica1->graph(0)->data()->clear();
+        ui->grafica1->graph(1)->data()->clear();
+        ui->grafica1->graph(2)->data()->clear();
+        ui->grafica1->graph(3)->data()->clear();
+        ui->grafica1->graph(4)->data()->clear();
+        ui->grafica1->graph(5)->data()->clear();
+        ui->grafica1->graph(6)->data()->clear();
+        ui->grafica1->graph(7)->data()->clear();
+        ui->grafica1->graph(8)->data()->clear();
+        ui->grafica1->graph(9)->data()->clear();
+        ui->grafica1->graph(10)->data()->clear();
+        ui->grafica1->graph(11)->data()->clear();
+
+        ui->grafica1->replot();
+        ui->grafica1->update();
+
+        switch (index) {
+        case 0: //q1
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+            break;
+        case 1: //q1 qd1
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica1->graph(1)->setName("Posición Deseada 1.");
+            break;
+        case 2: //q2
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 2.");
+            break;
+        case 3: //q2 qd2
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 2.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica1->graph(1)->setName("Posición Deseada 2.");
+            break;
+        case 4: //q3
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 3.");
+            break;
+        case 5: //q3 qd3
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 3.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkYellow));
+            ui->grafica1->graph(1)->setName("Posición Deseada 3.");
+            break;
+        case 6: //q4
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 4.");
+            break;
+        case 7: //q4 qd4
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 4.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkGray));
+            ui->grafica1->graph(1)->setName("Posición Deseada 4.");
+            break;
+        case 8: //q5
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 5.");
+            break;
+        case 9: //q5 qd5
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 5.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkRed));
+            ui->grafica1->graph(1)->setName("Posición Deseada 5.");
+            break;
+        case 10: //q6
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 6.");
+            break;
+        case 11: //q6 qd6
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 6.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkGreen));
+            ui->grafica1->graph(1)->setName("Posición Deseada 6.");
+            break;
+        case 12: //all current positions
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::magenta));
+            ui->grafica1->graph(1)->setName("Posición de la Articulación 2.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(2)->setPen(QPen(Qt::yellow));
+            ui->grafica1->graph(2)->setName("Posición de la Articulación 3.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(3)->setPen(QPen(Qt::gray));
+            ui->grafica1->graph(3)->setName("Posición de la Articulación 4.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(4)->setPen(QPen(Qt::red));
+            ui->grafica1->graph(4)->setName("Posición de la Articulación 5.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(5)->setPen(QPen(Qt::green));
+            ui->grafica1->graph(5)->setName("Posición de la Articulación 6.");
+            break;
+        case 13: //all signals
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica1->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica1->graph(1)->setName("Posición Deseada 1.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(2)->setPen(QPen(Qt::magenta));
+            ui->grafica1->graph(2)->setName("Posición de la Articulación 2.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(3)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica1->graph(3)->setName("Posición Deseada 2.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(4)->setPen(QPen(Qt::yellow));
+            ui->grafica1->graph(4)->setName("Posición de la Articulación 3.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(5)->setPen(QPen(Qt::darkYellow));
+            ui->grafica1->graph(5)->setName("Posición Deseada 3.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(6)->setPen(QPen(Qt::gray));
+            ui->grafica1->graph(6)->setName("Posición de la Articulación 4.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(7)->setPen(QPen(Qt::darkGray));
+            ui->grafica1->graph(7)->setName("Posición Deseada 4.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(8)->setPen(QPen(Qt::red));
+            ui->grafica1->graph(8)->setName("Posición de la Articulación 5.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(9)->setPen(QPen(Qt::darkRed));
+            ui->grafica1->graph(9)->setName("Posición Deseada 5.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(10)->setPen(QPen(Qt::green));
+            ui->grafica1->graph(10)->setName("Posición de la Articulación 6.");
+            ui->grafica1->addGraph();
+            ui->grafica1->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica1->graph(11)->setPen(QPen(Qt::darkGreen));
+            ui->grafica1->graph(11)->setName("Posición Deseada 6.");
+            break;
+        default: //error
+
+            break;
+        }
+        ui->grafica1->rescaleAxes();
+        ui->grafica1->replot();
+        ui->grafica1->update();
+
+    }else if(ui->ScreenGrafica->currentIndex()==2){//TR
+        ui->grafica2->graph(0)->data()->clear();
+        ui->grafica2->graph(1)->data()->clear();
+        ui->grafica2->graph(2)->data()->clear();
+        ui->grafica2->graph(3)->data()->clear();
+        ui->grafica2->graph(4)->data()->clear();
+        ui->grafica2->graph(5)->data()->clear();
+        ui->grafica2->graph(6)->data()->clear();
+        ui->grafica2->graph(7)->data()->clear();
+        ui->grafica2->graph(8)->data()->clear();
+        ui->grafica2->graph(9)->data()->clear();
+        ui->grafica2->graph(10)->data()->clear();
+        ui->grafica2->graph(11)->data()->clear();
+
+        ui->grafica2->replot();
+        ui->grafica2->update();
+
+        switch (index) {
+        case 0: //q1
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 1.");
+            break;
+        case 1: //q1 qd1
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica2->graph(1)->setName("Posición Deseada 1.");
+            break;
+        case 2: //q2
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 2.");
+            break;
+        case 3: //q2 qd2
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::magenta));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 2.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica2->graph(1)->setName("Posición Deseada 2.");
+            break;
+        case 4: //q3
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 3.");
+            break;
+        case 5: //q3 qd3
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::yellow));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 3.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkYellow));
+            ui->grafica2->graph(1)->setName("Posición Deseada 3.");
+            break;
+        case 6: //q4
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 4.");
+            break;
+        case 7: //q4 qd4
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::gray));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 4.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkGray));
+            ui->grafica2->graph(1)->setName("Posición Deseada 4.");
+            break;
+        case 8: //q5
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 5.");
+            break;
+        case 9: //q5 qd5
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::red));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 5.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkRed));
+            ui->grafica2->graph(1)->setName("Posición Deseada 5.");
+            break;
+        case 10: //q6
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 6.");
+            break;
+        case 11: //q6 qd6
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::green));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 6.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkGreen));
+            ui->grafica2->graph(1)->setName("Posición Deseada 6.");
+            break;
+        case 12: //all current positions
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::magenta));
+            ui->grafica2->graph(1)->setName("Posición de la Articulación 2.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(2)->setPen(QPen(Qt::yellow));
+            ui->grafica2->graph(2)->setName("Posición de la Articulación 3.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(3)->setPen(QPen(Qt::gray));
+            ui->grafica2->graph(3)->setName("Posición de la Articulación 4.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(4)->setPen(QPen(Qt::red));
+            ui->grafica2->graph(4)->setName("Posición de la Articulación 5.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(5)->setPen(QPen(Qt::green));
+            ui->grafica2->graph(5)->setName("Posición de la Articulación 6.");
+            break;
+        case 13: //all signals
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(0)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(0)->setPen(QPen(Qt::cyan));
+            ui->grafica2->graph(0)->setName("Posición de la Articulación 1.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(1)->setPen(QPen(Qt::darkCyan));
+            ui->grafica2->graph(1)->setName("Posición Deseada 1.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(2)->setPen(QPen(Qt::magenta));
+            ui->grafica2->graph(2)->setName("Posición de la Articulación 2.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(3)->setPen(QPen(Qt::darkMagenta));
+            ui->grafica2->graph(3)->setName("Posición Deseada 2.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(4)->setPen(QPen(Qt::yellow));
+            ui->grafica2->graph(4)->setName("Posición de la Articulación 3.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(5)->setPen(QPen(Qt::darkYellow));
+            ui->grafica2->graph(5)->setName("Posición Deseada 3.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(6)->setPen(QPen(Qt::gray));
+            ui->grafica2->graph(6)->setName("Posición de la Articulación 4.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(7)->setPen(QPen(Qt::darkGray));
+            ui->grafica2->graph(7)->setName("Posición Deseada 4.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(8)->setPen(QPen(Qt::red));
+            ui->grafica2->graph(8)->setName("Posición de la Articulación 5.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(9)->setPen(QPen(Qt::darkRed));
+            ui->grafica2->graph(9)->setName("Posición Deseada 5.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(10)->setPen(QPen(Qt::green));
+            ui->grafica2->graph(10)->setName("Posición de la Articulación 6.");
+            ui->grafica2->addGraph();
+            ui->grafica2->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
+            ui->grafica2->graph(11)->setPen(QPen(Qt::darkGreen));
+            ui->grafica2->graph(11)->setName("Posición Deseada 6.");
+            break;
+        default: //error
+
+            break;
+        }
+        ui->grafica2->rescaleAxes();
+        ui->grafica2->replot();
+        ui->grafica2->update();
+    }else{ //nada
+
+    }
+
+
 }
+
+
+

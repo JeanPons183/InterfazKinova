@@ -18,13 +18,7 @@ public:
 private slots:
     void on_IniciarPB_clicked();
 
-    void on_PausePB_clicked();
-
     void on_StopPB_clicked();
-
-    void on_StopPB_2_clicked();
-
-    void on_RegresarPB_clicked();
 
     void on_GuardarTrayectoriaPB_clicked();
 
@@ -48,21 +42,37 @@ private slots:
 
     void on_actionControl_IV_Class_Notes_triggered();
 
-    void on_AgregarGraficaPB_clicked();
-
-    void on_EliminarGraficaPB_clicked();
-
     void Controlador(int select);
 
     void SaveValues();
 
     void SetValues();
 
-    void on_ContinuarPB_clicked();
+    void SetGrafica();
 
-    void SetGrafica(int select);
+    void on_GraficasDespuesRB_toggled(bool checked);
 
-    void GraficarTR(int select);
+    void on_ElegirGraficaCB_currentIndexChanged(int index);
+
+    void on_SimulacionRB_toggled(bool checked);
+
+    void PausarUI();
+
+    void PlayUI();
+
+    void on_CancelarGravedadPB_clicked();
+
+    void on_RegresarZeroPB_clicked();
+
+    void on_FinalizarPB_clicked();
+
+    void on_FinalizarPB_2_clicked();
+
+    void PlotSignals(int index);
+
+    void on_ElegirGraficaSimCB_currentIndexChanged(int index);
+
+    void on_ElegirGraficaTrCB_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;
