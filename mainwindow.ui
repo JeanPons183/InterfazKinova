@@ -4030,6 +4030,12 @@
       <string>Masa Virtual</string>
      </property>
     </widget>
+    <zorder>cambiarGainsPB</zorder>
+    <zorder>Screenmc</zorder>
+    <zorder>label_Masavirtual</zorder>
+    <zorder>SettingFrame</zorder>
+    <zorder>GainsFrame</zorder>
+    <zorder>PosicionFrame</zorder>
    </widget>
    <widget class="QGroupBox" name="RunMode">
     <property name="geometry">
@@ -4164,7 +4170,7 @@
    <widget class="QCheckBox" name="ConeccionCB">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>150</x>
       <y>40</y>
       <width>171</width>
       <height>31</height>
@@ -4177,27 +4183,6 @@
     </property>
     <property name="text">
      <string>Conección Exitosa</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="ConectarPB">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>40</y>
-      <width>201</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="text">
-     <string>Conectar</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="Plots">
@@ -4707,7 +4692,24 @@
        </widget>
       </widget>
      </widget>
+     <zorder>GraficasDespuesRB</zorder>
+     <zorder>GraficasTiempoRealRB</zorder>
+     <zorder>ScreenGrafica</zorder>
+     <zorder>ActivarGraficasPB</zorder>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="ConectarPB">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>40</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Conectar</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -4761,7 +4763,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>ConectarPB</tabstop>
   <tabstop>ControlSelectCB</tabstop>
   <tabstop>CambiarControlPB</tabstop>
   <tabstop>CambiarTiempoPB</tabstop>

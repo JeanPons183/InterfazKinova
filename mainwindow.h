@@ -15,8 +15,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
+private slots:
 
     // Conectar frame
     void on_ConectarPB_clicked();
@@ -84,6 +83,12 @@ private:
     void on_actionKinova_Gen_3_Lite_User_Manual_triggered();
 
     void on_actionControl_IV_Class_Notes_triggered();
+
+
+private:
+    Ui::MainWindow *ui;
+
+
 
 
 

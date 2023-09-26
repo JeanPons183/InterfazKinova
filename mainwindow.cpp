@@ -3,6 +3,10 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <qvector.h>
+#include "qcustomplot.h"
+#include "stdio.h"
+#include "QDebug"
+#include "QString"
 //------------------------------------------------------------------------------------------------
 
 //bool Go=false; // bandera para el boton de iniciar
@@ -104,10 +108,16 @@ MainWindow::~MainWindow()
 
 // Conectar frame
 //---------------------------------------------------------------------------------------------------------------------------------------------------
+
 void MainWindow::on_ConectarPB_clicked()
 {
     //Conectar Robot
     RobotConectado=true;
+
+    //printf("Hola ese");
+    qDebug() << QString("Hola ese");
+
+    QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
 
     if(RobotConectado){
         ui->ConectarPB->setVisible(false); // eliminamos el botón
@@ -154,6 +164,7 @@ void MainWindow::on_ConectarPB_clicked()
         ui->MostrarErrores->append("No se pudo conectar con el Robot");
     }
 }
+
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Robot Settings frame
@@ -763,4 +774,4 @@ void MainWindow::on_actionControl_IV_Class_Notes_triggered()
 {
     //QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV_v17-01-22.pdf"));
 }
-//---------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------
