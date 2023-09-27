@@ -114,11 +114,6 @@ void MainWindow::on_ConectarPB_clicked()
     //Conectar Robot
     RobotConectado=true;
 
-    //printf("Hola ese");
-    qDebug() << QString("Hola ese");
-
-    QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
-
     if(RobotConectado){
         ui->ConectarPB->setVisible(false); // eliminamos el botón
         ui->ConeccionCB->setVisible(true);

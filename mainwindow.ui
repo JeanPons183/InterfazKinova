@@ -44,7 +44,7 @@
    <string>Interfaz Kinova Gen3 Lite</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="Ejecucion">
+   <widget class="QWidget" name="Ejecucion" native="true">
     <property name="geometry">
      <rect>
       <x>1630</x>
@@ -70,9 +70,6 @@
       <pointsize>12</pointsize>
      </font>
     </property>
-    <property name="title">
-     <string>Ejecución</string>
-    </property>
     <widget class="QFrame" name="PlayFrame">
      <property name="geometry">
       <rect>
@@ -81,6 +78,12 @@
        <width>261</width>
        <height>461</height>
       </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>261</width>
+       <height>461</height>
+      </size>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -327,7 +330,7 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QGroupBox" name="RobotSetting">
+   <widget class="QWidget" name="RobotSetting" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -352,9 +355,6 @@
      <font>
       <pointsize>12</pointsize>
      </font>
-    </property>
-    <property name="title">
-     <string>Configuración del Robot</string>
     </property>
     <widget class="QFrame" name="SettingFrame">
      <property name="geometry">
@@ -528,7 +528,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="gridLayoutWidget_9">
+     <widget class="QWidget" name="gridWidget_9" native="true">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -618,9 +618,9 @@
      <property name="geometry">
       <rect>
        <x>360</x>
-       <y>10</y>
-       <width>671</width>
-       <height>351</height>
+       <y>20</y>
+       <width>641</width>
+       <height>331</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -2634,14 +2634,18 @@
        <string>Controlador:</string>
       </property>
      </widget>
+     <zorder>ScreenGains</zorder>
+     <zorder>ScreenvirtualGains</zorder>
+     <zorder>label_ControlSelected</zorder>
+     <zorder>label_119</zorder>
     </widget>
     <widget class="QFrame" name="PosicionFrame">
      <property name="geometry">
       <rect>
        <x>1000</x>
-       <y>10</y>
+       <y>20</y>
        <width>611</width>
-       <height>421</height>
+       <height>411</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -4217,8 +4221,8 @@
     <widget class="QFrame" name="PlotFrame">
      <property name="geometry">
       <rect>
-       <x>-20</x>
-       <y>10</y>
+       <x>-10</x>
+       <y>-10</y>
        <width>1901</width>
        <height>541</height>
       </rect>
@@ -4711,6 +4715,18 @@
      <string>Conectar</string>
     </property>
    </widget>
+   <zorder>RobotSetting</zorder>
+   <zorder>Ejecucion</zorder>
+   <zorder>ProgresoPBar</zorder>
+   <zorder>RunMode</zorder>
+   <zorder>label_IP</zorder>
+   <zorder>label_EstadoActual</zorder>
+   <zorder>label_Robot</zorder>
+   <zorder>label_Titulo</zorder>
+   <zorder>label_Estado</zorder>
+   <zorder>ConeccionCB</zorder>
+   <zorder>Plots</zorder>
+   <zorder>ConectarPB</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
