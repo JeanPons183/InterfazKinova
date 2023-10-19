@@ -4,6 +4,12 @@
 #include <QDesktopServices>
 #include <qvector.h>
 
+// Robot Control Simulation Libraries
+#include "Controls.h"
+#include "Dynamics.h"
+#include "Robot.h"
+#include "Simulation.h"
+
 //------------------------------------------------------------------------------------------------
 
 //bool Go=false; // bandera para el boton de iniciar
@@ -28,6 +34,14 @@ bool PosicionDeseadaBoton=false;
 bool GraficasActivadoBoton=false;
 bool StopTotal=false;
 //-------------------------------------------------------------
+
+// Global Objects
+
+Robot<1> bot("r" , &robot::singlePendulum); // Crear robot
+
+Control<1> ctrl(&gravity::singlePendulum); // Crear controlador
+
+// Gloabal Control Variables
 
 int segundos=0; // Tiempo seleccionado para la acción del Robot
 double deltaT=0.001; // Periodo de tiempo de acción
@@ -101,6 +115,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label_EstadoActual->setVisible(false);
     ui->ProgresoPBar->setVisible(false);    // se esconde la barra del progreso de la acción
 
+    // Default Robot values
+    bot.q[0] = 0; // Position
+    bot.qp[0] = 0; // Valocity
+    bot.tau[0] = 0; // Torque
 
 }
 
@@ -160,6 +178,15 @@ void MainWindow::on_IniciarPB_clicked()
     ui->ProgresoPBar->setVisible(true);
     ui->ScreenRunStop->setCurrentIndex(1);
 
+    // Simulation
+    Sim<1> sim(&bot , &ctrl);
+
+    sim.Time = segundos*h_; // Tiempo en milisegundos
+    sim.S = 100; // Muestras
+
+    sim.Cycle(); // Ejecutar simulación
+
+
     //Funcion del Robot(); poner al final de su funcion la bandera TareaFinalizada
     TareaFinalizada=true; //prueba
 
@@ -208,6 +235,36 @@ void MainWindow::on_CambiarControlPB_clicked()
         ui->ControlSelectCB->setEnabled(false);
 
         Controlador(0);// funcion que dependiendo el controlador muestra las etiquetas de Ki o mc
+
+        /*Index del ComboBox
+         *0->PD + Cancelación de Gravedad
+         *1->PD + Compensación de Gravedad
+         *2->P'D' + Cancelación de Gravedad
+         *3->P'D' + Compensación de Gravedad
+         *4->sPsD + Cancelación de Gravedad
+         *5->sPsD + Compensación de Gravedad
+         *6->sPs'D' + Cancelación de Gravedad
+         *7->sPs'D' + Compensación de Gravedad
+         */
+
+        // Switch Case Controlador
+        switch(ui->ControlSelectCB->currentIndex()){ // Checa el controlador
+        case 0:
+            ctrl.controler = _PD_canG_;
+            break;
+        case 1:
+            ctrl.controler = _PD_comG_;
+            break;
+        case 2:
+            ctrl.controler = _P_d_canG_;
+            break;
+        case 3:
+            ctrl.controler = _P_d_comG_;
+            break;
+        default:
+            ctrl.controler = _canG_;
+            break;
+        }
 
         ControlActivado=true;
         ControlActivadoBoton=false;
@@ -411,6 +468,8 @@ void MainWindow::on_CambiarQdPB_clicked()
         qd[5]= ui->qd6SB->value();
         GripperValue= ui->gripValueSB->value();
 
+        ctrl.qd[0] = qd[0]*PI/180; // Controler desired position
+
         //Checar rangos de las posiciones y por singularidades
 
         ui->ScreenQd->setCurrentIndex(0);
@@ -543,6 +602,8 @@ void MainWindow::SaveValues()
         kc[3]= ui->kc4SB->value();
         kc[4]= ui->kc5SB->value();
         kc[5]= ui->kc6SB->value();
+
+        ctrl.K1[0] = kc[0]; // Controler gain
     }
     if(banderaPID){
         ki[0]= ui->ki1SB->value();
@@ -565,6 +626,10 @@ void MainWindow::SaveValues()
     kd[3]= ui->kd4SB->value();
     kd[4]= ui->kd5SB->value();
     kd[5]= ui->kd6SB->value();
+
+    // Controler Gains
+    ctrl.P[0] = kp[0];
+    ctrl.D[0] = kd[0];
 }
 
 void MainWindow::SetValues()
@@ -1406,4 +1471,10 @@ void MainWindow::PlotSignals(int index)
 }
 
 
+
+
+void MainWindow::on_ControlSelectCB_activated(int index)
+{
+
+}
 

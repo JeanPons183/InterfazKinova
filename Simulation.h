@@ -78,9 +78,10 @@ void Sim<N>::Cycle(void){
 		bot.Play(); // Active robot
 		
 		t+=_h; // Next time
-	}
-	
-	show_Data_v("\tTime: ");
+    }
+
+    //string Title = "\tqd = "+(string)ctrl.qd[0]+" Time: ";
+    show_Data_v("Title: ");
 	
 }
 
@@ -131,7 +132,7 @@ void Sim<N>::show_Data_v(string title){
 				if(d>0) // Include '+' symbol
 					num = "+" + to_string((double)d/1000); // Change to string
 				
-				cout<<num.substr(0,6)<<"\t| "; // Print data	
+                cout<<num.substr(0,6)<<"\t\t| "; // Print data
 			}
 		}
 		cout<<"\n----------------------------------------------------------------------------------------------------------------------"<<endl; // End line
@@ -167,7 +168,7 @@ void Sim<N>::show_Data_h(string title){
 				if(d>0) // Include '+' symbol
 					num = "+" + to_string((double)d/1000); // Change to string
 				
-				cout<<num.substr(0,6)<<"\t| "; // Print data	
+                cout<<num.substr(0,6)<<"\t\t| "; // Print data
 			}
 		}
 		cout<<"\n----------------------------------------------------------------------------------------------------------------------"<<endl; // End line

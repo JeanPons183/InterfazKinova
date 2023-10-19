@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#define g 9.81
+#define g 9.8
 
 //FUNCTIONS
 

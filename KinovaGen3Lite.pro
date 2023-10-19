@@ -13,12 +13,15 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     qcustomplot.cpp \
-    robot.cpp
 
 HEADERS += \
+    Controls.h \
+    Dynamics.h \
+    Numerics.h \
+    Robot.h \
+    Simulation.h \
     mainwindow.h \
-    qcustomplot.h \
-    robot.h
+    qcustomplot.h
 
 FORMS += \
     mainwindow.ui

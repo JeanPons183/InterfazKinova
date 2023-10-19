@@ -74,6 +74,8 @@ private slots:
 
     void on_ElegirGraficaTrCB_currentIndexChanged(int index);
 
+    void on_ControlSelectCB_activated(int index);
+
 private:
     Ui::MainWindow *ui;
 };
