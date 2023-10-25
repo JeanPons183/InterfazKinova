@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1080</height>
+    <height>1330</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -90,7 +90,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>250</y>
          <width>1886</width>
          <height>1002</height>
         </rect>
@@ -127,8 +127,8 @@
         <widget class="QFrame" name="PlotFrame">
          <property name="geometry">
           <rect>
-           <x>-10</x>
-           <y>-10</y>
+           <x>0</x>
+           <y>20</y>
            <width>1901</width>
            <height>541</height>
           </rect>
@@ -140,7 +140,7 @@
           </size>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -148,10 +148,10 @@
          <widget class="QRadioButton" name="GraficasDespuesRB">
           <property name="geometry">
            <rect>
-            <x>138</x>
-            <y>11</y>
+            <x>490</x>
+            <y>10</y>
             <width>414</width>
-            <height>25</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="font">
@@ -173,10 +173,10 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>558</x>
-            <y>11</y>
+            <x>910</x>
+            <y>10</y>
             <width>363</width>
-            <height>25</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="font">
@@ -195,9 +195,9 @@
          <widget class="QPushButton" name="ActivarGraficasPB">
           <property name="geometry">
            <rect>
-            <x>11</x>
-            <y>11</y>
-            <width>121</width>
+            <x>20</x>
+            <y>10</y>
+            <width>141</width>
             <height>26</height>
            </rect>
           </property>
@@ -208,404 +208,153 @@
            <string>Activar Gráficas</string>
           </property>
          </widget>
-         <widget class="QStackedWidget" name="ScreenGrafica">
+         <widget class="QComboBox" name="ElegirGraficaCB">
           <property name="geometry">
            <rect>
-            <x>30</x>
-            <y>50</y>
-            <width>1861</width>
-            <height>411</height>
+            <x>20</x>
+            <y>184</y>
+            <width>231</width>
+            <height>23</height>
            </rect>
           </property>
-          <property name="currentIndex">
-           <number>0</number>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>12</pointsize>
+           </font>
           </property>
-          <widget class="QWidget" name="GraficasDespues">
-           <widget class="QPushButton" name="AgregarGraficaPB">
-            <property name="geometry">
-             <rect>
-              <x>300</x>
-              <y>160</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Agregar</string>
-            </property>
-           </widget>
-           <widget class="QCustomPlot" name="grafica1" native="true">
-            <property name="geometry">
-             <rect>
-              <x>559</x>
-              <y>10</y>
-              <width>1301</width>
-              <height>421</height>
-             </rect>
-            </property>
-            <widget class="Line" name="line_19">
-             <property name="geometry">
-              <rect>
-               <x>-10</x>
-               <y>0</y>
-               <width>21</width>
-               <height>431</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_14">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>-10</y>
-               <width>1301</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_20">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>390</y>
-               <width>1301</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_21">
-             <property name="geometry">
-              <rect>
-               <x>1290</x>
-               <y>0</y>
-               <width>21</width>
-               <height>431</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QLabel" name="label_15">
-            <property name="geometry">
-             <rect>
-              <x>120</x>
-              <y>106</y>
-              <width>131</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>A graficar:</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="EliminarGraficaPB">
-            <property name="geometry">
-             <rect>
-              <x>420</x>
-              <y>160</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Eliminar</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="ElegirGraficaCB">
-            <property name="geometry">
-             <rect>
-              <x>120</x>
-              <y>130</y>
-              <width>411</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <family>Arial</family>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 1 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 2 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 3 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 4 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 5</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 5 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 6</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 6 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Todas las Articulaciones</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Todas las Articulaciones y sus posiciones deseadas</string>
-             </property>
-            </item>
-           </widget>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Posición de la Articulación 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Todas las Articulaciones</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_agraficar">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>160</y>
+            <width>131</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>A graficar:</string>
+          </property>
+         </widget>
+         <widget class="QCustomPlot" name="WidgetGrafica" native="true">
+          <property name="geometry">
+           <rect>
+            <x>490</x>
+            <y>40</y>
+            <width>1301</width>
+            <height>421</height>
+           </rect>
+          </property>
+          <widget class="Line" name="line_19">
+           <property name="geometry">
+            <rect>
+             <x>-10</x>
+             <y>0</y>
+             <width>21</width>
+             <height>431</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
           </widget>
-          <widget class="QWidget" name="GraficarTiempoReal">
-           <widget class="QCustomPlot" name="grafica2" native="true">
-            <property name="geometry">
-             <rect>
-              <x>559</x>
-              <y>10</y>
-              <width>1301</width>
-              <height>401</height>
-             </rect>
-            </property>
-            <widget class="Line" name="line_16">
-             <property name="geometry">
-              <rect>
-               <x>-10</x>
-               <y>0</y>
-               <width>21</width>
-               <height>431</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_13">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>-10</y>
-               <width>1301</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_17">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>390</y>
-               <width>1301</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-            <widget class="Line" name="line_18">
-             <property name="geometry">
-              <rect>
-               <x>1290</x>
-               <y>0</y>
-               <width>21</width>
-               <height>431</height>
-              </rect>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QComboBox" name="ElegirGraficaCB_TR">
-            <property name="geometry">
-             <rect>
-              <x>120</x>
-              <y>130</y>
-              <width>411</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <family>Arial</family>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 1 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 2 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 3 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 4 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 5</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 5 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 6</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Posición de la Articulación 6 y su posición deseada</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Todas las Articulaciones</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Todas las Articulaciones y sus posiciones deseadas</string>
-             </property>
-            </item>
-           </widget>
-           <widget class="QLabel" name="label_9">
-            <property name="geometry">
-             <rect>
-              <x>120</x>
-              <y>106</y>
-              <width>131</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>A graficar:</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="pushButton">
-            <property name="geometry">
-             <rect>
-              <x>410</x>
-              <y>160</y>
-              <width>121</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Elegir a graficar</string>
-            </property>
-           </widget>
+          <widget class="Line" name="line_14">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>-10</y>
+             <width>1301</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="Line" name="line_21">
+           <property name="geometry">
+            <rect>
+             <x>1290</x>
+             <y>0</y>
+             <width>21</width>
+             <height>431</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="Line" name="line_20">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>410</y>
+             <width>1301</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
           </widget>
          </widget>
-         <zorder>GraficasDespuesRB</zorder>
-         <zorder>GraficasTiempoRealRB</zorder>
-         <zorder>ScreenGrafica</zorder>
-         <zorder>ActivarGraficasPB</zorder>
+         <widget class="QCheckBox" name="PosicionDeseadaRD">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>180</y>
+            <width>181</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Posiciones Deseadas</string>
+          </property>
+         </widget>
         </widget>
        </widget>
        <widget class="QCheckBox" name="ConeccionCB">
@@ -716,7 +465,7 @@
           </rect>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -974,7 +723,7 @@
           </rect>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -3024,7 +2773,7 @@
            <number>0</number>
           </property>
           <widget class="QWidget" name="Labels_4">
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>11</x>
@@ -3072,7 +2821,7 @@
            </widget>
           </widget>
           <widget class="QWidget" name="Input_3">
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -3125,7 +2874,7 @@
           </rect>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -3987,7 +3736,7 @@
               <x>10</x>
               <y>290</y>
               <width>281</width>
-              <height>30</height>
+              <height>21</height>
              </rect>
             </property>
             <property name="font">
@@ -4009,7 +3758,7 @@
               <x>10</x>
               <y>320</y>
               <width>281</width>
-              <height>30</height>
+              <height>21</height>
              </rect>
             </property>
             <property name="font">
@@ -4352,7 +4101,7 @@
             <x>320</x>
             <y>360</y>
             <width>281</width>
-            <height>30</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="font">
@@ -4509,7 +4258,7 @@
           </size>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
@@ -4549,7 +4298,7 @@
            <string>Errores:</string>
           </property>
          </widget>
-         <widget class="QStackedWidget" name="RunStop">
+         <widget class="QStackedWidget" name="ScreenRunStop">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -4710,7 +4459,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>120</y>
+              <y>130</y>
               <width>221</width>
               <height>31</height>
              </rect>
@@ -4727,6 +4476,19 @@
             </property>
             <property name="text">
              <string>Guardar Trayectoria</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="AccionTerminadaRB">
+            <property name="geometry">
+             <rect>
+              <x>40</x>
+              <y>90</y>
+              <width>151</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Accion Terminada</string>
             </property>
            </widget>
           </widget>
