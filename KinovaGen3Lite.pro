@@ -12,13 +12,11 @@ QMAKE_CXXFLAGS += -Wa,-mbig-obj
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    qcustomplot.cpp \
-    robot.cpp
+    qcustomplot.cpp
 
 HEADERS += \
     mainwindow.h \
-    qcustomplot.h \
-    robot.h
+    qcustomplot.h
 
 FORMS += \
     mainwindow.ui
