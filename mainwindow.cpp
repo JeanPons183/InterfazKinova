@@ -1,5 +1,70 @@
+//Qt headers
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+//function headers
+#include <array>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
+#include <math.h>
+#include <cmath>
+#include <numeric>
+
+// To save data to a file -----
+#include <fstream>
+#include <cstring>
+
+// Kinova Headers
+#include "KinovaRobot.h"
+#include <BaseClientRpc.h>
+#include <BaseCyclicClientRpc.h>
+#include <ActuatorConfigClientRpc.h>
+#include <SessionClientRpc.h>
+#include <SessionManager.h>
+#include <RouterClient.h>
+#include <TransportClientUdp.h>
+#include <TransportClientTcp.h>
+#include <argh.h>
+#include <google/protobuf/util/json_util.h>
+
+// Time count / managment
+#if defined(_MSC_VER)
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+#include <time.h>
+
+// Mini matrices library
+#include "mat.h"
+
+using namespace std;
+
+// Gen3 lite specific funcions
+// -- i.e. Gravity Vector, Jacobian & Pose calculation
+#include "Gen3lite_model.h"
+
+//Kinova API object
+using namespace KinovaGen3lite;
+
+namespace k_api = Kinova::Api;
+
+
+
+//------------------------------------------------------------------------------------------------
+
+//TCP and UDP default setup with default user
+#define PORT 10000
+#define PORT_REAL_TIME 10001
+//--
+
+bool RobotEnPosicionSegura=false;
+
+string username = "admin";
+string password = "admin";
+string ip_address = "192.168.2.10";
 
 //------------------------------------------------------------------------------------------------
 
@@ -7,15 +72,21 @@
 
 //Constantes---------------------------------------------------
 
-int FrecuenciaDeMuestreo=100; // La gráfica en tiempo real se actualizará cada 100 milisegundos
-
-int DatosMostrados=10; //Cantidad de datos que se grafican en tiempo real
-
 double pi = 3.1416;
 
-double deltaT=0.001; // Periodo de tiempo de acción
+// deg2rad: Convertion degrees to radians
+const float deg2rad = 3.1415926565359 / 180.0f;
+// rad2deg : Convertion radians to degrees
+const float rad2deg = 180.0f / 3.1415926565359 ;
+// dt : Low Level time step
+const float dt = 0.001;
+// TIME_DURATION : Experiment duration (seconds)
+float TIME_DURATION = 10.0f;
 
 //-------------------------------------------------------------
+
+// Maximum allowed waiting time during actions
+constexpr auto TIMEOUT_PROMISE_DURATION = std::chrono::seconds{20};
 
 //Banderas para iniciar la acción del robot--------------------
 bool RobotConectado=false;
@@ -45,7 +116,7 @@ bool banderaVirtual=false; // bandera para activar las ganancias que inyectan am
 
 //Variables de los valores de configuración del Robot----------
 int TiempoTotalSegundos=0; // Tiempo seleccionado para la acción del Robot
-int TiempoTotalMilisegundos= 0;
+int TiempoTotalMilisegundos= 0; // Cantidad de milisegundos totales
 
 double kp[6];   // Ganancias Kp
 double ki[6];   // Ganancias Ki
@@ -64,8 +135,8 @@ double Mc=0; //Valor de la masa virtual del controlador
 double q[6];    // Coordenadas generalizadas del Robot (deg)
 long double q_rad[6]; // Posicion actual en radianes
 
-double qd[6];  // Coordenadas generalizadas de la posición deseada (deg)
-long double qd_rad[6]; // Posicion deseada en radianes
+double qdes[6];  // Coordenadas generalizadas de la posición deseada (deg)
+long double qdes_rad[6]; // Posicion deseada en radianes
 //--------------------------------------------------------------
 
 
@@ -96,9 +167,6 @@ MainWindow::MainWindow(QWidget *parent)
     MainWindow::setWindowState(Qt::WindowMaximized);
     //ui->RobotSetting->setMinimumHeight(minimumHeight());
 
-    ui->ConeccionCB->setChecked(true);
-    ui->ConeccionCB->setVisible(false);
-
     ui->RobotSetting->resize(1611,21); // al abrir la aplicacion se esconde la pantalla
     ui->Ejecucion->resize(261,21);
 
@@ -106,9 +174,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->RunMode->setVisible(false); // se esconde el Run mode
     ui->AccionTerminadaRB->setEnabled(false);
-
-    ui->label_119->setVisible(false);
-    ui->label_ControlSelected->setVisible(false);
 
     ui->ControlSelectCB->setVisible(false);
 
@@ -121,12 +186,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->IniciarPB->setEnabled(false);
 
     ui->ActivarGraficasPB->setVisible(false); // escondemos los botones de las graficas
-    ui->GraficasTiempoRealRB->setVisible(false);
-    ui->GraficasDespuesRB->setVisible(false);
 
-
-    ui->label_Estado->setVisible(false);    // se esconden las etiquetas del estado del robot
-    ui->label_EstadoActual->setVisible(false);
     ui->ProgresoPBar->setVisible(false);    // se esconde la barra del progreso de la acción
 
 
@@ -143,8 +203,6 @@ MainWindow::~MainWindow()
 void MainWindow::PausarUI()
 {
     ui->ActivarGraficasPB->setEnabled(false);
-    ui->GraficasDespuesRB->setEnabled(false);
-    ui->GraficasTiempoRealRB->setEnabled(false);
     //--------------------------------------------
     ui->CambiarTiempoPB->setEnabled(false);
     ui->CambiarControlPB->setEnabled(false);
@@ -160,8 +218,6 @@ void MainWindow::PausarUI()
 void MainWindow::PlayUI()
 {
     ui->ActivarGraficasPB->setEnabled(true);
-    ui->GraficasDespuesRB->setEnabled(true);
-    ui->GraficasTiempoRealRB->setEnabled(true);
     //--------------------------------------------
     ui->CambiarTiempoPB->setEnabled(true);
     ui->CambiarControlPB->setEnabled(true);
@@ -247,59 +303,11 @@ void MainWindow::Controlador(int select) // selector te permite seleccionar la p
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Conectar Frame
-//---------------------------------------------------------------------------------------------------------------------------------------------------
-void MainWindow::on_ConectarPB_clicked()
-{
-    //Conectar Robot
-    RobotConectado=true;
-
-    if(RobotConectado){
-        ui->ConectarPB->setVisible(false); // eliminamos el botón
-        ui->ConeccionCB->setVisible(true);
-        ui->ConeccionCB->setEnabled(false);
-
-        ui->RobotSetting->resize(1611,411); // desplegamos los widgets
-        ui->Ejecucion->resize(261,411);
-
-        ui->Plots->resize(1881,51);
-
-        ui->RunMode->setVisible(true); // se despliega el Run mode
-        ui->SimulacionRB->setChecked(true); // por defecto se usa el modo simulación
-        //ui->GraficasDespuesRB->setChecked(true);
-
-        ui->ActivarGraficasPB->setVisible(true); // se activa el boton que permite graficar
-        ui->ActivarGraficasPB->setEnabled(false);
-
-        ui->label_Estado->setVisible(true);    // se despliegan las etiquetas del estado del robot
-        ui->label_EstadoActual->setVisible(true);
-        ui->label_EstadoActual->setText("Stand by");
-        ui->label_119->setVisible(true);
-        ui->label_ControlSelected->setVisible(true);
-
-        //ui->label_IP->setText("IP");
-
-        ui->ControlSelectCB->setDisabled(true);
-
-        //conseguir q actual
-
-        QMessageBox::information(this,tr("Robot Conectado"),tr("Conección exitosa con el robot"));
-        //mensaje para el usuario de conección exitosa
-
-    }else{
-        QMessageBox::warning(this,tr("Problema con la conección del Robot"),tr("No se pudo efectuar la conección con el Robot"));
-        //mensaje para el usuario de conección fallida
-        ui->MostrarErrores->append("No se pudo conectar con el Robot");
-    }
-}
-//---------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Robot Settings Frame
+// Simulation Settings Frame
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 void MainWindow::on_CambiarControlPB_clicked()
 {
     if(ControlActivadoBoton){
-        ui->label_ControlSelected->setText(ui->ControlSelectCB->currentText());
         ui->CambiarControlPB->setText("Cambiar Control");
         ui->ControlSelectCB->setEnabled(false);
 
@@ -332,6 +340,7 @@ void MainWindow::on_CambiarTiempoPB_clicked()
             ui->label_Segundos->setText(QString::number(TiempoTotalSegundos));
             TiempoActivado=true;
             TiempoActivadoBoton=false;
+            TiempoTotalMilisegundos= TiempoTotalSegundos / deltaT;
 
         }else{ //Error, numero igual a 0
             QMessageBox::warning(this,tr("Error!"),tr("El tiempo seleccionado no es correcto"));
@@ -500,19 +509,43 @@ void MainWindow::on_PosZeroPB_clicked()
 
     // cambia la posicon deseada a q=[0,0,0,0,0,0]' (cero deg° para cada articulación)
 
-    qd[0]=0;
-    qd[1]=0;
-    qd[2]=0;
-    qd[3]=0;
-    qd[4]=0;
-    qd[5]=0;
+    qdes[0]=0;
+    qdes[1]=0;
+    qdes[2]=0;
+    qdes[3]=0;
+    qdes[4]=0;
+    qdes[5]=0;
+
+    ui->label_posqd1->setText(QString::number(qdes[0])+"°");
+    ui->label_posqd2->setText(QString::number(qdes[1])+"°");
+    ui->label_posqd3->setText(QString::number(qdes[2])+"°");
+    ui->label_posqd4->setText(QString::number(qdes[3])+"°");
+    ui->label_posqd5->setText(QString::number(qdes[4])+"°");
+    ui->label_posqd6->setText(QString::number(qdes[5])+"°");
+
+        PosicionDeseada=true;
+    if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
+        ui->IniciarPB->setEnabled(true);
+    }else{
+        ui->IniciarPB->setEnabled(false);
+    }
+}
+
+void MainWindow::on_PosHomePB_clicked()
+{
+    qdes[0]=0;
+    qdes[1]=15;
+    qdes[2]=180;
+    qdes[3]=230;
+    qdes[4]=0;
+    qdes[5]=55;
 
     ui->label_posqd1->setText(QString::number(qd[0])+"°");
-        ui->label_posqd2->setText(QString::number(qd[1])+"°");
-        ui->label_posqd3->setText(QString::number(qd[2])+"°");
-        ui->label_posqd4->setText(QString::number(qd[3])+"°");
-        ui->label_posqd5->setText(QString::number(qd[4])+"°");
-        ui->label_posqd6->setText(QString::number(qd[5])+"°");
+        ui->label_posqd2->setText(QString::number(qdes[1])+"°");
+        ui->label_posqd3->setText(QString::number(qdes[2])+"°");
+        ui->label_posqd4->setText(QString::number(qdes[3])+"°");
+        ui->label_posqd5->setText(QString::number(qdes[4])+"°");
+        ui->label_posqd6->setText(QString::number(qdes[5])+"°");
 
         PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
@@ -528,19 +561,19 @@ void MainWindow::on_PosPackPB_clicked()
 
     // cambia la posición deseada a q=[0,0,0,0,0,0]' (deg°) posición Packaging
 
-    qd[0]=0;
-    qd[1]=0;
-    qd[2]=0;
-    qd[3]=0;
-    qd[4]=0;
-    qd[5]=0;
+    qdes[0]=0;
+    qdes[1]=0;
+    qdes[2]=0;
+    qdes[3]=0;
+    qdes[4]=0;
+    qdes[5]=0;
 
-    ui->label_posqd1->setText(QString::number(qd[0])+"°");
-        ui->label_posqd2->setText(QString::number(qd[1])+"°");
-        ui->label_posqd3->setText(QString::number(qd[2])+"°");
-        ui->label_posqd4->setText(QString::number(qd[3])+"°");
-        ui->label_posqd5->setText(QString::number(qd[4])+"°");
-        ui->label_posqd6->setText(QString::number(qd[5])+"°");
+    ui->label_posqd1->setText(QString::number(qdes[0])+"°");
+    ui->label_posqd2->setText(QString::number(qdes[1])+"°");
+    ui->label_posqd3->setText(QString::number(qdes[2])+"°");
+    ui->label_posqd4->setText(QString::number(qdes[3])+"°");
+    ui->label_posqd5->setText(QString::number(qdes[4])+"°");
+    ui->label_posqd6->setText(QString::number(qdes[5])+"°");
 
         PosicionDeseada=true;
     if(GananciasActivado && ControlActivado && TiempoActivado && PosicionDeseada){ // Chequeo de banderas para activar el boton de iniciar
@@ -554,47 +587,47 @@ void MainWindow::on_CambiarQdPB_clicked()
 {
     if(PosicionDeseadaBoton){
 
-        qd[0]= ui->qd1SB->value();
-        qd[1]= ui->qd2SB->value();
-        qd[2]= ui->qd3SB->value();
-        qd[3]= ui->qd4SB->value();
-        qd[4]= ui->qd5SB->value();
-        qd[5]= ui->qd6SB->value();
+        qdes[0]= ui->qd1SB->value();
+        qdes[1]= ui->qd2SB->value();
+        qdes[2]= ui->qd3SB->value();
+        qdes[3]= ui->qd4SB->value();
+        qdes[4]= ui->qd5SB->value();
+        qdes[5]= ui->qd6SB->value();
         GripperValue= ui->gripValueSB->value();
 
-        qd_rad[0]=qd[0]*(pi/180);
-        qd_rad[1]=qd[1]*(pi/180);
-        qd_rad[2]=qd[2]*(pi/180);
-        qd_rad[3]=qd[3]*(pi/180);
-        qd_rad[4]=qd[4]*(pi/180);
-        qd_rad[5]=qd[5]*(pi/180); // Cambiamos la posición deseada recibida en grados a radianes
+        qdes_rad[0]=qdes[0]*deg2rad;
+        qdes_rad[1]=qdes[1]*deg2rad;
+        qdes_rad[2]=qdes[2]*deg2rad;
+        qdes_rad[3]=qdes[3]*deg2rad;
+        qdes_rad[4]=qdes[4]*deg2rad;
+        qdes_rad[5]=qdes[5]*deg2rad; // Cambiamos la posición deseada recibida en grados a radianes
 
         //Checar rangos de las posiciones y por singularidades
 
         ui->ScreenQd->setCurrentIndex(0);
 
-        ui->label_posqd1->setText(QString::number(qd[0])+"°"); //Cambia el valor en las etiquetas por los valores guardados
-        ui->label_posqd2->setText(QString::number(qd[1])+"°");
-            ui->label_posqd3->setText(QString::number(qd[2])+"°");
-            ui->label_posqd4->setText(QString::number(qd[3])+"°");
-            ui->label_posqd5->setText(QString::number(qd[4])+"°");
-            ui->label_posqd6->setText(QString::number(qd[5])+"°");
-            ui->label_gripperValueQd->setText(QString::number(GripperValue)+"%");
+        ui->label_posqd1->setText(QString::number(qdes[0])+"°"); //Cambia el valor en las etiquetas por los valores guardados
+        ui->label_posqd2->setText(QString::number(qdes[1])+"°");
+        ui->label_posqd3->setText(QString::number(qdes[2])+"°");
+        ui->label_posqd4->setText(QString::number(qdes[3])+"°");
+        ui->label_posqd5->setText(QString::number(qdes[4])+"°");
+        ui->label_posqd6->setText(QString::number(qdes[5])+"°");
+        ui->label_gripperValueQd->setText(QString::number(GripperValue)+"%");
 
         ui->CambiarQdPB->setText("Cambiar Posición Deseada");
 
-            PosicionDeseada=true;
+        PosicionDeseada=true;
         PosicionDeseadaBoton=false;
     }else{
 
         ui->ScreenQd->setCurrentIndex(1);
 
-        ui->qd1SB->setValue(qd[0]);
-        ui->qd2SB->setValue(qd[1]);
-        ui->qd3SB->setValue(qd[2]);
-        ui->qd4SB->setValue(qd[3]);
-        ui->qd5SB->setValue(qd[4]);
-        ui->qd6SB->setValue(qd[5]);
+        ui->qd1SB->setValue(qdes[0]);
+        ui->qd2SB->setValue(qdes[1]);
+        ui->qd3SB->setValue(qdes[2]);
+        ui->qd4SB->setValue(qdes[3]);
+        ui->qd5SB->setValue(qdes[4]);
+        ui->qd6SB->setValue(qdes[5]);
         ui->gripValueSB->setValue(GripperValue);
 
         ui->CambiarQdPB->setText("Guardar");
@@ -614,13 +647,12 @@ void MainWindow::on_CambiarQdPB_clicked()
 void MainWindow::on_IniciarPB_clicked()
 {
     PausarUI();
-    TiempoTotalMilisegundos= TiempoTotalSegundos / deltaT;
     TiempoMilisegundosGrafica.resize(TiempoTotalMilisegundos); //cambiar a hacer el ciclo si el RB esta activado al terminar de hacer la tarea, de lo contrario dejar vacio el vector, usar el mismo para las dos graficas
     for (int i = 0; i < TiempoTotalMilisegundos; i++) {
         TiempoMilisegundosGrafica[i]=i;
     }
     //--------------------------------------------
-    ui->ProgresoPBar->setVisible(true);
+
     ui->ScreenRunStop->setCurrentIndex(1);
 
     //Funcion del Robot(); poner al final de su funcion la bandera TareaFinalizada
@@ -638,6 +670,7 @@ void MainWindow::on_StopPB_clicked()
 
 void MainWindow::on_AccionTerminadaRB_toggled(bool checked)
 {
+    /*
     if(GraficasActivadoBoton){
         if(ui->GraficasTiempoRealRB->isChecked()){
             ui->WidgetGrafica->clearPlottables();
@@ -647,6 +680,7 @@ void MainWindow::on_AccionTerminadaRB_toggled(bool checked)
             GraficarTrayectoria(ui->ElegirGraficaCB->currentIndex());
         }
     }
+    */
 }
 
 void MainWindow::on_CancelarGravedadPB_clicked()//boton que se muestra cuando se detiene la simulación
@@ -671,6 +705,11 @@ void MainWindow::on_FinalizarPB_2_clicked() //boton que se muestra ya que el rob
     //ui->ScreenRunStop->setCurrentIndex(0);
 }
 
+void MainWindow::on_regresarMenuPB_clicked()
+{
+    ui->ScreenRunStop->setCurrentIndex(0);
+}
+/*
 void MainWindow::Temporizador()
 {
     tiempo = 0.0;
@@ -678,11 +717,12 @@ void MainWindow::Temporizador()
     connect(miTemporizador, &QTimer::timeout, this, &MainWindow::ActualizarGrafica);
     miTemporizador->start(FrecuenciaDeMuestreo);
 }
-
+*/
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
 //Graficas Frame
 //---------------------------------------------------------------------------------------------------------------------------------------------------
+/*
 void MainWindow::on_ActivarGraficasPB_clicked()
 {
 
@@ -696,7 +736,7 @@ void MainWindow::on_ActivarGraficasPB_clicked()
         ui->GraficasDespuesRB->setEnabled(false);
         ui->GraficasDespuesRB->setChecked(false);
         ui->label_agraficar->setVisible(false);
-        ui->label_posarticulaciones->setVisible(false);
+        //ui->label_posarticulaciones->setVisible(false);
         ui->ElegirGraficaCB->setVisible(false);
         ui->ElegirGraficaCB->setEnabled(false);
         ui->PosicionDeseadaRD->setVisible(false);
@@ -714,7 +754,7 @@ void MainWindow::on_ActivarGraficasPB_clicked()
         ui->GraficasDespuesRB->setEnabled(true);
         ui->GraficasDespuesRB->setChecked(true);
         ui->label_agraficar->setVisible(true);
-        ui->label_posarticulaciones->setVisible(true);
+        //ui->label_posarticulaciones->setVisible(true);
         ui->ElegirGraficaCB->setVisible(true);
         ui->ElegirGraficaCB->setEnabled(true);
         ui->PosicionDeseadaRD->setVisible(true);
@@ -734,6 +774,7 @@ void MainWindow::on_ElegirGraficaCB_currentIndexChanged(int index)
 
 void MainWindow::CrearGrafica()
 {
+    QCustomPlot *grafica = ui->WidgetGrafica;
     QFont legendFont = font();  // start out with MainWindow's font.
     legendFont.setPointSize(9); // and make a bit smaller for legend
 
@@ -761,8 +802,9 @@ void MainWindow::CrearGrafica()
 
 void MainWindow::ConfigurarGrafica(int index)
 {
-    grafica->clearPlottables();
 
+    QCustomPlot *grafica = ui->WidgetGrafica;
+    grafica->clearPlottables();
     switch (index) {
     case 0:
         grafica->addGraph();
@@ -852,54 +894,55 @@ void MainWindow::ConfigurarGrafica(int index)
         grafica->graph(0)->setName("Posición de la Articulación 1.");
 
         grafica->addGraph();
+        grafica->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
+        grafica->graph(1)->setPen(QPen(Qt::magenta));
+        grafica->graph(1)->setName("Posición de la Articulación 2.");
+
+        grafica->addGraph();
         grafica->graph(2)->data()->clear(); // borra datos previamente guardados en el widget
-        grafica->graph(2)->setPen(QPen(Qt::magenta));
-        grafica->graph(2)->setName("Posición de la Articulación 2.");
+        grafica->graph(2)->setPen(QPen(Qt::yellow));
+        grafica->graph(2)->setName("Posición de la Articulación 3.");
+
+        grafica->addGraph();
+        grafica->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
+        grafica->graph(3)->setPen(QPen(Qt::gray));
+        grafica->graph(3)->setName("Posición de la Articulación 4.");
 
         grafica->addGraph();
         grafica->graph(4)->data()->clear(); // borra datos previamente guardados en el widget
-        grafica->graph(4)->setPen(QPen(Qt::yellow));
-        grafica->graph(4)->setName("Posición de la Articulación 3.");
+        grafica->graph(4)->setPen(QPen(Qt::red));
+        grafica->graph(4)->setName("Posición de la Articulación 5.");
 
         grafica->addGraph();
-        grafica->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
-        grafica->graph(6)->setPen(QPen(Qt::gray));
-        grafica->graph(6)->setName("Posición de la Articulación 4.");
-
-        grafica->addGraph();
-        grafica->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
-        grafica->graph(8)->setPen(QPen(Qt::red));
-        grafica->graph(8)->setName("Posición de la Articulación 5.");
-
-        grafica->addGraph();
-        grafica->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
-        grafica->graph(10)->setPen(QPen(Qt::green));
-        grafica->graph(10)->setName("Posición de la Articulación 6.");
+        grafica->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
+        grafica->graph(5)->setPen(QPen(Qt::green));
+        grafica->graph(5)->setName("Posición de la Articulación 6.");
 
         if(ui->PosicionDeseadaRD->isChecked()){
-            grafica->graph(1)->data()->clear(); // borra datos previamente guardados en el widget
-            grafica->graph(1)->setPen(QPen(Qt::darkCyan));
-            grafica->graph(1)->setName("Posición Deseada 1.");
-
             grafica->addGraph();
-            grafica->graph(3)->data()->clear(); // borra datos previamente guardados en el widget
-            grafica->graph(3)->setPen(QPen(Qt::darkMagenta));
-            grafica->graph(3)->setName("Posición Deseada 2.");
-
-            grafica->addGraph();
-            grafica->graph(5)->data()->clear(); // borra datos previamente guardados en el widget
-            grafica->graph(5)->setPen(QPen(Qt::darkYellow));
-            grafica->graph(5)->setName("Posición Deseada 3.");
+            grafica->graph(6)->data()->clear(); // borra datos previamente guardados en el widget
+            grafica->graph(6)->setPen(QPen(Qt::darkCyan));
+            grafica->graph(6)->setName("Posición Deseada 1.");
 
             grafica->addGraph();
             grafica->graph(7)->data()->clear(); // borra datos previamente guardados en el widget
-            grafica->graph(7)->setPen(QPen(Qt::darkGray));
-            grafica->graph(7)->setName("Posición Deseada 4.");
+            grafica->graph(7)->setPen(QPen(Qt::darkMagenta));
+            grafica->graph(7)->setName("Posición Deseada 2.");
+
+            grafica->addGraph();
+            grafica->graph(8)->data()->clear(); // borra datos previamente guardados en el widget
+            grafica->graph(8)->setPen(QPen(Qt::darkYellow));
+            grafica->graph(8)->setName("Posición Deseada 3.");
 
             grafica->addGraph();
             grafica->graph(9)->data()->clear(); // borra datos previamente guardados en el widget
-            grafica->graph(9)->setPen(QPen(Qt::darkRed));
-            grafica->graph(9)->setName("Posición Deseada 5.");
+            grafica->graph(9)->setPen(QPen(Qt::darkGray));
+            grafica->graph(9)->setName("Posición Deseada 4.");
+
+            grafica->addGraph();
+            grafica->graph(10)->data()->clear(); // borra datos previamente guardados en el widget
+            grafica->graph(10)->setPen(QPen(Qt::darkRed));
+            grafica->graph(10)->setName("Posición Deseada 5.");
 
             grafica->addGraph();
             grafica->graph(11)->data()->clear(); // borra datos previamente guardados en el widget
@@ -913,16 +956,22 @@ void MainWindow::ConfigurarGrafica(int index)
     }
     grafica->rescaleAxes();
     grafica->replot();
-    grafica->update();
+    //grafica->update();
+}
+
+void MainWindow::on_PosicionDeseadaRD_toggled(bool checked)
+{
+    ConfigurarGrafica(ui->ElegirGraficaCB->currentIndex());
 }
 
 void MainWindow::GraficarTrayectoria(int index){ // Funcion que grafica la señal despues de la acción
+    QCustomPlot *grafica = ui->WidgetGrafica;
     switch (index) {
     case 0: // graficar q1
         grafica->graph(0)->setData(TiempoMilisegundosGrafica,TrayectoriaArticulacion1);
         if(ui->PosicionDeseadaRD->isChecked()){
             QVector<double> QD1(TiempoTotalMilisegundos,qd[0]);
-            grafica->graph(1)->setData(TiempoMilisegundosSecuencialVector,QD1);
+            grafica->graph(1)->setData(TiempoMilisegundosGrafica,QD1);
         }
         break;
     case 1: // graficar q2
@@ -987,6 +1036,7 @@ void MainWindow::GraficarTrayectoria(int index){ // Funcion que grafica la seña
 }
 
 void MainWindow::ActualizarGrafica(){ // Funcion que grafica la señal en tiempo real
+    QCustomPlot *grafica = ui->WidgetGrafica;
     switch (ui->ElegirGraficaCB->currentIndex()) {
     case 0: // graficar q1
         TiempoMilisegundosGrafica.append(TiempoMilisegundosGrafica.isEmpty() ? 0 : TiempoMilisegundosGrafica.last() + FrecuenciaDeMuestreo); // si el vector está vacio se inicializa con 0, de lo contrario se usa el ultimo miembro y se le suma la frecuencia de muestreo
@@ -1049,7 +1099,7 @@ void MainWindow::on_GuardarTrayectoriaPB_clicked()
 {
 
 }
-
+*/
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
 // MenuBar Frame
@@ -1065,5 +1115,392 @@ void MainWindow::on_actionControl_IV_Class_Notes_triggered()
     QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath()+"/"+"Manual Control IV.pdf"));
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+// Conectar Frame
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+void MainWindow::on_ConectarPB_clicked()
+{
+
+
+    //comprobar que sea exitoso
+    if(){
+        ui->ConectarPB->setVisible(false); // eliminamos el botón
+
+        ui->RobotSetting->resize(1611,411); // desplegamos los widgets
+        ui->Ejecucion->resize(261,411);
+
+        ui->Plots->resize(1881,51);
+
+        ui->RunMode->setVisible(true); // se despliega el Run mode
+        ui->SimulacionRB->setChecked(true); // por defecto se usa el modo simulación
+        //ui->GraficasDespuesRB->setChecked(true);
+
+        ui->ActivarGraficasPB->setVisible(true); // se activa el boton que permite graficar
+        ui->ActivarGraficasPB->setEnabled(false);
+
+        ui->label_Estado->setVisible(true);    // se despliegan las etiquetas del estado del robot
+        ui->label_EstadoActual->setVisible(true);
+        ui->label_EstadoActual->setText("Stand by");
+        actualizarPosicionesRobot();
+        //ui->label_IP->setText("IP");
+
+        ui->ControlSelectCB->setDisabled(true);
+
+        //conseguir q actual
+
+        QMessageBox::information(this,tr("Robot Conectado"),tr("Conección exitosa con el robot"));
+        //mensaje para el usuario de conección exitosa
+
+    }else{
+        QMessageBox::warning(this,tr("Problema con la conección del Robot"),tr("No se pudo efectuar la conección con el Robot"));
+        //mensaje para el usuario de conección fallida
+        ui->MostrarErrores->append("No se pudo conectar con el Robot");
+        desconectarRobot();
+    }
+}
+
+bool MainWindow::desconectarRobot()
+{
+    // Close API session
+    ui->label_EstadoActual->setText("Cerrando sesión con el Robot");
+    session_manager->CloseSession();
+    session_manager_real_time->CloseSession();
+
+    // Deactivate the router and cleanly disconnect from the transport object
+    router->SetActivationStatus(false);
+    transport->disconnect();
+    router_real_time->SetActivationStatus(false);
+    transport_real_time->disconnect();
+
+    // Destroy the API
+    delete base;
+    delete base_cyclic;
+    delete actuator_config;
+    delete session_manager;
+    delete session_manager_real_time;
+    delete router;
+    delete router_real_time;
+    delete transport;
+    delete transport_real_time;
+
+    return success ? 0 : 1;
+}
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+// Funciones de Kinova
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+int64_t MainWindow::GetTickUs()
+{
+#if defined(_MSC_VER)
+    LARGE_INTEGER start, frequency;
+
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&start);
+
+    return (start.QuadPart * 1000000) / frequency.QuadPart;
+#else
+    struct timespec start;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    return (start.tv_sec * 1000000LLU) + (start.tv_nsec / 1000);
+#endif
+}
+
+//-----Movimiento a alto nivel---------------------------------------------
+
+bool MainWindow::move_to_zero_position(k_api::Base::BaseClient *base)
+{
+    // Make sure the arm is in Single Level Servoing before executing an Action
+    auto servoingMode = k_api::Base::ServoingModeInformation();
+    servoingMode.set_servoing_mode(k_api::Base::ServoingMode::SINGLE_LEVEL_SERVOING);
+    base->SetServoingMode(servoingMode);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // Move arm to ready position
+    ui->label_EstadoActual->setText("Moviendo el brazo a la posición Zero.");
+    auto action_type = k_api::Base::RequestedActionType();
+    action_type.set_action_type(k_api::Base::REACH_JOINT_ANGLES);
+    auto action_list = base->ReadAllActions(action_type);
+    auto action_handle = k_api::Base::ActionHandle();
+    action_handle.set_identifier(0);
+    for (auto action : action_list.action_list())
+    {
+        if (action.name() == "Zero")
+        {
+            action_handle = action.handle();
+        }
+    }
+
+    if (action_handle.identifier() == 0)
+    {
+        ui->MostrarErrores->append("No se puede llegar a la posición Zero, saliendo.");
+        ui->label_EstadoActual->setText("Error.");
+        return false;
+    }
+    else
+    {
+        // Connect to notification action topic
+        std::promise<k_api::Base::ActionEvent> finish_promise;
+        auto finish_future = finish_promise.get_future();
+        auto promise_notification_handle = base->OnNotificationActionTopic(
+            create_event_listener_by_promise(finish_promise),
+            k_api::Common::NotificationOptions()
+            );
+
+        // Execute action
+        base->ExecuteActionFromReference(action_handle);
+
+        // Wait for future value from promise
+        const auto status = finish_future.wait_for(TIMEOUT_PROMISE_DURATION);
+        base->Unsubscribe(promise_notification_handle);
+
+        if(status != std::future_status::ready)
+        {
+            ui->MostrarErrores->append("Tiempo de espera de comunicación sobrepasado.");
+            ui->label_EstadoActual->setText("Error.");
+            return false;
+        }
+        const auto promise_event = finish_future.get();
+
+        ui->label_EstadoActual->setText("Se llegó a Zero!");
+        return true;
+    }
+}
+
+bool MainWindow::move_to_home_position(k_api::Base::BaseClient *base)
+{
+    // Make sure the arm is in Single Level Servoing before executing an Action
+    auto servoingMode = k_api::Base::ServoingModeInformation();
+    servoingMode.set_servoing_mode(k_api::Base::ServoingMode::SINGLE_LEVEL_SERVOING);
+    base->SetServoingMode(servoingMode);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // Move arm to ready position
+    ui->label_EstadoActual->setText("Moviendo el brazo a la posición Home.");
+    auto action_type = k_api::Base::RequestedActionType();
+    action_type.set_action_type(k_api::Base::REACH_JOINT_ANGLES);
+    auto action_list = base->ReadAllActions(action_type);
+    auto action_handle = k_api::Base::ActionHandle();
+    action_handle.set_identifier(0);
+    for (auto action : action_list.action_list())
+    {
+        if (action.name() == "Home")
+        {
+            action_handle = action.handle();
+        }
+    }
+
+    if (action_handle.identifier() == 0)
+    {
+        ui->MostrarErrores->append("No se puede llegar a la posición Home, saliendo.");
+        ui->label_EstadoActual->setText("Error.");
+        return false;
+    }
+    else
+    {
+        // Connect to notification action topic
+        std::promise<k_api::Base::ActionEvent> finish_promise;
+        auto finish_future = finish_promise.get_future();
+        auto promise_notification_handle = base->OnNotificationActionTopic(
+            create_event_listener_by_promise(finish_promise),
+            k_api::Common::NotificationOptions()
+            );
+
+        // Execute action
+        base->ExecuteActionFromReference(action_handle);
+
+        // Wait for future value from promise
+        const auto status = finish_future.wait_for(TIMEOUT_PROMISE_DURATION);
+        base->Unsubscribe(promise_notification_handle);
+
+        if(status != std::future_status::ready)
+        {
+            ui->MostrarErrores->append("Tiempo de espera de comunicación sobrepasado.");
+            ui->label_EstadoActual->setText("Error.");
+            return false;
+        }
+        const auto promise_event = finish_future.get();
+
+        ui->label_EstadoActual->setText("Se llegó a Home!");
+        return true;
+    }
+}
+
+bool MainWindow::move_to_packaging_position(k_api::Base::BaseClient *base)
+{
+    // Make sure the arm is in Single Level Servoing before executing an Action
+    auto servoingMode = k_api::Base::ServoingModeInformation();
+    servoingMode.set_servoing_mode(k_api::Base::ServoingMode::SINGLE_LEVEL_SERVOING);
+    base->SetServoingMode(servoingMode);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // Move arm to ready position
+    ui->label_EstadoActual->setText("Moviendo el brazo a la posición Packaging.");
+    auto action_type = k_api::Base::RequestedActionType();
+    action_type.set_action_type(k_api::Base::REACH_JOINT_ANGLES);
+    auto action_list = base->ReadAllActions(action_type);
+    auto action_handle = k_api::Base::ActionHandle();
+    action_handle.set_identifier(0);
+    for (auto action : action_list.action_list())
+    {
+        if (action.name() == "Packaging")
+        {
+            action_handle = action.handle();
+        }
+    }
+
+    if (action_handle.identifier() == 0)
+    {
+        ui->MostrarErrores->append("No se puede llegar a la posición Packaging, saliendo.");
+        ui->label_EstadoActual->setText("Error.");
+        return false;
+    }
+    else
+    {
+        // Connect to notification action topic
+        std::promise<k_api::Base::ActionEvent> finish_promise;
+        auto finish_future = finish_promise.get_future();
+        auto promise_notification_handle = base->OnNotificationActionTopic(
+            create_event_listener_by_promise(finish_promise),
+            k_api::Common::NotificationOptions()
+            );
+
+        // Execute action
+        base->ExecuteActionFromReference(action_handle);
+
+        // Wait for future value from promise
+        const auto status = finish_future.wait_for(TIMEOUT_PROMISE_DURATION);
+        base->Unsubscribe(promise_notification_handle);
+
+        if(status != std::future_status::ready)
+        {
+            ui->MostrarErrores->append("Tiempo de espera de comunicación sobrepasado.");
+            ui->label_EstadoActual->setText("Error.");
+            return false;
+        }
+        const auto promise_event = finish_future.get();
+
+        ui->label_EstadoActual->setText("Se llegó a Packaging!");
+        return true;
+    }
+}
+
+MainWindow::create_event_listener_by_promise(std::promise<k_api::Base::ActionEvent> &finish_promise)
+{
+    return [&finish_promise] (k_api::Base::ActionNotification notification)
+    {
+        const auto action_event = notification.action_event();
+        switch(action_event)
+        {
+        case k_api::Base::ActionEvent::ACTION_END:
+        case k_api::Base::ActionEvent::ACTION_ABORT:
+            finish_promise.set_value(action_event);
+            break;
+        default:
+            break;
+        }
+    };
+}
+
+void MainWindow::on_moverAltoNivelPB_clicked()
+{
+    ui->ScreenRunStop->setCurrentIndex(4);
+}
+
+void MainWindow::on_goToZeroPB_clicked()
+{
+    PausarUi();
+    bool success = true;
+    success&=move_to_zero_position(base);
+    if (!success)
+    {
+        ui->MostrarErrores->append("Hubo un error inesperado y no se concluyó la tarea.");
+    }else{
+        ui->ScreenRunStop->setCurrentIndex(2);
+        actualizarPosicionesRobot();
+        PlayUi();
+    }
+}
+
+
+void MainWindow::on_goToHomePB_clicked()
+{
+    PausarUi();
+    bool success = true;
+    success&=move_to_home_position(base);
+    if (!success)
+    {
+        ui->MostrarErrores->append("Hubo un error inesperado y no se concluyó la tarea.");
+    }else{
+        ui->ScreenRunStop->setCurrentIndex(2);
+        actualizarPosicionesRobot();
+        PlayUi();
+    }
+}
+
+
+void MainWindow::on_goToPackPB_clicked()
+{
+    PausarUi();
+    bool success = true;
+    success&=move_to_packaging_position(base);
+    if (!success)
+    {
+        ui->MostrarErrores->append("Hubo un error inesperado y no se concluyó la tarea.");
+    }else{
+        ui->ScreenRunStop->setCurrentIndex(2);
+        actualizarPosicionesRobot();
+        PlayUi();
+    }
+}
+
+
+void MainWindow::actualizarPosicionesRobot()
+{
+    //------- Feedback de la base --------------
+
+    k_api::BaseCyclic::Feedback base_feedback;
+    base_feedback = base_cyclic->RefreshFeedback(); // Conseguimos los valores del robot
+
+    ui->label_q1->setText(QString::number(base_feedback.actuators(0).position()+"°");
+    ui->label_q2->setText(QString::number(base_feedback.actuators(1).position()+"°");
+    ui->label_q3->setText(QString::number(base_feedback.actuators(2).position()+"°");
+    ui->label_q4->setText(QString::number(base_feedback.actuators(3).position()+"°");
+    ui->label_q5->setText(QString::number(base_feedback.actuators(4).position()+"°");
+    ui->label_q6->setText(QString::number(base_feedback.actuators(5).position()+"°");
+}
+
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+//---- Funciónes de Errores
+
+void MainWindow::DisplayDetalllesError(k_api::Base::ConfigurationChangeNotification &data)
+{
+    auto error_info = ex.getErrorInfo().getError();
+    ui->MostrarErrores->append("KDetailedoption detectó:" + ex.what());
+
+    ui->MostrarErrores->append("KError error_code: " + error_info_error_code());
+    ui->MostrarErrores->append("KError sub_code: " + error_info_error_sub_code());
+    ui->MostrarErrores->append("KError sub_string: " + error_info_error_sub_string());
+
+    ui->MostrarErrores->append("Error code string equivalent: " + k_api::ErrorCodes_Name(k_api::ErrorCodes(error_info.error_code())));
+    ui->MostrarErrores->append("Error sub_code string equivalent: " + k_api::SubErrorCodes_Name(k_api::SubErrorCodes(error_info.error_sub_code())));
+
+}
+
+//--------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
