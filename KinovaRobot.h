@@ -3,35 +3,48 @@
 class KinovaRobot
 {
 public:
-    KinovaRobot(const std::string& ip, const std::string& user, const std::string& password, unsigned int PORT, unsigned int PORT_REAL_TIME);
-    ~KinovaRobot();
+
+    KinovaRobot(const std::string& ip, const std::string& user, const std::string& password, unsigned int PORT, unsigned int PORT_REAL_TIME);   //Contructor
+    ~KinovaRobot(); //Destructor
 
     bool Init();                            // Crea el objeto robot
     void Disconnect();                      // Cierra las sesiones y elimina el objeto
-    bool IsConnected() { return robotIsConnected;}
 
     void SubscribeToNotification();
     void UnsubscribeToNotification();
 
-    bool Mover_Alto_Nivel_Accion(const std::string& nombreAccion, Kinova::Api::Base::RequestActionType& accion);
-    bool Esperar_Robot_Movimiento(const int timeout);
-    bool Stop();
+    //Getters
+    bool                                        IsConnected() { return robotIsConnected;}
+    int                                         GetNDoF() const { return robot_DoF;}
+    Kinova::Api::BaseCyclic::Feedback           GetFeedback() const { return robot_feedback;}
+    Kinova::Api::BaseCyclic::ActuatorFeedback   GetActuatorFeedback(const int actIdx) const;
+    std::vector<float>                          GetJointPosition() const;
+    std::vector<float>                          GetJointVelocities() const;
 
-    //bool Ejecutar_Accion(const Kinova::Api::Base::Action& accion);
+    bool RefreshFeedBack();
+    bool SetCustomData(std::vector<float> data);
+
+    //Accion a alto nivel
+    bool Mover_Alto_Nivel_Accion(const std::string& nombreAccion, Kinova::Api::Base::RequestActionType& tipoDeAccion);
+    
+    bool Esperar_Robot_Movimiento(const int timeout);   //Esperar al robot 
+    bool Stop();    //Funcion Stop de la API manda un twist command com velocidades 0 a todos los actuadores, esta acci√≥n tiene prioridad a cualquier otro comando a los actuadores. (No usar)
+
+
+
 
 protected:
     void OnError(k_api::KDetailedException& ex);
     void OnActionNotificationCallBack(k_api::Base::ActionNotification& notif);
-
+    void OnRefreshFeedBackCallBack(const Kinova::Api::Error& err, const Kinova::Api::BaseCyclic::Feedback& feedback);
 
 protected:
 
     // Especificaciones del robot
-    int robot_Dofs;
+    int robot_DoF;
     bool robot_ocupado;
 
-    Kinova::Api::Base::Action accion;
-    Kinova::Api::ControlConfig::ControlConfigClient* controlConfigClient;
+    Kinova::Api::Base::Action robot_accion;
 
     std::string robot_ip;
     std::string robot_username;
@@ -43,15 +56,21 @@ protected:
     bool robotIsConnected;
     std::vector<Kinova::Api::Common::NotificationHandle> robot_NotificationHandleList;
 
-    Kinova::Api::TransportClientTcp* transport;
-    Kinova::Api:: transport_real_time;
-    Kinova::Api:: router_real_time;
-    Kinova::Api:: session_manager;
-    Kinova::Api:: router;
-    Kinova::Api:: session_manager_real_time;
-    Kinova::Api:: base;
-    Kinova::Api:: base_cyclic;
-    Kinova::Api:: actuator_config;
+    Kinova::Api::TransportClientTcp* robot_transport;
+    Kinova::Api::TransportClientUdp* robot_transport_real_time;
+
+    Kinova::Api::RouterClient* robot_router;
+    Kinova::Api::RouterClient* robot_router_real_time;
+
+    Kinova::Api::SessionManager* robot_session_manager;
+    Kinova::Api::SessionManager* robot_session_manager_real_time;
+
+    Kinova::Api::DeviceConfig::DeviceConfigClient* robot_deviceConfigClient;
+    Kinova::Api::ControlConfig::ControlConfigClient* robot_controlConfigClient;
+
+    Kinova::Api::BaseClient* robot_base;
+    Kinova::Api::BaseCyclic::BaseCyclicClient* robot_base_cyclic;
+    Kinova::Api::BaseCyclic::FeedBack robot_feedback;
 };
 
 
@@ -72,14 +91,14 @@ KinovaRobot::KinovaRobot(const std::string& ip, const std::string& user, const s
 
 KinovaRobot::~KinovaRobot()
 {
-    
     Disconnect();
 }
 
+/*
 bool KinovaRobot::Init()
 {
     // ************************************************************************
-    // *************    PASO 1. CONEXI”N              *************************
+    // *************    PASO 1. CONEXI√ìN              *************************
     //*************************************************************************
 
     if (robotIsConnected) {
@@ -88,122 +107,209 @@ bool KinovaRobot::Init()
 
     // * High level communication connection - TCP
     auto error_callback = [](Kinova::Api::KError err) { ui->MostrarErrores->append("_________ callback error _________" + err.toString()) };
-    transport = new Kinova::Api::TransportClientTcp();
-    router = new Kinova::Api::RouterClient(transport, error_callback);
-    transport->connect(robot_ip, robot_PORT);
+    robot_transport = new Kinova::Api::TransportClientTcp();
+    robot_router = new Kinova::Api::RouterClient(robot_transport, error_callback);
 
-    if (!transport->connect(robot_ip, robot_PORT)) {
+    auto create_session_info = Kinova::Api::Session::CreateSessionInfo();
+    create_session_info.set_username(robot_username);
+    create_session_info.set_password(robot_password);
+    create_session_info.set_session_inactivity_timeout(60000);   // (milliseconds)
+    create_session_info.set_connection_inactivity_timeout(2000); // (milliseconds)
+
+    robot_transport->connect(robot_ip, robot_PORT);
+
+    if (!robot_transport->connect(robot_ip, robot_PORT))
+    {
+        Disconnect();
         return false; //failed to connect TCP
     }
 
     // * Low level communication connection - UDP
-    transport_real_time = new Kinova::Api::TransportClientUdp();
-    router_real_time = new Kinova::Api::RouterClient(transport_real_time, error_callback);
-    transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME);
+    robot_transport_real_time = new Kinova::Api::TransportClientUdp();
+    robot_router_real_time = new Kinova::Api::RouterClient(robot_transport_real_time, error_callback);
 
-    if (!transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME)) {
+    robot_transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME);
+
+    if (!robot_transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME))
+    {
+        Disconnect();
         return false; //failed to connect UDP
     }
 
     try {
         // Set session data connection information
-        session_manager = new Kinova::Api::SessionManager(router);
-        session_manager_real_time = new Kinova::Api::SessionManager(router_real_time);
+        robot_session_manager = new Kinova::Api::SessionManager(robot_router);
+        robot_session_manager_real_time = new Kinova::Api::SessionManager(robot_router_real_time);
 
-        auto create_session_info = Kinova::Api::Session::CreateSessionInfo();
-        create_session_info.set_username(robot_username);
-        create_session_info.set_password(robot_password);
-        create_session_info.set_session_inactivity_timeout(60000);   // (milliseconds)
-        create_session_info.set_connection_inactivity_timeout(2000); // (milliseconds)
-
-        session_manager->CreateSession(create_session_info);
-        session_manager_real_time->CreateSession(create_session_info);
-
-        robotIsConnected = true;
+        robot_session_manager->CreateSession(create_session_info);
+        robot_session_manager_real_time->CreateSession(create_session_info);
 
         //Acceder a la base del robot
-        base = new Kinova::Api::Base::BaseClient(router);
-        base_cyclic = new Kinova::Api::BaseCyclic::BaseCyclicClient(router);
-        actuator_config = new Kinova::Api:::ActuatorConfig::ActuatorConfigClient(router);
+        robot_base = new Kinova::Api::Base::BaseClient(robot_router);
+        robot_base_cyclic = new Kinova::Api::BaseCyclic::BaseCyclicClient(robot_router_real_time);
+        robot_actuator_config = new Kinova::Api:::ActuatorConfig::ActuatorConfigClient(robot_router_real_time);
 
     }
-    catch () {
+    catch (Kinova::Api::KDetailedException ex) {
         OnError(ex);
+        Disconnect();
+        return false;
     }
+    robotIsConnected = true;
     return true;
 }
+*/
+
+
+bool KinovaRobot::Init()
+{
+    // ************************************************************************
+    // *************            CONEXI√ìN              *************************
+    //*************************************************************************
+
+    if (robotIsConnected) {
+        Disconnect();
+    }
+
+    auto error_callback = [](Kinova::Api::KError err) { ui->MostrarErrores->append("_________ callback error _________" + err.toString()) };
+    robot_transport = new Kinova::Api::TransportClientTcp();
+    robot_router = new Kinova::Api::RouterClient(robot_transport, error_callback);
+
+    auto create_session_info = Kinova::Api::Session::CreateSessionInfo();
+    create_session_info.set_username(robot_username);
+    create_session_info.set_password(robot_password);
+    create_session_info.set_session_inactivity_timeout(60000);   // (milliseconds)
+    create_session_info.set_connection_inactivity_timeout(2000); // (milliseconds)
+
+    robot_transport->connect(robot_ip, robot_PORT);
+
+    if (!robot_transport->connect(robot_ip, robot_PORT))
+    {
+        Disconnect();
+        return false; //failed to connect TCP
+    }
+    try {   //Conectamos con el puerto TCP y configuramos el robot a un modo de control inicial SINGLE_LEVEL_SERVOING (Alto nivel)
+        robot_session_manager = new Kinova::Api::SessionManager(robot_router);
+        robot_session_manager->CreateSession(create_session_info);
+
+        //Acceder a la base del robot
+        robot_deviceConfigClient = new Kinova::Api::DeviceConfig::DeviceConfigClient(robot_router);
+        robot_base = new Kinova::Api::Base::BaseClient(robot_router);
+        robot_controlConfigClient = new Kinova::Api::ControlConfig::ControlConfigClient(robot_router);
+
+        robot_DoF = robot_base->GetActuatorCount.count();
+        auto servoingMode = Kinova::Api::Base::ServoingInformation();
+        servoingMode.set_servoing_mode(Kinova::Api::ServoingMode::SINGLE_LEVEL_SERVOING);
+        robot_base->SetServoingMode(servoingMode);
+
+    }
+    catch (Kinova::Api::KDetailedException ex) {
+        OnError(ex);
+        Disconnect();
+        return false;
+    }
+
+    // Conectamos con el puerto - UDP
+    robot_transport_real_time = new Kinova::Api::TransportClientUdp();
+    robot_router_real_time = new Kinova::Api::RouterClient(robot_transport_real_time, error_callback);
+
+    robot_transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME);
+
+    if (!robot_transport_real_time->connect(robot_ip, robot_PORT_REAL_TIME))
+    {
+        Disconnect();
+        return false; //failed to connect UDP
+    }
+
+    try {
+        robot_session_manager_real_time = new Kinova::Api::SessionManager(robot_router_real_time);
+        robot_session_manager_real_time->CreateSession(create_session_info);
+        robot_base_cyclic = new Kinova::Api::BaseCyclic::BaseCyclicClient(robot_router_real_time);
+        robot_actuator_config = new Kinova::Api:::ActuatorConfig::ActuatorConfigClient(robot_router_real_time);
+
+    }
+    catch (Kinova::Api::KDetailedException ex) {
+        OnError(ex);
+        Disconnect();
+        return false;
+    }
+    robotIsConnected = true;
+    return true;
+}
+
+
 
 bool KinovaRobot::Disconnect()
 {
     if (robotIsConnected) {
         // Close API session
-        //ui->label_EstadoActual->setText("Cerrando sesiÛn con el Robot");
-        session_manager->CloseSession();
-        session_manager_real_time->CloseSession();
+        //ui->label_EstadoActual->setText("Cerrando sesi√≥n con el Robot");
+        robot_session_manager->CloseSession();
+        robot_session_manager_real_time->CloseSession();
 
         // Deactivate the router and cleanly disconnect from the transport object
-        router->SetActivationStatus(false);
-        transport->disconnect();
-        router_real_time->SetActivationStatus(false);
-        transport_real_time->disconnect();
+        robot_router->SetActivationStatus(false);
+        robot_router_real_time->SetActivationStatus(false);
 
+        robot_transport->disconnect();
+        robot_transport_real_time->disconnect();
     }
     // Destroy the API
 
     robotIsConnected = false;
 
-    if (base != nullptr)
+    if (robot_base != nullptr)
     {
-        delete base;
-        base = nullptr;
+        delete robot_base;
+        robot_base = nullptr;
     }
     
-    if (base_cyclic != nullptr)
+    if (robot_base_cyclic != nullptr)
     {
-        delete base_cyclic;
-        base_cyclic = nullptr;
+        delete robot_base_cyclic;
+        robot_base_cyclic = nullptr;
     }
 
-    if (actuator_config != nullptr)
+    if (robot_actuator_config != nullptr)
     {
-        delete actuator_config;
-        actuator_config = nullptr;
+        delete robot_actuator_config;
+        robot_actuator_config = nullptr;
     }
 
-    if (session_manager != nullptr)
+    if (robot_session_manager != nullptr)
     {
-        delete session_manager;
-        session_manager = nullptr;
+        delete robot_session_manager;
+        robot_session_manager = nullptr;
     }
 
-    if (session_manager_real_time != nullptr)
+    if (robot_session_manager_real_time != nullptr)
     {
-        delete session_manager_real_time;
-        session_manager_real_time = nullptr;
+        delete robot_session_manager_real_time;
+        robot_session_manager_real_time = nullptr;
     }
 
-    if (router != nullptr)
+    if (robot_router != nullptr)
     {
-        delete router;
-        router = nullptr;
+        delete robot_router;
+        robot_router = nullptr;
     }
 
-    if (router_real_time != nullptr)
+    if (robot_router_real_time != nullptr)
     {
-        delete router_real_time;
-        router_real_time = nullptr;
+        delete robot_router_real_time;
+        robot_router_real_time = nullptr;
     }
     
-    if (transport != nullptr)
+    if (robot_transport != nullptr)
     {
-        delete transport;
-        transport = nullptr;
+        delete robot_transport;
+        robot_transport = nullptr;
     }
     
-    if (transport_real_time != nullptr)
+    if (robot_transport_real_time != nullptr)
     {
-        delete transport_real_time;
-        transport_real_time = nullptr;
+        delete robot_transport_real_time;
+        robot_transport_real_time = nullptr;
     }
 }
 
@@ -212,11 +318,11 @@ void KinovaRobot::SubscribeToNotification()
     if (!robotIsConnected) {
         return;
     }
-    k_api::Common::NotificationOptions options;
-    options.set_type(k_api::Common::NOTIFICATION_TYPE_EVENT);
+    Kinova::Api::Common::NotificationOptions options;
+    options.set_type(Kinova::Api::Common::NOTIFICATION_TYPE_EVENT);
 
-    std::function<void(k_api::Base::ActionNotification)> actionCallBack = std::bind(&KinovaRobot::OnActionNotificationCallback, this, _1);
-    auto handle = base->OnNotificationActionTopic(actionCallback, options);
+    std::function<void>(Kinova::Api::Base::ActionNotification)> actionCallBack = std::bind(&KinovaRobot::OnActionNotificationCallback, this, _1);
+    auto handle = robot_base->OnNotificationActionTopic(actionCallback, options);
     robot_NotificationHandleList.push_back(handle);
 }
 
@@ -226,21 +332,21 @@ void KinovaRobot::UnsubscribeToNotification()
         return;
     }
     for (auto handle : robot_NotificationHandleList) {
-        base->Unsubscribe(handle);
+        robot_base->Unsubscribe(handle);
     }
 }
 
 void KinovaRobot::OnError(Kinova::Api::KDetailedException& ex)
 {
     auto error_info = ex.getErrorInfo().getError();
-    ui->MostrarErrores->append("KDetailedoption detectÛ:" + ex.what());
+    ui->MostrarErrores->append("KDetailedoption detect√≥:" + ex.what());
 
     ui->MostrarErrores->append("KError error_code: " + error_info_error_code());
     ui->MostrarErrores->append("KError sub_code: " + error_info_error_sub_code());
     ui->MostrarErrores->append("KError sub_string: " + error_info_error_sub_string());
 
-    ui->MostrarErrores->append("Error code string equivalent: " + Kinova::Api::ErrorCodes_Name(k_api::ErrorCodes(error_info.error_code())));
-    ui->MostrarErrores->append("Error sub_code string equivalent: " + Kinova::Api::SubErrorCodes_Name(k_api::SubErrorCodes(error_info.error_sub_code())));
+    ui->MostrarErrores->append("Error code string equivalent: " + Kinova::Api::ErrorCodes_Name(Kinova::Api::ErrorCodes(error_info.error_code())));
+    ui->MostrarErrores->append("Error sub_code string equivalent: " + Kinova::Api::SubErrorCodes_Name(Kinova::Api::SubErrorCodes(error_info.error_sub_code())));
 
 }
 
@@ -279,12 +385,12 @@ void KinovaRobot::OnActionNotificationCallBack(Kinova::Api::Base::ActionNotifica
 
 bool KinovaRobot::Mover_Alto_Nivel_Accion(const std::string& nombreAccion, Kinova::Api::Base::RequestActionType& tipoDeAccion)
 {
-    if (robotIsConnected || robot_ocupado)
+    if (!robotIsConnected || robot_ocupado)
     {
         return false;
     }
     try {
-        auto action_list = base->ReadAllActions(tipoDeAccion);
+        auto action_list = robot_base->ReadAllActions(tipoDeAccion);
         auto action_handle = Kinova::Api::Base::ActionHandle();
         action_handle.set_identifier(0);
         for (auto action : action_list.action_list())
@@ -300,21 +406,22 @@ bool KinovaRobot::Mover_Alto_Nivel_Accion(const std::string& nombreAccion, Kinov
             return false;
         }
         else {
-            base->ExecuteActionFromReference(action_handle);
+            robot_base->ExecuteActionFromReference(action_handle);
         }
     }
     catch (Kinova::Api::KDetailedException& ex)
     {
         OnError(ex);
+        return false;
     }
-    std::this_thread::sleep_for(tiempe std::chrono::miliseconds(_val 500));
+    std::this_thread::sleep_for(std::chrono::miliseconds(500));
 
     return true;
 }
 
 bool KinovaRobot::Esperar_Robot_Movimiento(const int timeout)
 {
-    if (robotIsConnected)
+    if (!robotIsConnected)
     {
         return false;
     }
@@ -323,7 +430,7 @@ bool KinovaRobot::Esperar_Robot_Movimiento(const int timeout)
     while (robot_ocupado && cycle < timeout) 
     {
         cycle++;
-        std::this_thread::sleep_for(tiempe std::chrono::miliseconds(_val 10));
+        std::this_thread::sleep_for(std::chrono::miliseconds(10));
     }
     if (cycle > timeout) {
         return false;
@@ -333,22 +440,87 @@ bool KinovaRobot::Esperar_Robot_Movimiento(const int timeout)
 
 bool KinovaRobot::Stop()
 {
-    if (robotIsConnected)
+    if (!robotIsConnected)
     {
         return false;
     }
     try 
     {
-        base->Stop();
+        robot_base->Stop();
     }
     catch (Kinova::Api::KDetailedException& ex)
     {
         OnError(ex);
+        return false;
     }
 
     return true;
 }
 
+Kinova::Api::BaseCyclic::ActuatorFeedback KinovaRobot::GetActuatorFeedback(const int actIdx) const
+{
+    if (actIdx >= robot_DoF) {
+        return Kinova::Api:BaseCyclic::ActuatorFeedback();
+    }
+    return robot_feedback.actuators(actIdx);
+}
+
+std::vector<float> KinovaRobot::GetJointPosition() const
+{
+    std::vector<float> positions;
+    if (!robotIsConnected)
+    {
+        return positions;
+    }
+    for (int i = 0; i < robot_DoF; i++)
+    {
+        positions.push_back(robot_feedback.actuators(i).position());
+    }
+    return positions;
+}
+
+std::vector<float> KinovaRobot::GetJointVelocities() const
+{
+    std::vector<float> velocities;
+    if (!robotIsConnected)
+    {
+        return velocities;
+    }
+    for (int i = 0; i < robot_DoF; i++)
+    {
+        velocities.push_back(robot_feedback.actuators(i).velocity());
+    }
+    return velocities;
+}
+
+bool KinovaRobot::RefreshFeedBack()
+{
+    if (!robotIsConnected)
+    {
+        return false;
+    }
+    try()
+    {
+        auto lambda_fct_callback = [this](const Kinova::Api::BaseCyclic::Feedback data)
+        {
+            OnRefreshFeedbackCallback(err, data);
+        }
+        robot_base_cyclic->RefreshFeedback_callback(lambda_fct_callback);
+    }
+    catch (Kinova::Api::KDetailedException& ex)
+    {
+        OnError(ex);
+        return false;
+    }
+    return true;
+}
+
+void KinovaRobot::OnRefreshFeedBackCallBack(const Kinova::Api::Error& err, const Kinova::Api::BaseCyclic::Feedback& feedback)
+{
+
+}
+
+/* llamada dentro del main 
 KinovaRobot robot = KinovaRobot(ip_address, username, password, PORT, PORT_REAL_TIME);
 
 if (robot.IsConnected()) {
@@ -361,3 +533,4 @@ if (robot.IsConnected()) {
 
     robot.UnsuscribeToNotifications();
 }
+*/
