@@ -20,6 +20,7 @@ public:
     Kinova::Api::BaseCyclic::ActuatorFeedback   GetActuatorFeedback(const int actIdx) const;
     std::vector<float>                          GetJointPosition() const;
     std::vector<float>                          GetJointVelocities() const;
+    std::vector<float>                          GetJointTorques() const;
 
     bool RefreshFeedBack();
     bool SetCustomData(std::vector<float> data);
@@ -50,11 +51,14 @@ protected:
     std::string robot_username;
     std::string robot_password;
 
+
     unsigned int robot_PORT;
     unsigned int robot_POR_REAL_TIME;
 
     bool robotIsConnected;
+
     std::vector<Kinova::Api::Common::NotificationHandle> robot_NotificationHandleList;
+    std::vector<float> robot_customData;
 
     Kinova::Api::TransportClientTcp* robot_transport;
     Kinova::Api::TransportClientUdp* robot_transport_real_time;
@@ -160,7 +164,6 @@ bool KinovaRobot::Init()
 }
 */
 
-
 bool KinovaRobot::Init()
 {
     // ************************************************************************
@@ -236,8 +239,6 @@ bool KinovaRobot::Init()
     robotIsConnected = true;
     return true;
 }
-
-
 
 bool KinovaRobot::Disconnect()
 {
@@ -493,6 +494,30 @@ std::vector<float> KinovaRobot::GetJointVelocities() const
     return velocities;
 }
 
+std::vector<float> KinovaRobot::GetJointTorques() const
+{
+    std::vector<float> torques;
+    if (!robotIsConnected)
+    {
+        return torques;
+    }
+    for (int i = 0; i < robot_DoF; i++)
+    {
+        torques.push_back(robot_feedback.actuators(i).torque());
+    }
+    return torques;
+}
+
+bool KinovaRobot::SetCustomData(std::vector<float> data)
+{
+    if (data.size() == robot_DoF)
+    {
+        robot_customData = data;
+        return true;
+    }
+    return false;
+}
+
 bool KinovaRobot::RefreshFeedBack()
 {
     if (!robotIsConnected)
@@ -504,7 +529,7 @@ bool KinovaRobot::RefreshFeedBack()
         auto lambda_fct_callback = [this](const Kinova::Api::BaseCyclic::Feedback data)
         {
             OnRefreshFeedbackCallback(err, data);
-        }
+        };
         robot_base_cyclic->RefreshFeedback_callback(lambda_fct_callback);
     }
     catch (Kinova::Api::KDetailedException& ex)
@@ -515,9 +540,24 @@ bool KinovaRobot::RefreshFeedBack()
     return true;
 }
 
-void KinovaRobot::OnRefreshFeedBackCallBack(const Kinova::Api::Error& err, const Kinova::Api::BaseCyclic::Feedback& feedback)
+void KinovaRobot::OnRefreshFeedBackCallBack(const Kinova::Api::Error &err, const Kinova::Api::BaseCyclic::Feedback& feedback)
 {
+    robot_feedback = feedback;
 
+    //Insertar algoritmo de detección de colisiones aqui
+    std::vector<float> torques = GetJointTorques();
+
+    if (!robor_customData.empy()) 
+    {
+        for (int i = 0; i < robot_DoF; i++)
+        {
+            if (fabsf(torques[i] - robot_customData[i] > 0.5f)) // este es un algoritmo que detecta colisiones cuando el robot está estatico, si se quiere que se detecten colisiones mientras el robot se mueve se tiene que cambiar la customData por el valor del torque del vector de gravedad + el torque dinamico en el movimiento del robot
+            {
+                // colision detectada en la articulación i
+                return;
+            }
+        }
+    }
 }
 
 /* llamada dentro del main 
