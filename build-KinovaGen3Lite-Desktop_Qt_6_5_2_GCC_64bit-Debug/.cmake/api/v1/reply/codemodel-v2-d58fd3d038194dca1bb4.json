@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-831fa33fe16a1a6682a3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "KinovaGen3Lite",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "KinovaGen3LiteApp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-KinovaGen3LiteApp-Debug-fdc0a1000e23c653eebc.json",
+					"name" : "KinovaGen3LiteApp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "KinovaGen3LiteApp_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-KinovaGen3LiteApp_autogen-Debug-50d876cf9156044d95e3.json",
+					"name" : "KinovaGen3LiteApp_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "KinovaGen3LiteApp_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-KinovaGen3LiteApp_autogen_timestamp_deps-Debug-d4cef15f620705e11a15.json",
+					"name" : "KinovaGen3LiteApp_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug",
+		"source" : "/home/conrob/Desktop/GUIKortex/KinovaGen3Lite"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
