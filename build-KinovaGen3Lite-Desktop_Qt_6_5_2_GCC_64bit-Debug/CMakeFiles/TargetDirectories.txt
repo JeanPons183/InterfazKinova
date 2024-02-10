@@ -1,9 +1,0 @@
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/KinovaGen3LiteApp.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/edit_cache.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/rebuild_cache.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/list_install_components.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/install.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/install/local.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/install/strip.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/KinovaGen3LiteApp_autogen_timestamp_deps.dir
-/home/conrob/Desktop/GUIKortex/build-KinovaGen3Lite-Desktop_Qt_6_5_2_GCC_64bit-Debug/CMakeFiles/KinovaGen3LiteApp_autogen.dir
