@@ -1,5 +1,5 @@
-#ifndef MAT_INL
-#define MAT_INL
+#ifndef MAT_H
+#define MAT_H
 
 #include <array>
 #include <cstddef>
