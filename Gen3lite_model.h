@@ -1,3 +1,6 @@
+#ifndef GEN3LITE_H
+#define GEN3LITE_H
+
 #include <algorithm>
 #include <cmath>
 
@@ -15,7 +18,7 @@
 // Mini matrices library
 #include "mat.h"
 
-namespace KinovaGen3lite
+namespace KinovaGen3litemodel
 {
 
     // ----------- GEN3 lite --- GEAR RATIO AND TORQUE CONSTANTS ------------
@@ -266,3 +269,4 @@ namespace KinovaGen3lite
     }
 
 }
+#endif
