@@ -1,7 +1,10 @@
 #------------------------ Setup Cmake and QT directories -------------------------
 
+#------------------------ Setup Cmake and QT directories -------------------------
+
 cmake_minimum_required(VERSION 3.5)
 
+project(KinovaGen3Lite VERSION 0.1 LANGUAGES CXX)
 project(KinovaGen3Lite VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -10,10 +13,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_INCLUDE_CURRENT_DIR   ON)
+set(CMAKE_VERBOSE_MAKEFILE      ON)
+set(CMAKE_COLOR_MAKEFILE        ON)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Core Gui)
 set(CMAKE_INCLUDE_CURRENT_DIR   ON)
 set(CMAKE_VERBOSE_MAKEFILE      ON)
 set(CMAKE_COLOR_MAKEFILE        ON)
@@ -34,7 +50,10 @@ set(PROJECT_SOURCES
 
 #------------------------ Executable Setup -------------------------
 
+#------------------------ Executable Setup -------------------------
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(KinovaGen3LiteApp
     qt_add_executable(KinovaGen3LiteApp
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -45,10 +64,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET KinovaGen3Lite APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET KinovaGen3Lite APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
+        add_library(KinovaGen3Lite SHARED
         add_library(KinovaGen3Lite SHARED
             ${PROJECT_SOURCES}
         )
@@ -56,11 +77,107 @@ else()
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(KinovaGen3Lite
+        add_executable(KinovaGen3Lite
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
+#------------------------ Setup MSVC ------------------------------
+
+set (CMAKE_CXX_STANDARD 11)
+
+macro(configure_msvc_runtime)
+
+    # Default to statically-linked runtime.
+    if("${MSVC_RUNTIME}" STREQUAL "")
+      set(MSVC_RUNTIME "static")
+    endif()
+
+    # Set compiler options.
+    set(variables
+      CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_MINSIZEREL
+      CMAKE_C_FLAGS_RELEASE
+      CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_MINSIZEREL
+      CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    )
+
+    if(${MSVC_RUNTIME} STREQUAL "static")
+      message(STATUS
+        "MSVC -> forcing use of statically-linked runtime."
+      )
+      foreach(variable ${variables})
+        if(${variable} MATCHES "/MD")
+          string(REGEX REPLACE "/MD" "/MT" ${variable} "${${variable}}")
+        endif()
+      endforeach()
+
+    else()
+      message(STATUS
+        "MSVC -> forcing use of dynamically-linked runtime."
+      )
+      foreach(variable ${variables})
+        if(${variable} MATCHES "/MT")
+          string(REGEX REPLACE "/MT" "/MD" ${variable} "${${variable}}")
+        endif()
+      endforeach()
+
+    endif()
+
+endmacro()
+
+#include_directories(${PROJECT_SOURCE_DIR}/thirdParty/cxxopts/)
+
+configure_msvc_runtime()
+
+if(UNIX)
+  add_definitions(-D_OS_UNIX)
+else()
+  MESSAGE(FATAL_ERROR "Unknown os! Not supported yet")
+endif()
+
+#------------------------ Setup Kortex Api Path and Libraries -------------------------
+
+target_link_libraries(KinovaGen3LiteApp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(KinovaGen3LiteApp PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(KinovaGen3LiteApp PRIVATE Qt${QT_VERSION_MAJOR}::Gui)
+
+if(NOT KORTEX_SUB_DIR)
+  set(KORTEX_SUB_DIR "")
+else()
+  set(KORTEX_SUB_DIR "${KORTEX_SUB_DIR}/")
+endif()
+
+set(KORTEX_DIR "${PROJECT_SOURCE_DIR}/kortex_api/${KORTEX_SUB_DIR}")
+
+link_libraries(${KORTEX_DIR}lib/release/libKortexApiCpp.a)
+target_link_libraries(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}lib/release/libKortexApiCpp.a)
+
+# Add Include Directories
+target_include_directories(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}include)
+target_include_directories(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}include/client)
+target_include_directories(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}include/common)
+target_include_directories(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}include/messages)
+target_include_directories(KinovaGen3LiteApp PUBLIC ${KORTEX_DIR}include/client_stubs)
+
+link_libraries(pthread)
+
+include_directories(${PROJECT_SOURCE_DIR}/thirdParty/argh)
+
+#------------------------ Executable Finalize -------------------------
+
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# If you are developing for iOS or macOS you should consider setting an
+# explicit, fixed bundle identifier manually though.
+if(${QT_VERSION} VERSION_LESS 6.1.0)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.KinovaGen3Lite)
+endif()
+set_target_properties(KinovaGen3LiteApp PROPERTIES
+    ${BUNDLE_ID_OPTION}
 #------------------------ Setup MSVC ------------------------------
 
 set (CMAKE_CXX_STANDARD 11)
@@ -164,11 +281,18 @@ set_target_properties(KinovaGen3LiteApp PROPERTIES
 
 include(GNUInstallDirs)
 install(TARGETS KinovaGen3LiteApp
+include(GNUInstallDirs)
+install(TARGETS KinovaGen3LiteApp
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_finalize_executable(KinovaGen3LiteApp)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_finalize_executable(KinovaGen3LiteApp)
 endif()
